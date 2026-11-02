@@ -6,4 +6,3 @@ coverage/
 .DS_Store
 .vscode/*
 !.vscode/extensions.json
-.wrangler/

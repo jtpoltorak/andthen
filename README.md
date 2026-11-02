@@ -30,4 +30,4 @@ The service worker only runs in production builds. To try offline/install behavi
 
 ## Deploying
 
-Pushes to `main` deploy automatically to Cloudflare (static assets on Workers, free tier). Config lives in `wrangler.jsonc` and `apps/web/public/_headers`. See [docs/DEPLOY.md](docs/DEPLOY.md) for the one-time dashboard setup and custom domain.
+Pushes to `main` deploy automatically to Railway, which builds the `Dockerfile` (Node build, then Caddy serving the static files). The domain and DNS are in Cloudflare. See [docs/DEPLOY.md](docs/DEPLOY.md) for the one-time setup and custom domain.
