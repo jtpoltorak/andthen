@@ -39,6 +39,8 @@ interface HabitRow {
   /** Set when the habit (or its routine) has been retired. */
   retiredOn?: DayKey;
   gridLabel: string;
+  /** Started in the last week, so most of the grid is still blank. */
+  isNew: boolean;
 }
 
 interface RoutineSection {
@@ -141,7 +143,7 @@ export class Progress {
   private row(habit: Habit, routine: Routine): HabitRow {
     const today = this.store.today();
     const index = this.index();
-    const { until } = habitSpan(habit, routine);
+    const { from, until } = habitSpan(habit, routine);
     const retiredOn = until && until <= today ? until : undefined;
     // A retired habit's grid ends on its last day, so old history stays visible.
     const lastDay = retiredOn ? addDays(retiredOn, -1) : today;
@@ -161,7 +163,15 @@ export class Progress {
     const gridLabel =
       `Last ${WEEKS} weeks: ${plural(counts.full, 'day')} done, ` +
       `${counts.mini} with the 2-minute version, ${counts.skip} skipped`;
-    return { habit, weeks, stats: habitStats(habit, routine, index, today), retiredOn, gridLabel };
+    const isNew = !retiredOn && from > addDays(today, -7);
+    return {
+      habit,
+      weeks,
+      stats: habitStats(habit, routine, index, today),
+      retiredOn,
+      gridLabel,
+      isNew,
+    };
   }
 }
 

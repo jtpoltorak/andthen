@@ -176,6 +176,13 @@ h1 {
   font-weight: 700;
 }
 
+.new-note {
+  margin: -4px 0 10px;
+  font-size: 13px;
+  line-height: 1.4;
+  color: var(--muted);
+}
+
 .habit-body {
   display: flex;
   flex-wrap: wrap;

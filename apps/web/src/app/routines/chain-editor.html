@@ -13,9 +13,14 @@
         </div>
         <div class="row-body">
           @if (editing()?.kind === 'anchor') {
-            <form class="edit-form" (submit)="$event.preventDefault(); saveAnchor()">
+            <form
+              class="edit-form"
+              (submit)="$event.preventDefault(); saveAnchor()"
+              (keydown.escape)="cancel()"
+            >
               <label class="field-label" for="anchor-input">Start after</label>
               <input
+                appAutofocus
                 id="anchor-input"
                 class="text-input"
                 type="text"
@@ -46,7 +51,7 @@
                   {{ r.usualTime ? 'Usually around ' + r.usualTime : 'Something you already do' }}
                 </div>
               </div>
-              <button type="button" class="btn-text" (click)="editAnchor()">
+              <button type="button" class="btn-text" id="edit-anchor" (click)="editAnchor()">
                 Edit<span class="visually-hidden"> anchor</span>
               </button>
             </div>
@@ -65,9 +70,14 @@
           </div>
           <div class="row-body">
             @if (isEditingHabit(habit)) {
-              <form class="edit-form" (submit)="$event.preventDefault(); saveHabit(habit)">
+              <form
+                class="edit-form"
+                (submit)="$event.preventDefault(); saveHabit(habit)"
+                (keydown.escape)="cancel()"
+              >
                 <label class="field-label" [for]="'name-' + habit.id">Habit</label>
                 <input
+                  appAutofocus
                   class="text-input"
                   type="text"
                   autocomplete="off"
@@ -111,6 +121,7 @@
                   <button
                     type="button"
                     class="icon-btn"
+                    [id]="'up-' + habit.id"
                     [disabled]="first"
                     [attr.aria-label]="'Move ' + habit.name + ' up'"
                     (click)="move(habit, -1)"
@@ -132,6 +143,7 @@
                   <button
                     type="button"
                     class="icon-btn"
+                    [id]="'down-' + habit.id"
                     [disabled]="last"
                     [attr.aria-label]="'Move ' + habit.name + ' down'"
                     (click)="move(habit, 1)"
@@ -150,7 +162,12 @@
                       <path d="M6 9l6 6 6-6" />
                     </svg>
                   </button>
-                  <button type="button" class="btn-text" (click)="editHabit(habit)">
+                  <button
+                    type="button"
+                    class="btn-text"
+                    [id]="'edit-' + habit.id"
+                    (click)="editHabit(habit)"
+                  >
                     Edit<span class="visually-hidden"> {{ habit.name }}</span>
                   </button>
                 </div>
@@ -165,9 +182,14 @@
     </ol>
 
     @if (adding()) {
-      <form class="add-card" (submit)="$event.preventDefault(); addHabit()">
+      <form
+        class="add-card"
+        (submit)="$event.preventDefault(); addHabit()"
+        (keydown.escape)="cancel()"
+      >
         <label class="field-label" for="add-name">And then I'll...</label>
         <input
+          appAutofocus
           id="add-name"
           class="text-input"
           type="text"
@@ -192,7 +214,9 @@
         </div>
       </form>
     } @else {
-      <button type="button" class="and-then" (click)="startAdding()">+ and then...</button>
+      <button type="button" class="and-then" id="add-habit" (click)="startAdding()">
+        + and then...
+      </button>
     }
 
     <p class="hint tip">
@@ -206,17 +230,25 @@
           <button type="button" class="btn-small danger-fill" (click)="removeRoutine()">
             Remove routine
           </button>
-          <button type="button" class="btn-text" (click)="confirmingRemoveRoutine.set(false)">
+          <button appAutofocus type="button" class="btn-text" (click)="keepRoutine()">
             Keep it
           </button>
         </div>
       } @else {
-        <button type="button" class="btn-text danger" (click)="confirmingRemoveRoutine.set(true)">
+        <button
+          type="button"
+          class="btn-text danger"
+          id="remove-routine"
+          (click)="confirmingRemoveRoutine.set(true)"
+        >
           Remove this routine
         </button>
       }
     </div>
   } @else {
-    <p class="empty">This routine isn't here anymore.</p>
+    <h1>Routine not found</h1>
+    <p class="empty">
+      This routine isn't here anymore. It may have been removed; its history is still on Progress.
+    </p>
   }
 </main>

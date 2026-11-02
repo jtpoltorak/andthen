@@ -9,7 +9,12 @@
 
   @for (chain of chains(); track chain.routine.id) {
     @if (chain.routine.id === openRoutineId()) {
-      <section class="card" [attr.aria-label]="chain.routine.anchor">
+      <section
+        class="card"
+        tabindex="-1"
+        [id]="'card-' + chain.routine.id"
+        [attr.aria-label]="chain.routine.anchor"
+      >
         <div class="card-head">
           <div class="anchor">
             <span class="anchor-dot" aria-hidden="true"></span>
@@ -64,42 +69,71 @@
                 <div class="link-sub">
                   {{ subtitle(link) }}
                   @if (link.status !== 'pending') {
-                    <button type="button" class="undo" (click)="undo(link)">
+                    <button type="button" class="undo" (click)="undo(chain.routine.id, link)">
                       Undo<span class="visually-hidden"> {{ link.habit.name }}</span>
                     </button>
                   }
                 </div>
 
                 @if (link.isNext) {
+                  <!-- After a miss, the 2-minute version comes first, in reading and tab order too. -->
                   <div class="actions" [class.nudge]="link.missedYesterday">
-                    <button type="button" class="act act-done" (click)="answer(link, 'full')">
-                      Done
-                    </button>
-                    <button type="button" class="act act-mini" (click)="answer(link, 'mini')">
-                      Did 2 min
-                    </button>
-                    <button type="button" class="act act-skip" (click)="answer(link, 'skip')">
-                      Skip
+                    @if (link.missedYesterday) {
+                      <ng-container *ngTemplateOutlet="miniBtn; context: { $implicit: link }" />
+                      <ng-container *ngTemplateOutlet="doneBtn; context: { $implicit: link }" />
+                    } @else {
+                      <ng-container *ngTemplateOutlet="doneBtn; context: { $implicit: link }" />
+                      <ng-container *ngTemplateOutlet="miniBtn; context: { $implicit: link }" />
+                    }
+                    <button
+                      type="button"
+                      class="act act-skip"
+                      (click)="answer(chain.routine.id, link, 'skip')"
+                    >
+                      Skip<span class="visually-hidden"> {{ link.habit.name }}</span>
                     </button>
                   </div>
                 }
+                <ng-template #doneBtn let-link>
+                  <button
+                    type="button"
+                    class="act act-done"
+                    (click)="answer(chain.routine.id, link, 'full')"
+                  >
+                    Done<span class="visually-hidden"> {{ link.habit.name }}</span>
+                  </button>
+                </ng-template>
+                <ng-template #miniBtn let-link>
+                  <button
+                    type="button"
+                    class="act act-mini"
+                    (click)="answer(chain.routine.id, link, 'mini')"
+                  >
+                    Did 2 min<span class="visually-hidden"> of {{ link.habit.name }}</span>
+                  </button>
+                </ng-template>
               </div>
             </li>
           }
         </ol>
 
         @if (chain.complete) {
-          <div class="complete" role="status">
+          <div class="complete" role="status" tabindex="-1">
             <div class="complete-title">Chain complete</div>
             <div class="complete-note">Small still counts. See you tomorrow.</div>
           </div>
         }
 
         @if (addingTo() === chain.routine.id) {
-          <form class="add-form" (submit)="$event.preventDefault(); addLink(chain.routine.id)">
+          <form
+            class="add-form"
+            (submit)="$event.preventDefault(); addLink(chain.routine.id)"
+            (keydown.escape)="cancelAdding(chain.routine.id)"
+          >
             <label class="field-label" for="next-link">And then I'll...</label>
             <div class="add-row">
               <input
+                appAutofocus
                 id="next-link"
                 class="text-input"
                 type="text"
@@ -110,9 +144,17 @@
               />
               <button type="submit" class="add-btn">Add</button>
             </div>
+            <button type="button" class="cancel-btn" (click)="cancelAdding(chain.routine.id)">
+              Cancel
+            </button>
           </form>
         } @else {
-          <button type="button" class="and-then" (click)="startAdding(chain.routine.id)">
+          <button
+            type="button"
+            class="and-then"
+            [id]="'and-then-' + chain.routine.id"
+            (click)="startAdding(chain.routine.id)"
+          >
             + and then...
           </button>
         }
@@ -144,8 +186,14 @@
       </button>
     }
   } @empty {
-    <p class="footnote">No routines right now. <a routerLink="/routines/new">Start one</a>.</p>
+    <section class="empty-card">
+      <h2>Nothing on today's list</h2>
+      <p>Pick something you already do every day, and chain one tiny habit after it.</p>
+      <a class="empty-action" routerLink="/routines/new">Start a routine</a>
+    </section>
   }
 
-  <p class="footnote">Missed a day? No streak to lose. Just don't miss twice.</p>
+  @if (chains().length) {
+    <p class="footnote">Missed a day? No streak to lose. Just don't miss twice.</p>
+  }
 </main>

@@ -48,7 +48,7 @@
       </div>
 
       <div class="spacer"></div>
-      <h1>Small habits, linked to what you already do.</h1>
+      <h1 tabindex="-1">Small habits, linked to what you already do.</h1>
       <p class="lede">Start with one tiny habit. No account, no setup marathon.</p>
       <button type="button" class="btn-primary" (click)="go('habit')">Get started</button>
       <app-data-backup class="restore" restoreOnly (restored)="afterRestore()" />
@@ -75,7 +75,7 @@
         </button>
         <span class="step-count">Step 1 of 3</span>
       </div>
-      <h2>What's one habit you'd like to build?</h2>
+      <h1 class="step-title" tabindex="-1">What's one habit you'd like to build?</h1>
       <p class="hint">Pick one to start. You can add more later.</p>
       <div class="chips" role="group" aria-label="Suggested habits">
         @for (h of starterHabits; track h.name) {
@@ -128,18 +128,17 @@
         </button>
         <span class="step-count">Step 2 of 3</span>
       </div>
-      <h2>When will you do it?</h2>
+      <h1 class="step-title" tabindex="-1">When will you do it?</h1>
       <p class="hint">
         Pick something you already do every day. {{ habit().trim() }} comes right after it.
       </p>
-      <div class="options" role="radiogroup" aria-label="Anchors">
+      <div class="options" role="group" aria-label="Everyday moments">
         @for (a of starterAnchors; track a.anchor) {
           <button
             type="button"
-            role="radio"
             class="option"
             [class.selected]="anchor() === a.anchor"
-            [attr.aria-checked]="anchor() === a.anchor"
+            [attr.aria-pressed]="anchor() === a.anchor"
             (click)="anchor.set(a.anchor)"
           >
             <span class="radio" aria-hidden="true"></span>{{ a.anchor }}
@@ -184,7 +183,7 @@
         </button>
         <span class="step-count">Step 3 of 3</span>
       </div>
-      <h2>Now make it tiny.</h2>
+      <h1 class="step-title" tabindex="-1">Now make it tiny.</h1>
       <p class="hint">What's the 2-minute version? On busy days, the tiny version still counts.</p>
       <label class="field-label" for="mini-input">2-minute version</label>
       <input

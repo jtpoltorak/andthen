@@ -156,7 +156,7 @@ const LEAD_LABELS: Record<ReminderLead, string> = {
     input[role='switch']:focus-visible,
     select:focus-visible,
     .check-row input:focus-visible {
-      outline: 3px solid var(--accent);
+      outline: 3px solid var(--focus);
       outline-offset: 2px;
     }
     .note {

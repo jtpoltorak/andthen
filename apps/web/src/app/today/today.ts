@@ -1,4 +1,12 @@
-import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  Injector,
+  computed,
+  inject,
+  signal,
+} from '@angular/core';
+import { NgTemplateOutlet } from '@angular/common';
 import {
   type ChainLink,
   type CheckInKind,
@@ -10,19 +18,21 @@ import {
 import { RouterLink } from '@angular/router';
 import { HabitStore } from '../data/habit-store';
 import { PreferencesStore } from '../data/preferences';
+import { Autofocus, byId, focusAfterRender } from '../shared/focus';
 
 const lowerFirst = (text: string) => (text ? text.charAt(0).toLowerCase() + text.slice(1) : '');
 
 /** Today: each routine is a card; the active one is open and asks "what's next?" */
 @Component({
   selector: 'app-today',
-  imports: [RouterLink],
+  imports: [RouterLink, NgTemplateOutlet, Autofocus],
   templateUrl: './today.html',
   styleUrl: './today.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class Today {
   protected readonly store = inject(HabitStore);
+  private readonly injector = inject(Injector);
 
   /** A card the person opened by hand; otherwise the app picks the active routine. */
   private readonly openedByHand = signal<string | undefined>(undefined);
@@ -61,14 +71,28 @@ export class Today {
   protected open(routineId: string): void {
     this.openedByHand.set(routineId);
     this.addingTo.set(undefined);
+    this.focusCard(routineId);
   }
 
-  protected answer(link: ChainLink, kind: CheckInKind): void {
-    void this.store.checkIn(link.habit.id, kind);
+  protected async answer(routineId: string, link: ChainLink, kind: CheckInKind): Promise<void> {
+    await this.store.checkIn(link.habit.id, kind);
+    this.focusCard(routineId);
   }
 
-  protected undo(link: ChainLink): void {
-    void this.store.undoCheckIn(link.habit.id);
+  protected async undo(routineId: string, link: ChainLink): Promise<void> {
+    await this.store.undoCheckIn(link.habit.id);
+    this.focusCard(routineId);
+  }
+
+  /**
+   * The buttons that had focus go away after a check-in, so move focus on: to the next
+   * habit's first action, or to "Chain complete" once there's nothing left.
+   */
+  private focusCard(routineId: string): void {
+    focusAfterRender(this.injector, () => {
+      const card = document.getElementById(`card-${routineId}`);
+      return card?.querySelector<HTMLElement>('.act, .complete') ?? card;
+    });
   }
 
   protected subtitle(link: ChainLink): string {
@@ -89,10 +113,15 @@ export class Today {
     this.addingTo.set(routineId);
   }
 
+  protected cancelAdding(routineId: string): void {
+    this.draft.set('');
+    this.addingTo.set(undefined);
+    focusAfterRender(this.injector, byId(`and-then-${routineId}`));
+  }
+
   protected async addLink(routineId: string): Promise<void> {
     const name = this.draft().trim();
     if (name) await this.store.addLink(routineId, name, suggestTwoMinuteVersion(name));
-    this.draft.set('');
-    this.addingTo.set(undefined);
+    this.cancelAdding(routineId);
   }
 }

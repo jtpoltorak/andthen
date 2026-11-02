@@ -99,7 +99,7 @@ const WEEK_OPTIONS: { value: WeekStart; label: string }[] = [
       margin: 0 0 8px;
     }
     .text-input:focus-visible {
-      outline: 3px solid var(--accent);
+      outline: 3px solid var(--focus);
       outline-offset: 2px;
     }
     .segmented {
@@ -142,7 +142,7 @@ const WEEK_OPTIONS: { value: WeekStart; label: string }[] = [
       font-weight: 700;
     }
     .segmented input:focus-visible + span {
-      outline: 3px solid var(--accent);
+      outline: 3px solid var(--focus);
       outline-offset: 2px;
     }
     .status {

@@ -1,8 +1,18 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { ChangeDetectionStrategy, Component, Injector, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { NavigationEnd, Router, RouterOutlet } from '@angular/router';
+import { filter, skip } from 'rxjs';
 import { HabitStore } from './data/habit-store';
 import { PreferencesStore } from './data/preferences';
 import { Reminders } from './reminders/reminders';
+import { focusAfterRender } from './shared/focus';
+
+/** The new screen's main heading, made focusable so focus can move to it. */
+function pageHeading(): HTMLElement | null {
+  const heading = document.querySelector<HTMLElement>('main h1');
+  heading?.setAttribute('tabindex', '-1');
+  return heading;
+}
 
 @Component({
   selector: 'app-root',
@@ -30,6 +40,17 @@ export class App {
 
   constructor() {
     this.reminders.start();
+
+    // After moving to another screen, put focus on its heading. Without this, focus stays on
+    // the link that was pressed (or drops to the page), and screen readers don't hear the change.
+    const injector = inject(Injector);
+    inject(Router)
+      .events.pipe(
+        filter((e) => e instanceof NavigationEnd),
+        skip(1), // Leave the first page load alone.
+        takeUntilDestroyed(),
+      )
+      .subscribe(() => focusAfterRender(injector, pageHeading));
   }
 
   protected onVisibilityChange(): void {

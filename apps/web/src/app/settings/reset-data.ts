@@ -1,5 +1,13 @@
-import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  Injector,
+  computed,
+  inject,
+  signal,
+} from '@angular/core';
 import { Router } from '@angular/router';
+import { Autofocus, byId, focusAfterRender } from '../shared/focus';
 import { HabitStore } from '../data/habit-store';
 import { clearLocalSettings } from '../data/local-store';
 import { PreferencesStore } from '../data/preferences';
@@ -17,18 +25,19 @@ const plural = (n: number, word: string) => `${n} ${word}${n === 1 ? '' : 's'}`;
  */
 @Component({
   selector: 'app-reset-data',
+  imports: [Autofocus],
   template: `
     @if (!open()) {
       <p class="hint">
         Delete all your routines, check-ins and settings on this device, and begin again from the
         welcome screen.
       </p>
-      <button type="button" class="btn-outline danger" (click)="open.set(true)">
+      <button type="button" class="btn-outline danger" id="reset-open" (click)="open.set(true)">
         Reset everything…
       </button>
     } @else {
       <div class="confirm" role="group" aria-labelledby="reset-title">
-        <p id="reset-title" class="confirm-title">Reset everything?</p>
+        <p appAutofocus id="reset-title" class="confirm-title" tabindex="-1">Reset everything?</p>
         <p>
           This deletes {{ summary() }}, plus your name, look and reminder settings, from this
           device. It can't be undone.
@@ -149,7 +158,7 @@ const plural = (n: number, word: string) => `${n} ${word}${n === 1 ? '' : 's'}`;
       margin: 4px 0 0;
     }
     .text-input:focus-visible {
-      outline: 3px solid var(--accent);
+      outline: 3px solid var(--focus);
       outline-offset: 2px;
     }
     .actions {
@@ -171,6 +180,7 @@ export class ResetData {
   private readonly preferences = inject(PreferencesStore);
   private readonly reminders = inject(Reminders);
   private readonly router = inject(Router);
+  private readonly injector = inject(Injector);
 
   protected readonly word = RESET_WORD;
   protected readonly open = signal(false);
@@ -199,6 +209,7 @@ export class ResetData {
     this.typed.set('');
     this.savedName.set('');
     this.error.set('');
+    focusAfterRender(this.injector, byId('reset-open'));
   }
 
   protected async confirm(): Promise<void> {

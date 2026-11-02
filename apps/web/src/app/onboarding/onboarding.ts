@@ -1,8 +1,16 @@
-import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  Injector,
+  computed,
+  inject,
+  signal,
+} from '@angular/core';
 import { Router } from '@angular/router';
 import { STARTER_ANCHORS, STARTER_HABITS, suggestTwoMinuteVersion } from '@andthen/core';
 import { HabitStore } from '../data/habit-store';
 import { DataBackup } from '../settings/data-backup';
+import { focusAfterRender } from '../shared/focus';
 
 type Step = 'welcome' | 'habit' | 'anchor' | 'mini';
 
@@ -19,6 +27,7 @@ const lowerFirst = (text: string) => (text ? text.charAt(0).toLowerCase() + text
 export class Onboarding {
   private readonly store = inject(HabitStore);
   private readonly router = inject(Router);
+  private readonly injector = inject(Injector);
 
   protected readonly starterHabits = STARTER_HABITS;
   protected readonly starterAnchors = STARTER_ANCHORS;
@@ -38,8 +47,10 @@ export class Onboarding {
   protected readonly habitLower = computed(() => lowerFirst(this.habit().trim()));
   protected readonly miniLower = computed(() => lowerFirst(this.mini().trim()));
 
+  /** Shows a step and moves focus to its heading, so keyboard and screen reader users start at the top. */
   protected go(step: Step): void {
     this.step.set(step);
+    focusAfterRender(this.injector, () => document.querySelector<HTMLElement>('main h1'));
   }
 
   protected pickHabit(name: string, twoMinuteVersion: string): void {
@@ -53,13 +64,13 @@ export class Onboarding {
   }
 
   protected toAnchor(): void {
-    if (this.habit().trim()) this.step.set('anchor');
+    if (this.habit().trim()) this.go('anchor');
   }
 
   protected toMini(): void {
     if (!this.anchor().trim()) return;
     if (!this.mini().trim()) this.mini.set(suggestTwoMinuteVersion(this.habit()));
-    this.step.set('mini');
+    this.go('mini');
   }
 
   /** A restored backup with routines skips the rest of first run. */

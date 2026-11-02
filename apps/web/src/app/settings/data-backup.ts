@@ -3,6 +3,7 @@ import {
   booleanAttribute,
   Component,
   computed,
+  Injector,
   inject,
   input,
   output,
@@ -17,6 +18,7 @@ import {
   toDayKey,
 } from '@andthen/core';
 import { HabitStore } from '../data/habit-store';
+import { Autofocus, byId, focusAfterRender } from '../shared/focus';
 
 type Status =
   | { kind: 'idle' }
@@ -55,6 +57,7 @@ export function downloadBackup(store: HabitStore, now = new Date()): string {
  */
 @Component({
   selector: 'app-data-backup',
+  imports: [Autofocus],
   template: `
     @if (!restoreOnly()) {
       <p class="hint">
@@ -78,7 +81,9 @@ export function downloadBackup(store: HabitStore, now = new Date()): string {
       @case ('confirm') {
         @if (confirming(); as c) {
           <div class="confirm" role="group" aria-labelledby="restore-title">
-            <p id="restore-title" class="confirm-title">Restore {{ c.fileName }}?</p>
+            <p appAutofocus id="restore-title" class="confirm-title" tabindex="-1">
+              Restore {{ c.fileName }}?
+            </p>
             <p>{{ describe(c.summary) }}</p>
             @if (hasData()) {
               <p class="warn">
@@ -98,6 +103,7 @@ export function downloadBackup(store: HabitStore, now = new Date()): string {
       @default {
         <button
           type="button"
+          id="restore-open"
           [class]="restoreOnly() ? 'btn-text' : 'btn-outline'"
           [disabled]="status().kind === 'restoring'"
           (click)="picker.click()"
@@ -208,6 +214,7 @@ export function downloadBackup(store: HabitStore, now = new Date()): string {
 })
 export class DataBackup {
   private readonly store = inject(HabitStore);
+  private readonly injector = inject(Injector);
 
   /** Show only the restore button (used on the welcome screen). */
   readonly restoreOnly = input(false, { transform: booleanAttribute });
@@ -274,10 +281,17 @@ export class DataBackup {
         message: 'Something went wrong, so nothing was changed. Try again.',
       });
     }
+    this.focusRestoreButton();
   }
 
   protected reset(): void {
     this.status.set({ kind: 'idle' });
+    this.focusRestoreButton();
+  }
+
+  /** The confirm buttons go away once restore is done or cancelled; land back on "Restore". */
+  private focusRestoreButton(): void {
+    focusAfterRender(this.injector, byId('restore-open'));
   }
 
   protected describe(s: BackupSummary): string {

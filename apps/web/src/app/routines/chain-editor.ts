@@ -1,7 +1,16 @@
-import { ChangeDetectionStrategy, Component, computed, inject, input, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  Injector,
+  computed,
+  inject,
+  input,
+  signal,
+} from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { type Habit, suggestTwoMinuteVersion } from '@andthen/core';
 import { HabitStore } from '../data/habit-store';
+import { Autofocus, byId, focusAfterRender } from '../shared/focus';
 
 /** What is open for editing: the anchor, one habit, or nothing. */
 type Editing = { kind: 'anchor' } | { kind: 'habit'; id: string } | undefined;
@@ -12,7 +21,7 @@ type Editing = { kind: 'anchor' } | { kind: 'habit'; id: string } | undefined;
  */
 @Component({
   selector: 'app-chain-editor',
-  imports: [RouterLink],
+  imports: [RouterLink, Autofocus],
   templateUrl: './chain-editor.html',
   styleUrl: './routines.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -20,6 +29,7 @@ type Editing = { kind: 'anchor' } | { kind: 'habit'; id: string } | undefined;
 export class ChainEditor {
   private readonly store = inject(HabitStore);
   private readonly router = inject(Router);
+  private readonly injector = inject(Injector);
 
   /** Route param `:id`, bound by the router. */
   readonly id = input.required<string>();
@@ -64,7 +74,7 @@ export class ChainEditor {
       anchor: this.draftAnchor(),
       usualTime: this.draftTime() || undefined,
     });
-    this.editing.set(undefined);
+    this.cancel();
   }
 
   protected editHabit(habit: Habit): void {
@@ -81,16 +91,23 @@ export class ChainEditor {
       name,
       twoMinuteVersion: this.draftMini().trim() || suggestTwoMinuteVersion(name),
     });
-    this.editing.set(undefined);
+    this.cancel();
   }
 
   protected async removeHabit(habit: Habit): Promise<void> {
     await this.store.archiveHabit(habit.id);
     this.editing.set(undefined);
+    focusAfterRender(this.injector, byId('add-habit'));
   }
 
-  protected move(habit: Habit, by: number): void {
-    void this.store.moveHabit(habit.id, by);
+  /** Moves a habit, keeping focus on its arrow (or the other one, at the top or bottom). */
+  protected async move(habit: Habit, by: number): Promise<void> {
+    await this.store.moveHabit(habit.id, by);
+    const [same, other] = by < 0 ? ['up', 'down'] : ['down', 'up'];
+    focusAfterRender(this.injector, () => {
+      const button = document.getElementById(`${same}-${habit.id}`) as HTMLButtonElement | null;
+      return button && !button.disabled ? button : document.getElementById(`${other}-${habit.id}`);
+    });
   }
 
   protected startAdding(): void {
@@ -109,9 +126,24 @@ export class ChainEditor {
     this.newMini.set('');
   }
 
+  /** Closes whichever form is open and puts focus back on the button that opened it. */
   protected cancel(): void {
+    const editing = this.editing();
+    const returnTo = this.adding()
+      ? 'add-habit'
+      : editing?.kind === 'habit'
+        ? `edit-${editing.id}`
+        : editing?.kind === 'anchor'
+          ? 'edit-anchor'
+          : undefined;
     this.editing.set(undefined);
     this.adding.set(false);
+    if (returnTo) focusAfterRender(this.injector, byId(returnTo));
+  }
+
+  protected keepRoutine(): void {
+    this.confirmingRemoveRoutine.set(false);
+    focusAfterRender(this.injector, byId('remove-routine'));
   }
 
   protected async removeRoutine(): Promise<void> {
