@@ -12,7 +12,12 @@
             <span class="anchor-dot" aria-hidden="true"></span>
             <span>{{ chain.routine.anchor }}</span>
           </div>
-          <span class="count">{{ chain.doneCount }} of {{ chain.total }}</span>
+          <span class="head-meta">
+            <span class="count">{{ chain.doneCount }} of {{ chain.total }}</span>
+            <a class="edit-link" [routerLink]="['/routines', chain.routine.id]">
+              Edit<span class="visually-hidden"> {{ chain.routine.anchor }}</span>
+            </a>
+          </span>
         </div>
 
         <ol class="links">
@@ -135,6 +140,8 @@
         </span>
       </button>
     }
+  } @empty {
+    <p class="footnote">No routines right now. <a routerLink="/routines/new">Start one</a>.</p>
   }
 
   <p class="footnote">Missed a day? No streak to lose. Just don't miss twice.</p>

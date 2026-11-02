@@ -1,4 +1,5 @@
 import { TestBed } from '@angular/core/testing';
+import { provideRouter } from '@angular/router';
 import { HABIT_REPOSITORY, InMemoryHabitRepository } from '../data/habit-repository';
 import { HabitStore } from '../data/habit-store';
 import { Today } from './today';
@@ -10,11 +11,14 @@ describe('Today', () => {
   async function setup() {
     TestBed.configureTestingModule({
       imports: [Today],
-      providers: [{ provide: HABIT_REPOSITORY, useValue: new InMemoryHabitRepository() }],
+      providers: [
+        provideRouter([]),
+        { provide: HABIT_REPOSITORY, useValue: new InMemoryHabitRepository() },
+      ],
     });
     const store = TestBed.inject(HabitStore);
     await store.load();
-    const routine = await store.createFirstChain({
+    const routine = await store.createChain({
       anchor: 'After I pour my coffee',
       habitName: 'Drink water',
       twoMinuteVersion: 'Take one sip of water',

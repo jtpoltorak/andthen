@@ -65,7 +65,7 @@ export class Onboarding {
     this.saving.set(true);
     try {
       const preset = STARTER_ANCHORS.find((a) => a.anchor === this.anchor());
-      await this.store.createFirstChain({
+      await this.store.createChain({
         anchor: this.anchor(),
         usualTime: preset?.usualTime,
         habitName: this.habit(),
