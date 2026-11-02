@@ -1,10 +1,13 @@
 import { Injectable, computed, inject, signal } from '@angular/core';
 import {
+  type BackupData,
+  type BackupFile,
   type CheckIn,
   type CheckInKind,
   type Habit,
   type Routine,
   buildDay,
+  createBackup,
   chainHabits,
   moveItem,
   nextOrder,
@@ -175,5 +178,23 @@ export class HabitStore {
     const date = this.today();
     await this.repo.deleteCheckIn(habitId, date);
     this.checkIns.update((list) => removeCheckIn(list, habitId, date));
+  }
+
+  /** Everything on this device, wrapped as a backup file. */
+  backup(now = new Date()): BackupFile {
+    return createBackup(
+      { routines: this.routines(), habits: this.habits(), checkIns: this.checkIns() },
+      now,
+    );
+  }
+
+  /** Replaces everything on this device with validated backup data. */
+  async restore(data: BackupData): Promise<void> {
+    const snapshot = structuredClone(data);
+    await this.repo.replaceAll(snapshot);
+    this.routines.set(snapshot.routines);
+    this.habits.set(snapshot.habits);
+    this.checkIns.set(snapshot.checkIns);
+    this.loading = Promise.resolve();
   }
 }

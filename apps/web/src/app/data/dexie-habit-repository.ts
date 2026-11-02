@@ -50,4 +50,17 @@ export class DexieHabitRepository implements HabitRepository {
   async deleteCheckIn(habitId: string, date: DayKey): Promise<void> {
     await this.db.checkIns.delete([habitId, date]);
   }
+
+  async replaceAll(snapshot: HabitSnapshot): Promise<void> {
+    const { routines, habits, checkIns } = this.db;
+    // One transaction: if anything fails, the old data stays untouched.
+    await this.db.transaction('rw', routines, habits, checkIns, async () => {
+      await Promise.all([routines.clear(), habits.clear(), checkIns.clear()]);
+      await Promise.all([
+        routines.bulkPut(snapshot.routines),
+        habits.bulkPut(snapshot.habits),
+        checkIns.bulkPut(snapshot.checkIns),
+      ]);
+    });
+  }
 }

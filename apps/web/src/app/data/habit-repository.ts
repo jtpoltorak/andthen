@@ -20,6 +20,8 @@ export interface HabitRepository {
   putHabits(habits: readonly Habit[]): Promise<void>;
   putCheckIn(checkIn: CheckIn): Promise<void>;
   deleteCheckIn(habitId: string, date: DayKey): Promise<void>;
+  /** Replaces everything with a snapshot, all or nothing (used to restore a backup). */
+  replaceAll(snapshot: HabitSnapshot): Promise<void>;
 }
 
 export const HABIT_REPOSITORY = new InjectionToken<HabitRepository>('HabitRepository');
@@ -57,5 +59,9 @@ export class InMemoryHabitRepository implements HabitRepository {
     this.data.checkIns = this.data.checkIns.filter(
       (c) => !(c.habitId === habitId && c.date === date),
     );
+  }
+
+  async replaceAll(snapshot: HabitSnapshot): Promise<void> {
+    this.data = structuredClone(snapshot);
   }
 }

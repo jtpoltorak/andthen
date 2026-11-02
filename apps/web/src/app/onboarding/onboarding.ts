@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@a
 import { Router } from '@angular/router';
 import { STARTER_ANCHORS, STARTER_HABITS, suggestTwoMinuteVersion } from '@andthen/core';
 import { HabitStore } from '../data/habit-store';
+import { DataBackup } from '../settings/data-backup';
 
 type Step = 'welcome' | 'habit' | 'anchor' | 'mini';
 
@@ -10,6 +11,7 @@ const lowerFirst = (text: string) => (text ? text.charAt(0).toLowerCase() + text
 /** First run: welcome, pick a habit, pick its anchor, make it tiny. Target: under 60 seconds. */
 @Component({
   selector: 'app-onboarding',
+  imports: [DataBackup],
   templateUrl: './onboarding.html',
   styleUrl: './onboarding.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -58,6 +60,11 @@ export class Onboarding {
     if (!this.anchor().trim()) return;
     if (!this.mini().trim()) this.mini.set(suggestTwoMinuteVersion(this.habit()));
     this.step.set('mini');
+  }
+
+  /** A restored backup with routines skips the rest of first run. */
+  protected async afterRestore(): Promise<void> {
+    if (this.store.hasRoutines()) await this.router.navigate(['/today']);
   }
 
   protected async start(): Promise<void> {
