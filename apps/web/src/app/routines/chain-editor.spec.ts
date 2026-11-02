@@ -84,4 +84,30 @@ describe('ChainEditor', () => {
     await fixture.whenStable();
     expect(names()).toEqual(['Stretch my back']);
   });
+
+  it('focuses the form when editing, and returns focus to Edit on Escape', async () => {
+    const { fixture, root } = await setup();
+    const edit = () =>
+      [...root.querySelectorAll('button')].find(
+        (b) => b.textContent?.trim() === 'Edit Stretch',
+      ) as HTMLButtonElement;
+
+    edit().click();
+    await fixture.whenStable();
+    const input = document.activeElement as HTMLInputElement;
+    expect(input.value).toBe('Stretch');
+
+    input.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
+    await fixture.whenStable();
+    expect(document.activeElement).toBe(edit());
+  });
+
+  it('keeps focus on a habit as it moves, even when it reaches the top', async () => {
+    const { fixture, root, names } = await setup();
+    button(root, 'Move Stretch up').click();
+    await fixture.whenStable();
+    expect(names()).toEqual(['Stretch', 'Drink water']);
+    // "Up" is now disabled, so focus moves to its "down" arrow.
+    expect(document.activeElement?.getAttribute('aria-label')).toBe('Move Stretch down');
+  });
 });

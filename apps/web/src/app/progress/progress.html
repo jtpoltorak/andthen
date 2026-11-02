@@ -23,17 +23,22 @@
     </p>
   </section>
 
-  <div class="legend" aria-hidden="true">
-    <span><i class="dot dot-full"></i>Done</span>
-    <span><i class="dot dot-mini"></i>2 min</span>
-    <span><i class="dot dot-skip"></i>Skipped</span>
-    <span><i class="dot dot-missed"></i>No check-in</span>
-  </div>
+  @if (sections().length || retiredSections().length) {
+    <div class="legend" aria-hidden="true">
+      <span><i class="dot dot-full"></i>Done</span>
+      <span><i class="dot dot-mini"></i>2 min</span>
+      <span><i class="dot dot-skip"></i>Skipped</span>
+      <span><i class="dot dot-missed"></i>No check-in</span>
+    </div>
+  }
 
   @for (section of sections(); track section.routine.id) {
     <ng-container *ngTemplateOutlet="routineCard; context: { $implicit: section }"></ng-container>
   } @empty {
-    <p class="empty">No routines right now. <a routerLink="/routines/new">Start one</a>.</p>
+    <p class="empty">
+      Nothing to track right now. <a routerLink="/routines/new">Start a routine</a>, and your
+      progress will show up here.
+    </p>
   }
 
   @if (retiredSections().length) {
@@ -88,6 +93,9 @@
         <span class="retired-tag">Retired {{ shortDate(row.retiredOn) }}</span>
       }
     </div>
+    @if (row.isNew) {
+      <p class="new-note">New this week. Your dots fill in day by day.</p>
+    }
     <div class="habit-body">
       <div class="grid-wrap">
         <div class="weekdays" aria-hidden="true">

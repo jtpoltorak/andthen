@@ -106,6 +106,12 @@ import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
       border-top: 1px solid var(--border);
       background: var(--surface);
     }
+    /* On wider screens the app sits in a centered column; frame the tab bar to match. */
+    @media (min-width: 481px) {
+      nav {
+        border-inline: 1px solid var(--border);
+      }
+    }
     a {
       display: flex;
       flex-direction: column;

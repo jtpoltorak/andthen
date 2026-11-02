@@ -9,6 +9,7 @@
   --accent: #1e6b5c;
   --accent-ink: #1e5a4e;
   --accent-soft: #e3efea;
+  --focus: #1e6b5c;
   --amber: #f2b544;
   --amber-ink: #3d2b04;
   --amber-soft: #fbefd3;
@@ -39,6 +40,7 @@
   --accent: #2a7d6c;
   --accent-ink: #7ccfba;
   --accent-soft: #1d3832;
+  --focus: #7ccfba;
   --amber-soft: #3a2f17;
   --amber-soft-ink: #f3d38c;
   --disabled: #4a544f;
@@ -63,6 +65,7 @@
     --accent: #2a7d6c;
     --accent-ink: #7ccfba;
     --accent-soft: #1d3832;
+    --focus: #7ccfba;
     --amber-soft: #3a2f17;
     --amber-soft-ink: #f3d38c;
     --disabled: #4a544f;
@@ -107,8 +110,14 @@ button:disabled {
 }
 
 :focus-visible {
-  outline: 3px solid var(--accent);
+  outline: 3px solid var(--focus);
   outline-offset: 2px;
+}
+
+/* Headings and panels that receive focus from code (after navigating, or when a step
+   changes) aren't controls, so they don't need a focus ring. */
+[tabindex='-1']:focus {
+  outline: none;
 }
 
 h1,
@@ -152,7 +161,6 @@ p {
 
 .text-input:focus {
   border-color: var(--accent);
-  outline: none;
 }
 
 .visually-hidden {

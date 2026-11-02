@@ -34,7 +34,7 @@ h1 {
   letter-spacing: -0.02em;
 }
 
-h2 {
+.step-title {
   margin: 24px 0 8px;
   font-size: 26px;
   line-height: 1.2;
