@@ -1,13 +1,19 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { DataBackup } from './data-backup';
+import { ReminderSettings } from './reminder-settings';
 
-/** Settings tab. For now it holds backup and restore; reminders and preferences come next. */
+/** Settings tab: reminders and backup. Preferences come next. */
 @Component({
   selector: 'app-settings',
-  imports: [DataBackup],
+  imports: [ReminderSettings, DataBackup],
   template: `
     <main class="page">
       <h1>Settings</h1>
+
+      <section aria-labelledby="reminders-heading">
+        <h2 id="reminders-heading">Reminders</h2>
+        <app-reminder-settings />
+      </section>
 
       <section aria-labelledby="data-heading">
         <h2 id="data-heading">Your data</h2>
