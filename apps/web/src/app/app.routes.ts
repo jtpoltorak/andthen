@@ -5,7 +5,7 @@ import { ChainEditor } from './routines/chain-editor';
 import { Progress } from './progress/progress';
 import { NewRoutine } from './routines/new-routine';
 import { Routines } from './routines/routines';
-import { ComingSoon } from './shell/coming-soon';
+import { Settings } from './settings/settings';
 import { Shell } from './shell/shell';
 import { Today } from './today/today';
 
@@ -27,12 +27,7 @@ export const routes: Routes = [
       { path: 'routines/new', component: NewRoutine, title: 'New routine · AndThen' },
       { path: 'routines/:id', component: ChainEditor, title: 'Edit routine · AndThen' },
       { path: 'progress', component: Progress, title: 'Progress · AndThen' },
-      {
-        path: 'settings',
-        component: ComingSoon,
-        title: 'Settings · AndThen',
-        data: { title: 'Settings', blurb: 'Coming soon: reminders and exporting your data.' },
-      },
+      { path: 'settings', component: Settings, title: 'Settings · AndThen' },
     ],
   },
   { path: '**', redirectTo: '' },

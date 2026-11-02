@@ -51,6 +51,7 @@
       <h1>Small habits, linked to what you already do.</h1>
       <p class="lede">Start with one tiny habit. No account, no setup marathon.</p>
       <button type="button" class="btn-primary" (click)="go('habit')">Get started</button>
+      <app-data-backup class="restore" restoreOnly (restored)="afterRestore()" />
     </main>
   }
 

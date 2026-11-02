@@ -231,3 +231,10 @@ h2 {
   line-height: 1.5;
   color: #3f4a45;
 }
+
+/* "Restore from a backup" under Get started, for people moving to a new device. */
+.restore {
+  margin-top: 8px;
+  align-items: center;
+  text-align: center;
+}

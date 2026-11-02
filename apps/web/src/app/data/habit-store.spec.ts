@@ -127,6 +127,31 @@ describe('HabitStore', () => {
     });
   });
 
+  it('backs up and restores everything, replacing what was there', async () => {
+    await store.createChain({
+      anchor: 'After lunch',
+      habitName: 'Walk',
+      twoMinuteVersion: 'Shoes on',
+    });
+    await store.checkIn(store.chains()[0].links[0].habit.id, 'full');
+    const backup = store.backup(new Date('2026-11-02T12:00:00Z'));
+    expect(backup).toMatchObject({ app: 'andthen', version: 1 });
+    expect(backup.data.checkIns).toHaveLength(1);
+
+    await store.createChain({
+      anchor: 'After dinner',
+      habitName: 'Read',
+      twoMinuteVersion: 'One page',
+    });
+    await store.restore(backup.data);
+
+    expect(store.routines().map((r) => r.anchor)).toEqual(['After lunch']);
+    expect(store.checkIns()).toHaveLength(1);
+    const saved = await repo.loadAll();
+    expect(saved.routines.map((r) => r.anchor)).toEqual(['After lunch']);
+    expect(saved.habits).toHaveLength(1);
+  });
+
   it('rolls today over on refresh', () => {
     store.today.set('2026-01-01');
     store.refreshDay(new Date(2026, 0, 2, 0, 5));

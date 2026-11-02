@@ -13,6 +13,8 @@ AndThen is a simple, low-friction habit app built around **routine chains**: pic
 
 Data stays on the device in IndexedDB (via [Dexie](https://dexie.org)). No account is needed. Screens talk to a `HabitRepository` interface, so a sync-backed store can be added later without touching the UI.
 
+Because data never leaves the browser, **Settings → Your data** can save everything to a JSON backup file and restore it later (also offered on the welcome screen, for a new device). The file format and its validation live in `packages/core/src/backup.ts`; restoring checks every record and asks before replacing anything.
+
 ## Getting started
 
 Requires Node 22.22.3 or newer.
