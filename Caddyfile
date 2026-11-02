@@ -1,0 +1,38 @@
+{
+	# Railway (and Cloudflare in front of it) handles HTTPS, so Caddy serves plain HTTP.
+	admin off
+	auto_https off
+	persist_config off
+}
+
+# Railway sets $PORT. 8080 is the fallback for running the image locally.
+:{$PORT:8080} {
+	root * /srv
+	encode zstd gzip
+
+	header {
+		X-Content-Type-Options nosniff
+		Referrer-Policy strict-origin-when-cross-origin
+		X-Frame-Options DENY
+		Permissions-Policy "camera=(), microphone=(), geolocation=(), payment=(), usb=()"
+		-Server
+	}
+
+	# Build files with a content hash in their name never change, so cache them
+	# for a year. A missing one is a real 404, never the index.html fallback.
+	@hashed path_regexp ^/(main|chunk|polyfills|styles)-[A-Za-z0-9]+\.(js|css)$
+	handle @hashed {
+		@found file
+		header @found Cache-Control "public, max-age=31536000, immutable"
+		file_server
+	}
+
+	# Everything else (index.html, ngsw-worker.js, ngsw.json, icons, manifest) is
+	# rechecked on every visit, so service worker updates reach people promptly.
+	# Unknown paths like /routines get index.html and the Angular router takes over.
+	handle {
+		header Cache-Control "no-cache"
+		try_files {path} /index.html
+		file_server
+	}
+}

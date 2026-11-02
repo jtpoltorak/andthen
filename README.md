@@ -27,3 +27,7 @@ npm run build      # production build in apps/web/dist/web
 ```
 
 The service worker only runs in production builds. To try offline/install behavior, serve `apps/web/dist/web/browser` with any static server.
+
+## Deploying
+
+Pushes to `main` deploy automatically to Railway, which builds the `Dockerfile` (Node build, then Caddy serving the static files). The domain and DNS are in Cloudflare. See [docs/DEPLOY.md](docs/DEPLOY.md) for the one-time setup and custom domain.
