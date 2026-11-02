@@ -3,6 +3,7 @@ import {
   type PlannedReminder,
   type ReminderLead,
   type ReminderPrefs,
+  DEFAULT_REMINDER_PREFS,
   dueReminders,
   minutesOf,
   nextReminderMinutes,
@@ -12,29 +13,13 @@ import {
   toDayKey,
 } from '@andthen/core';
 import { HabitStore } from '../data/habit-store';
+import { readJson, writeJson } from '../data/local-store';
 import { Notifier, type NotifyPermission } from './notifier';
 
 const PREFS_KEY = 'andthen.reminders';
 const SENT_KEY = 'andthen.reminders.sent';
 /** Wake up at least this often, so sleep, clock changes and midnight are picked up. */
 const MAX_WAIT_MS = 15 * 60 * 1000;
-
-function readJson(key: string): unknown {
-  try {
-    const raw = localStorage.getItem(key);
-    return raw ? JSON.parse(raw) : undefined;
-  } catch {
-    return undefined;
-  }
-}
-
-function writeJson(key: string, value: unknown): void {
-  try {
-    localStorage.setItem(key, JSON.stringify(value));
-  } catch {
-    // Storage can be unavailable (private mode); reminders still work for this visit.
-  }
-}
 
 const minutesSinceMidnight = (d: Date) => d.getHours() * 60 + d.getMinutes();
 
@@ -99,6 +84,11 @@ export class Reminders {
 
   isMuted(routineId: string): boolean {
     return this.prefs().mutedRoutineIds.includes(routineId);
+  }
+
+  /** Back to the defaults (reminders off). Used by "Reset everything", which clears storage itself. */
+  reset(): void {
+    this.prefs.set({ ...DEFAULT_REMINDER_PREFS });
   }
 
   /** Re-reads the browser permission, e.g. after the person changed it in site settings. */

@@ -23,6 +23,9 @@
   font-weight: 800;
   letter-spacing: -0.02em;
 }
+.brand svg {
+  color: var(--accent);
+}
 
 h1 {
   font-size: 32px;
@@ -95,7 +98,7 @@ h2 {
 }
 .ring-done {
   background: var(--accent);
-  color: #fff;
+  color: var(--on-accent);
 }
 .ring-next {
   border: 2px solid var(--accent);
@@ -161,7 +164,7 @@ h2 {
 .chip.selected {
   border-color: var(--accent);
   background: var(--accent);
-  color: #fff;
+  color: var(--on-accent);
 }
 
 .options {
@@ -191,7 +194,7 @@ h2 {
   width: 18px;
   height: 18px;
   border-radius: 9px;
-  border: 2px solid #b9beb3;
+  border: 2px solid var(--dashed-soft);
   background: var(--surface);
 }
 .option.selected .radio {
@@ -229,7 +232,7 @@ h2 {
   margin-top: 8px;
   font-size: 14px;
   line-height: 1.5;
-  color: #3f4a45;
+  color: var(--ink-soft);
 }
 
 /* "Restore from a backup" under Get started, for people moving to a new device. */

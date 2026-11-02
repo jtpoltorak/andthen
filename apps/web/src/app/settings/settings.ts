@@ -1,14 +1,21 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { DataBackup } from './data-backup';
+import { PreferenceSettings } from './preference-settings';
 import { ReminderSettings } from './reminder-settings';
+import { ResetData } from './reset-data';
 
-/** Settings tab: reminders and backup. Preferences come next. */
+/** Settings tab: preferences, reminders, backup, and starting over. */
 @Component({
   selector: 'app-settings',
-  imports: [ReminderSettings, DataBackup],
+  imports: [PreferenceSettings, ReminderSettings, DataBackup, ResetData],
   template: `
     <main class="page">
       <h1>Settings</h1>
+
+      <section aria-labelledby="prefs-heading">
+        <h2 id="prefs-heading">You</h2>
+        <app-preference-settings />
+      </section>
 
       <section aria-labelledby="reminders-heading">
         <h2 id="reminders-heading">Reminders</h2>
@@ -18,6 +25,11 @@ import { ReminderSettings } from './reminder-settings';
       <section aria-labelledby="data-heading">
         <h2 id="data-heading">Your data</h2>
         <app-data-backup />
+      </section>
+
+      <section aria-labelledby="reset-heading">
+        <h2 id="reset-heading">Start over</h2>
+        <app-reset-data />
       </section>
     </main>
   `,

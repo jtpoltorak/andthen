@@ -197,4 +197,13 @@ export class HabitStore {
     this.checkIns.set(snapshot.checkIns);
     this.loading = Promise.resolve();
   }
+
+  /** Deletes every routine, habit and check-in on this device, all or nothing. */
+  async resetAll(): Promise<void> {
+    await this.repo.replaceAll({ routines: [], habits: [], checkIns: [] });
+    this.routines.set([]);
+    this.habits.set([]);
+    this.checkIns.set([]);
+    this.loading = Promise.resolve();
+  }
 }

@@ -91,7 +91,7 @@
     <div class="habit-body">
       <div class="grid-wrap">
         <div class="weekdays" aria-hidden="true">
-          @for (label of weekdayLabels; track $index) {
+          @for (label of weekdayLabels(); track $index) {
             <span>{{ label }}</span>
           }
         </div>

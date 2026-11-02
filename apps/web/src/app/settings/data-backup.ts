@@ -34,6 +34,21 @@ const dayLabel = (day: string) =>
     year: 'numeric',
   });
 
+/** Saves everything on this device as a JSON file in the downloads folder. Returns its name. */
+export function downloadBackup(store: HabitStore, now = new Date()): string {
+  const fileName = backupFileName(toDayKey(now));
+  const blob = new Blob([JSON.stringify(store.backup(now), null, 2)], {
+    type: 'application/json',
+  });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = fileName;
+  link.click();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+  return fileName;
+}
+
 /**
  * Back up everything on this device to a JSON file, or restore from one.
  * Restoring always shows what's in the file and asks before replacing anything.
@@ -132,10 +147,10 @@ const dayLabel = (day: string) =>
     .btn-small {
       border: none;
       background: var(--accent);
-      color: #fff;
+      color: var(--on-accent);
     }
     .btn-small.danger-fill {
-      background: var(--danger);
+      background: var(--danger-fill);
     }
     .btn-outline {
       border: 1.5px solid var(--input-border);
@@ -217,18 +232,7 @@ export class DataBackup {
   });
 
   protected download(): void {
-    const now = new Date();
-    const fileName = backupFileName(toDayKey(now));
-    const blob = new Blob([JSON.stringify(this.store.backup(now), null, 2)], {
-      type: 'application/json',
-    });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = fileName;
-    link.click();
-    setTimeout(() => URL.revokeObjectURL(url), 1000);
-    this.status.set({ kind: 'saved', fileName });
+    this.status.set({ kind: 'saved', fileName: downloadBackup(this.store) });
   }
 
   protected async pick(picker: HTMLInputElement): Promise<void> {

@@ -3,11 +3,13 @@ import {
   type ChainLink,
   type CheckInKind,
   fromDayKey,
+  greeting,
   pickActiveRoutine,
   suggestTwoMinuteVersion,
 } from '@andthen/core';
 import { RouterLink } from '@angular/router';
 import { HabitStore } from '../data/habit-store';
+import { PreferencesStore } from '../data/preferences';
 
 const lowerFirst = (text: string) => (text ? text.charAt(0).toLowerCase() + text.slice(1) : '');
 
@@ -29,6 +31,14 @@ export class Today {
   protected readonly draft = signal('');
 
   protected readonly chains = this.store.chains;
+  private readonly preferences = inject(PreferencesStore);
+
+  /** "Good morning, Sam" when there's a name; nothing extra when there isn't. */
+  protected readonly greeting = computed(() => {
+    const name = this.preferences.prefs().name;
+    this.store.today(); // Refresh when the day rolls over.
+    return name ? greeting(name, new Date().getHours()) : '';
+  });
 
   protected readonly dateLabel = computed(() =>
     fromDayKey(this.store.today()).toLocaleDateString(undefined, {
