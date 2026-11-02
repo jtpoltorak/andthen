@@ -2,6 +2,7 @@ import { Routes } from '@angular/router';
 import { onlyNewUsers, requireRoutines } from './data/guards';
 import { Onboarding } from './onboarding/onboarding';
 import { ChainEditor } from './routines/chain-editor';
+import { Progress } from './progress/progress';
 import { NewRoutine } from './routines/new-routine';
 import { Routines } from './routines/routines';
 import { ComingSoon } from './shell/coming-soon';
@@ -25,15 +26,7 @@ export const routes: Routes = [
       { path: 'routines', component: Routines, title: 'Routines · AndThen' },
       { path: 'routines/new', component: NewRoutine, title: 'New routine · AndThen' },
       { path: 'routines/:id', component: ChainEditor, title: 'Edit routine · AndThen' },
-      {
-        path: 'progress',
-        component: ComingSoon,
-        title: 'Progress · AndThen',
-        data: {
-          title: 'Progress',
-          blurb: 'Coming soon: an 8-week dot grid for every habit and a weekly recap.',
-        },
-      },
+      { path: 'progress', component: Progress, title: 'Progress · AndThen' },
       {
         path: 'settings',
         component: ComingSoon,

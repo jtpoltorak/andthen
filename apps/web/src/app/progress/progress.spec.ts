@@ -1,0 +1,93 @@
+import { TestBed } from '@angular/core/testing';
+import { provideRouter } from '@angular/router';
+import { addDays, type CheckIn, type Habit, type Routine } from '@andthen/core';
+import { HABIT_REPOSITORY, InMemoryHabitRepository } from '../data/habit-repository';
+import { HabitStore } from '../data/habit-store';
+import { Progress } from './progress';
+
+// A Friday, so "this week" is Monday 2026-11-02 to today.
+const TODAY = '2026-11-06';
+
+const routine = (id: string, over: Partial<Routine> = {}): Routine => ({
+  id,
+  anchor: `Anchor ${id}`,
+  order: 0,
+  createdOn: '2026-10-20',
+  ...over,
+});
+
+const habit = (id: string, routineId: string, over: Partial<Habit> = {}): Habit => ({
+  id,
+  routineId,
+  name: `Habit ${id}`,
+  twoMinuteVersion: 'tiny',
+  order: 0,
+  createdOn: '2026-10-20',
+  ...over,
+});
+
+const days = (from: string, count: number, habitId: string, kind: CheckIn['kind']): CheckIn[] =>
+  Array.from({ length: count }, (_, i) => ({ habitId, date: addDays(from, i), kind }));
+
+describe('Progress', () => {
+  async function setup(seed: ConstructorParameters<typeof InMemoryHabitRepository>[0]) {
+    TestBed.configureTestingModule({
+      imports: [Progress],
+      providers: [
+        provideRouter([]),
+        { provide: HABIT_REPOSITORY, useValue: new InMemoryHabitRepository(seed) },
+      ],
+    });
+    const store = TestBed.inject(HabitStore);
+    await store.load();
+    store.today.set(TODAY);
+    const fixture = TestBed.createComponent(Progress);
+    await fixture.whenStable();
+    return { root: fixture.nativeElement as HTMLElement };
+  }
+
+  it('recaps the week and shows a forgiving chain per habit', async () => {
+    const { root } = await setup({
+      routines: [routine('am')],
+      habits: [habit('water', 'am')],
+      checkIns: [
+        // Done Oct 30 to Nov 3, missed Nov 4, 2-minute version Nov 5. Today still open.
+        ...days('2026-10-30', 5, 'water', 'full'),
+        { habitId: 'water', date: '2026-11-05', kind: 'mini' },
+      ],
+    });
+    const text = root.textContent ?? '';
+    expect(text).toContain('Showed up 3 of 5 days');
+    expect(text).toContain('2 done');
+    expect(text).toContain('1 as 2 min');
+    expect(text).toContain('Habit water');
+    expect(text).toContain('7 days'); // The single miss doesn't break the chain.
+    expect(text).toMatch(/Done\s+6\s+times\s+1 as the 2-minute version/);
+    expect(root.querySelectorAll('.week')).toHaveLength(8);
+    expect(root.querySelectorAll('.dot-full').length).toBeGreaterThanOrEqual(5);
+    expect(root.querySelector('.dot-open')?.getAttribute('title')).toContain('not checked in yet');
+  });
+
+  it('keeps retired habits and routines in history', async () => {
+    const { root } = await setup({
+      routines: [routine('am'), routine('old', { archivedOn: '2026-11-01' })],
+      habits: [
+        habit('water', 'am'),
+        habit('floss', 'am', { archivedOn: '2026-11-03' }),
+        habit('read', 'old'),
+      ],
+      checkIns: [
+        ...days('2026-10-25', 4, 'floss', 'full'),
+        ...days('2026-10-26', 3, 'read', 'mini'),
+      ],
+    });
+    const text = root.textContent ?? '';
+    expect(text).toContain('Retired habits (1)');
+    expect(text).toContain('Habit floss');
+    expect(text).toContain('Retired routines (1)');
+    expect(text).toContain('Anchor old');
+    expect(text).toContain('Habit read');
+    expect(text).toContain('Best chain: 4 days');
+    expect(text).toContain('Starts with one check-in');
+  });
+});
