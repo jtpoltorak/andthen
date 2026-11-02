@@ -11,10 +11,15 @@
     "build": "npm run build -w @andthen/web",
     "test": "npm test -w @andthen/core && npm test -w @andthen/web -- --watch=false",
     "test:core": "npm test -w @andthen/core",
-    "typecheck": "npm run typecheck -w @andthen/core"
+    "typecheck": "npm run typecheck -w @andthen/core",
+    "deploy": "npm run build && wrangler deploy",
+    "preview": "npm run build && wrangler dev"
   },
   "engines": {
     "node": ">=22.22.3"
   },
-  "packageManager": "npm@10.9.9"
+  "packageManager": "npm@10.9.9",
+  "devDependencies": {
+    "wrangler": "^4.156.2"
+  }
 }

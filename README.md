@@ -27,3 +27,7 @@ npm run build      # production build in apps/web/dist/web
 ```
 
 The service worker only runs in production builds. To try offline/install behavior, serve `apps/web/dist/web/browser` with any static server.
+
+## Deploying
+
+Pushes to `main` deploy automatically to Cloudflare (static assets on Workers, free tier). Config lives in `wrangler.jsonc` and `apps/web/public/_headers`. See [docs/DEPLOY.md](docs/DEPLOY.md) for the one-time dashboard setup and custom domain.
