@@ -2,6 +2,9 @@
   <header>
     <div class="date">{{ dateLabel() }}</div>
     <h1>Today</h1>
+    @if (greeting(); as hello) {
+      <p class="greeting">{{ hello }}.</p>
+    }
   </header>
 
   @for (chain of chains(); track chain.routine.id) {

@@ -1,0 +1,55 @@
+/** How the app looks: follow the device, or always light or dark. */
+export const THEMES = ['system', 'light', 'dark'] as const;
+export type Theme = (typeof THEMES)[number];
+
+/** The first day of the week in Progress, as `Date.getDay()` numbers: Monday (1) or Sunday (0). */
+export const WEEK_STARTS = [1, 0] as const;
+export type WeekStart = (typeof WEEK_STARTS)[number];
+
+/** Longest name we keep. Enough for a first name or a nickname. */
+export const MAX_NAME_LENGTH = 40;
+
+/** Per-device preferences. None of them change habit data. */
+export interface Preferences {
+  /** What to call the person. Empty means no name, and that's fine. */
+  name: string;
+  theme: Theme;
+  weekStartsOn: WeekStart;
+}
+
+export const DEFAULT_PREFERENCES: Preferences = {
+  name: '',
+  theme: 'system',
+  weekStartsOn: 1,
+};
+
+/** Trims a name, folds inner runs of spaces, and caps its length. */
+export function cleanName(name: string): string {
+  return name.trim().replace(/\s+/g, ' ').slice(0, MAX_NAME_LENGTH).trim();
+}
+
+/** Reads stored preferences defensively; anything odd falls back to the defaults. */
+export function parsePreferences(raw: unknown): Preferences {
+  if (!raw || typeof raw !== 'object') return { ...DEFAULT_PREFERENCES };
+  const r = raw as Record<string, unknown>;
+  const theme = THEMES.find((t) => t === r['theme']);
+  const weekStartsOn = WEEK_STARTS.find((w) => w === r['weekStartsOn']);
+  return {
+    name: typeof r['name'] === 'string' ? cleanName(r['name']) : DEFAULT_PREFERENCES.name,
+    theme: theme ?? DEFAULT_PREFERENCES.theme,
+    weekStartsOn: weekStartsOn ?? DEFAULT_PREFERENCES.weekStartsOn,
+  };
+}
+
+/** A friendly hello for the hour of the day, with the person's name if they gave one. */
+export function greeting(name: string, hour: number): string {
+  const part =
+    hour < 5 ? 'Hi' : hour < 12 ? 'Good morning' : hour < 17 ? 'Good afternoon' : 'Good evening';
+  const who = cleanName(name);
+  return who ? `${part}, ${who}` : part;
+}
+
+/** Weekday labels for a week grid: just M, W and F, so the grid stays calm. */
+export function weekdayLabels(weekStartsOn: WeekStart): string[] {
+  return weekStartsOn === 0 ? ['', 'M', '', 'W', '', 'F', ''] : ['M', '', 'W', '', 'F', '', ''];
+}

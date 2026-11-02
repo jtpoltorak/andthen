@@ -6,3 +6,4 @@ export * from './editing';
 export * from './history';
 export * from './backup';
 export * from './reminders';
+export * from './preferences';

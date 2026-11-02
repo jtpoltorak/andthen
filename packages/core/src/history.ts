@@ -1,5 +1,6 @@
 import { addDays, fromDayKey } from './dates';
 import type { CheckIn, DayKey, Habit, Routine } from './model';
+import type { WeekStart } from './preferences';
 
 /**
  * How one habit went on one day.
@@ -136,18 +137,18 @@ export function habitStats(
   return stats;
 }
 
-/** Monday of the week that holds `day`. */
-export function weekStart(day: DayKey): DayKey {
-  const weekday = (fromDayKey(day).getDay() + 6) % 7; // Monday = 0
-  return addDays(day, -weekday);
+/** First day of the week that holds `day`: Monday by default, or Sunday when `startsOn` is 0. */
+export function weekStart(day: DayKey, startsOn: WeekStart = 1): DayKey {
+  const sinceStart = (fromDayKey(day).getDay() - startsOn + 7) % 7;
+  return addDays(day, -sinceStart);
 }
 
 /**
- * A calendar of `weeks` Monday-to-Sunday weeks ending with the week that holds
- * `today`, oldest first. Each week is 7 DayKeys.
+ * A calendar of `weeks` whole weeks ending with the week that holds `today`,
+ * oldest first. Each week is 7 DayKeys, starting on Monday unless `startsOn` is 0 (Sunday).
  */
-export function weekGrid(today: DayKey, weeks: number): DayKey[][] {
-  const first = addDays(weekStart(today), -7 * (weeks - 1));
+export function weekGrid(today: DayKey, weeks: number, startsOn: WeekStart = 1): DayKey[][] {
+  const first = addDays(weekStart(today, startsOn), -7 * (weeks - 1));
   return Array.from({ length: weeks }, (_, w) =>
     Array.from({ length: 7 }, (_, d) => addDays(first, w * 7 + d)),
   );

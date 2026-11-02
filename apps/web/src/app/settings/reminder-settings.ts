@@ -143,7 +143,7 @@ const LEAD_LABELS: Record<ReminderLead, string> = {
       width: 26px;
       height: 26px;
       border-radius: 50%;
-      background: #fff;
+      background: var(--knob);
       box-shadow: 0 1px 3px rgb(0 0 0 / 0.2);
       transition: transform 0.15s;
     }

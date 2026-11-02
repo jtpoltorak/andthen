@@ -119,7 +119,7 @@ import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
       text-decoration: none;
     }
     a.active {
-      color: var(--accent);
+      color: var(--accent-ink);
       font-weight: 700;
     }
   `,

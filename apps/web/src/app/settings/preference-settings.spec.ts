@@ -1,0 +1,53 @@
+import { TestBed } from '@angular/core/testing';
+import { PreferencesStore } from '../data/preferences';
+import { PreferenceSettings } from './preference-settings';
+
+describe('PreferenceSettings', () => {
+  beforeEach(() => {
+    localStorage.clear();
+    delete document.documentElement.dataset['theme'];
+  });
+
+  async function setup() {
+    TestBed.configureTestingModule({ imports: [PreferenceSettings] });
+    const fixture = TestBed.createComponent(PreferenceSettings);
+    await fixture.whenStable();
+    return {
+      fixture,
+      prefs: TestBed.inject(PreferencesStore),
+      root: fixture.nativeElement as HTMLElement,
+    };
+  }
+
+  it('saves a tidied name', async () => {
+    const { fixture, prefs, root } = await setup();
+    const input = root.querySelector<HTMLInputElement>('#pref-name')!;
+    input.value = '  Sam   Lee ';
+    input.dispatchEvent(new Event('change'));
+    await fixture.whenStable();
+
+    expect(prefs.prefs().name).toBe('Sam Lee');
+    expect(input.value).toBe('Sam Lee');
+    expect(JSON.parse(localStorage.getItem('andthen.prefs')!).name).toBe('Sam Lee');
+    expect(root.textContent).toContain('Hi, Sam Lee');
+  });
+
+  it('switches the theme on the page and remembers it', async () => {
+    const { fixture, root } = await setup();
+    expect(document.documentElement.dataset['theme']).toBe('system');
+
+    const dark = root.querySelector<HTMLInputElement>('input[name="theme"][value="dark"]')!;
+    dark.click();
+    await fixture.whenStable();
+
+    expect(document.documentElement.dataset['theme']).toBe('dark');
+    expect(JSON.parse(localStorage.getItem('andthen.prefs')!).theme).toBe('dark');
+  });
+
+  it('changes the first day of the week', async () => {
+    const { fixture, prefs, root } = await setup();
+    root.querySelectorAll<HTMLInputElement>('input[name="week-start"]')[1].click();
+    await fixture.whenStable();
+    expect(prefs.prefs().weekStartsOn).toBe(0);
+  });
+});

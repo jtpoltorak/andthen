@@ -159,6 +159,20 @@ describe('weeks', () => {
     expect(weekStart('2026-11-08')).toBe('2026-11-02');
   });
 
+  it('finds the Sunday of a week when weeks start on Sunday', () => {
+    expect(weekStart('2026-11-01', 0)).toBe('2026-11-01');
+    expect(weekStart('2026-11-02', 0)).toBe('2026-11-01');
+    expect(weekStart('2026-11-07', 0)).toBe('2026-11-01');
+    expect(weekStart('2026-11-08', 0)).toBe('2026-11-08');
+  });
+
+  it('builds a Sunday-first grid when asked', () => {
+    const grid = weekGrid('2026-11-02', 2, 0);
+    expect(grid[0][0]).toBe('2026-10-25');
+    expect(grid[1][0]).toBe('2026-11-01');
+    expect(grid[1][6]).toBe('2026-11-07');
+  });
+
   it('builds a Monday-first grid ending with this week', () => {
     const grid = weekGrid(TODAY, 8);
     expect(grid).toHaveLength(8);

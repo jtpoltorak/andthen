@@ -17,8 +17,10 @@ import {
   summarize,
   weekGrid,
   weekStart,
+  weekdayLabels,
 } from '@andthen/core';
 import { HabitStore } from '../data/habit-store';
+import { PreferencesStore } from '../data/preferences';
 
 /** How many weeks the dot grid shows. */
 const WEEKS = 8;
@@ -70,13 +72,20 @@ const plural = (n: number, word: string) => `${n} ${word}${n === 1 ? '' : 's'}`;
 export class Progress {
   private readonly store = inject(HabitStore);
 
-  protected readonly weekdayLabels = ['M', '', 'W', '', 'F', '', ''];
+  private readonly preferences = inject(PreferencesStore);
+  private readonly weekStartsOn = computed(() => this.preferences.prefs().weekStartsOn);
+
+  protected readonly weekdayLabels = computed(() => weekdayLabels(this.weekStartsOn()));
   protected readonly shortDate = shortDate;
 
   private readonly index = computed(() => indexCheckIns(this.store.checkIns()));
 
   protected readonly week = computed(() =>
-    summarize(this.store.checkIns(), weekStart(this.store.today()), this.store.today()),
+    summarize(
+      this.store.checkIns(),
+      weekStart(this.store.today(), this.weekStartsOn()),
+      this.store.today(),
+    ),
   );
 
   protected readonly sections = computed(() => {
@@ -136,11 +145,12 @@ export class Progress {
     const retiredOn = until && until <= today ? until : undefined;
     // A retired habit's grid ends on its last day, so old history stays visible.
     const lastDay = retiredOn ? addDays(retiredOn, -1) : today;
-    const weeks = weekGrid(lastDay < today ? lastDay : today, WEEKS).map((week) =>
-      week.map((date): Dot => {
-        const status = dayStatus(habit, routine, index, date, today);
-        return { date, status, title: `${shortDate(date)}: ${STATUS_WORDS[status]}` };
-      }),
+    const weeks = weekGrid(lastDay < today ? lastDay : today, WEEKS, this.weekStartsOn()).map(
+      (week) =>
+        week.map((date): Dot => {
+          const status = dayStatus(habit, routine, index, date, today);
+          return { date, status, title: `${shortDate(date)}: ${STATUS_WORDS[status]}` };
+        }),
     );
     const counts = { full: 0, mini: 0, skip: 0 };
     for (const dot of weeks.flat()) {

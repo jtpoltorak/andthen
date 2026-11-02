@@ -112,7 +112,7 @@ h1 {
   background: var(--amber);
 }
 .dot-skip {
-  border: 1.5px dashed #9aa197;
+  border: 1.5px dashed var(--dashed);
 }
 .dot-missed {
   background: var(--line);

@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { HabitStore } from './data/habit-store';
+import { PreferencesStore } from './data/preferences';
 import { Reminders } from './reminders/reminders';
 
 @Component({
@@ -24,6 +25,8 @@ import { Reminders } from './reminders/reminders';
 export class App {
   protected readonly store = inject(HabitStore);
   protected readonly reminders = inject(Reminders);
+  // Created at boot so the chosen theme applies on every screen, the welcome flow included.
+  private readonly preferences = inject(PreferencesStore);
 
   constructor() {
     this.reminders.start();

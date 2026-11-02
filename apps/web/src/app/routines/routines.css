@@ -204,7 +204,7 @@ h1 {
   border: none;
   border-radius: 12px;
   background: var(--accent);
-  color: #fff;
+  color: var(--on-accent);
   font-size: 15px;
   font-weight: 700;
 }
@@ -212,7 +212,7 @@ h1 {
   background: var(--disabled);
 }
 .btn-small.danger-fill {
-  background: var(--danger);
+  background: var(--danger-fill);
 }
 
 .edit-form,
@@ -255,7 +255,7 @@ form {
   justify-content: center;
   width: 100%;
   height: 48px;
-  border: 1.5px dashed #b9beb3;
+  border: 1.5px dashed var(--dashed-soft);
   border-radius: var(--radius-control);
   background: none;
   color: var(--accent-ink);

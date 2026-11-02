@@ -15,10 +15,65 @@
   --amber-soft-ink: #5c4106;
   --disabled: #c9cec4;
   --danger: #a13a2b;
+  --danger-fill: #a13a2b;
+  --on-accent: #ffffff;
+  --ink-soft: #3f4a45;
+  --dashed: #9aa197;
+  --dashed-soft: #b9beb3;
+  --knob: #ffffff;
   --radius-card: 22px;
   --radius-control: 14px;
   --font: 'Manrope', system-ui, -apple-system, 'Segoe UI', sans-serif;
   color-scheme: light;
+}
+
+/* Dark colors: chosen in Settings, or following the device when the theme is "system". */
+:root[data-theme='dark'] {
+  --bg: #121815;
+  --surface: #1b2320;
+  --ink: #e6ebe7;
+  --muted: #a3aea8;
+  --line: #2f3934;
+  --border: #2a332f;
+  --input-border: #3f4a45;
+  --accent: #2a7d6c;
+  --accent-ink: #7ccfba;
+  --accent-soft: #1d3832;
+  --amber-soft: #3a2f17;
+  --amber-soft-ink: #f3d38c;
+  --disabled: #4a544f;
+  --danger: #f08c7c;
+  --danger-fill: #b3473a;
+  --ink-soft: #c3ccc7;
+  --dashed: #6d7771;
+  --dashed-soft: #56605a;
+  --knob: #f1f4f1;
+  color-scheme: dark;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    --bg: #121815;
+    --surface: #1b2320;
+    --ink: #e6ebe7;
+    --muted: #a3aea8;
+    --line: #2f3934;
+    --border: #2a332f;
+    --input-border: #3f4a45;
+    --accent: #2a7d6c;
+    --accent-ink: #7ccfba;
+    --accent-soft: #1d3832;
+    --amber-soft: #3a2f17;
+    --amber-soft-ink: #f3d38c;
+    --disabled: #4a544f;
+    --danger: #f08c7c;
+    --danger-fill: #b3473a;
+    --ink-soft: #c3ccc7;
+    --dashed: #6d7771;
+    --dashed-soft: #56605a;
+    --knob: #f1f4f1;
+    color-scheme: dark;
+  }
 }
 
 *,
