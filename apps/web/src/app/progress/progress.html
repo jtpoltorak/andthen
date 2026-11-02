@@ -1,0 +1,134 @@
+<main class="progress">
+  <h1>Progress</h1>
+
+  <section class="card recap" aria-labelledby="recap-title">
+    <h2 id="recap-title" class="eyebrow">This week</h2>
+    <p class="recap-big">
+      Showed up {{ week().daysShowedUp }} of {{ week().daysSoFar }}
+      {{ week().daysSoFar === 1 ? 'day' : 'days' }}
+    </p>
+    <div class="chips">
+      <span class="chip chip-full">{{ week().full }} done</span>
+      <span class="chip chip-mini">{{ week().mini }} as 2 min</span>
+      <span class="chip chip-skip">{{ week().skips }} skipped</span>
+    </div>
+    <p class="recap-note">
+      @if (week().mini > 0) {
+        Every 2-minute version counts. That's how habits survive busy days.
+      } @else if (week().daysShowedUp === 0) {
+        A fresh week. One small check-in gets it started.
+      } @else {
+        Small and steady beats big and rare.
+      }
+    </p>
+  </section>
+
+  <div class="legend" aria-hidden="true">
+    <span><i class="dot dot-full"></i>Done</span>
+    <span><i class="dot dot-mini"></i>2 min</span>
+    <span><i class="dot dot-skip"></i>Skipped</span>
+    <span><i class="dot dot-missed"></i>No check-in</span>
+  </div>
+
+  @for (section of sections(); track section.routine.id) {
+    <ng-container *ngTemplateOutlet="routineCard; context: { $implicit: section }"></ng-container>
+  } @empty {
+    <p class="empty">No routines right now. <a routerLink="/routines/new">Start one</a>.</p>
+  }
+
+  @if (retiredSections().length) {
+    <details class="retired">
+      <summary>Retired routines ({{ retiredSections().length }})</summary>
+      <p class="retired-note">Removed routines keep their history here.</p>
+      @for (section of retiredSections(); track section.routine.id) {
+        <ng-container
+          *ngTemplateOutlet="routineCard; context: { $implicit: section }"
+        ></ng-container>
+      }
+    </details>
+  }
+
+  <p class="footnote">
+    A chain only breaks if you miss two days in a row. Skips and a single missed day keep it going.
+  </p>
+</main>
+
+<ng-template #routineCard let-section>
+  <section class="card" [attr.aria-label]="section.routine.anchor">
+    <div class="anchor">
+      <span class="anchor-dot" aria-hidden="true"></span>
+      <span>{{ section.routine.anchor }}</span>
+      @if (section.routine.archivedOn) {
+        <span class="retired-tag">Retired {{ shortDate(section.routine.archivedOn) }}</span>
+      }
+    </div>
+
+    @for (row of section.habits; track row.habit.id) {
+      <ng-container *ngTemplateOutlet="habitRow; context: { $implicit: row }"></ng-container>
+    } @empty {
+      <p class="empty">No habits in this routine yet.</p>
+    }
+
+    @if (section.retiredHabits.length) {
+      <details class="retired-habits">
+        <summary>Retired habits ({{ section.retiredHabits.length }})</summary>
+        @for (row of section.retiredHabits; track row.habit.id) {
+          <ng-container *ngTemplateOutlet="habitRow; context: { $implicit: row }"></ng-container>
+        }
+      </details>
+    }
+  </section>
+</ng-template>
+
+<ng-template #habitRow let-row>
+  <div class="habit">
+    <div class="habit-head">
+      <h3 class="habit-name">{{ row.habit.name }}</h3>
+      @if (row.retiredOn) {
+        <span class="retired-tag">Retired {{ shortDate(row.retiredOn) }}</span>
+      }
+    </div>
+    <div class="habit-body">
+      <div class="grid-wrap">
+        <div class="weekdays" aria-hidden="true">
+          @for (label of weekdayLabels; track $index) {
+            <span>{{ label }}</span>
+          }
+        </div>
+        <div class="grid" role="img" [attr.aria-label]="row.gridLabel">
+          @for (week of row.weeks; track $index) {
+            <div class="week">
+              @for (dot of week; track dot.date) {
+                <i [class]="'dot dot-' + dot.status" [title]="dot.title"></i>
+              }
+            </div>
+          }
+        </div>
+      </div>
+      <dl class="stats">
+        <div>
+          <dt>{{ row.retiredOn ? 'History' : 'Chain' }}</dt>
+          <dd class="chain" [class.chain-on]="!row.retiredOn && row.stats.currentChain > 0">
+            {{ chainLabel(row) }}
+          </dd>
+        </div>
+        @if (!row.retiredOn && row.stats.bestChain > row.stats.currentChain) {
+          <div>
+            <dt>Best</dt>
+            <dd>{{ row.stats.bestChain }} {{ row.stats.bestChain === 1 ? 'day' : 'days' }}</dd>
+          </div>
+        }
+        <div>
+          <dt>All time</dt>
+          <dd>
+            Done {{ row.stats.full + row.stats.mini }}
+            {{ row.stats.full + row.stats.mini === 1 ? 'time' : 'times' }}
+            @if (row.stats.mini) {
+              <span class="sub">{{ row.stats.mini }} as the 2-minute version</span>
+            }
+          </dd>
+        </div>
+      </dl>
+    </div>
+  </div>
+</ng-template>
