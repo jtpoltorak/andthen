@@ -1,0 +1,218 @@
+@switch (step()) {
+  @case ('welcome') {
+    <main class="screen welcome">
+      <div class="brand">
+        <svg width="30" height="30" viewBox="0 0 30 30" aria-hidden="true">
+          <circle cx="8" cy="15" r="5" fill="#1E6B5C" />
+          <path d="M13 15h4" stroke="#1E6B5C" stroke-width="2.5" stroke-linecap="round" />
+          <circle cx="22.5" cy="15" r="5" fill="none" stroke="#1E6B5C" stroke-width="2.5" />
+        </svg>
+        <span>AndThen</span>
+      </div>
+
+      <div class="sample" aria-hidden="true">
+        <div class="sample-row">
+          <div class="rail"><span class="anchor-dot"></span><span class="line"></span></div>
+          <div class="sample-text">
+            <div class="sample-anchor">After I pour my coffee</div>
+            <div class="and-then">and then</div>
+          </div>
+        </div>
+        <div class="sample-row">
+          <div class="rail">
+            <span class="ring ring-done">
+              <svg
+                width="14"
+                height="14"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="3"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path d="M5 12.5l4.5 4.5L19 7.5" />
+              </svg>
+            </span>
+            <span class="line"></span>
+          </div>
+          <div class="sample-text">
+            <div class="sample-habit">Drink a glass of water</div>
+            <div class="and-then">and then</div>
+          </div>
+        </div>
+        <div class="sample-row">
+          <div class="rail"><span class="ring ring-next"></span></div>
+          <div class="sample-text"><div class="sample-habit">Stretch for two minutes</div></div>
+        </div>
+      </div>
+
+      <div class="spacer"></div>
+      <h1>Small habits, linked to what you already do.</h1>
+      <p class="lede">Start with one tiny habit. No account, no setup marathon.</p>
+      <button type="button" class="btn-primary" (click)="go('habit')">Get started</button>
+    </main>
+  }
+
+  @case ('habit') {
+    <main class="screen">
+      <div class="topbar">
+        <button type="button" class="back" aria-label="Back" (click)="go('welcome')">
+          <svg
+            width="22"
+            height="22"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+          >
+            <path d="M15 5l-7 7 7 7" />
+          </svg>
+        </button>
+        <span class="step-count">Step 1 of 3</span>
+      </div>
+      <h2>What's one habit you'd like to build?</h2>
+      <p class="hint">Pick one to start. You can add more later.</p>
+      <div class="chips" role="group" aria-label="Suggested habits">
+        @for (h of starterHabits; track h.name) {
+          <button
+            type="button"
+            class="chip"
+            [class.selected]="habit() === h.name"
+            [attr.aria-pressed]="habit() === h.name"
+            (click)="pickHabit(h.name, h.twoMinuteVersion)"
+          >
+            {{ h.name }}
+          </button>
+        }
+      </div>
+      <label class="field-label own" for="habit-own">Or type your own</label>
+      <input
+        id="habit-own"
+        class="text-input"
+        type="text"
+        placeholder="e.g. Floss"
+        autocomplete="off"
+        [value]="isPresetHabit() ? '' : habit()"
+        (input)="typeHabit($any($event.target).value)"
+        (keydown.enter)="toAnchor()"
+      />
+      <div class="spacer"></div>
+      <button type="button" class="btn-primary" [disabled]="!habit().trim()" (click)="toAnchor()">
+        Next
+      </button>
+    </main>
+  }
+
+  @case ('anchor') {
+    <main class="screen">
+      <div class="topbar">
+        <button type="button" class="back" aria-label="Back" (click)="go('habit')">
+          <svg
+            width="22"
+            height="22"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+          >
+            <path d="M15 5l-7 7 7 7" />
+          </svg>
+        </button>
+        <span class="step-count">Step 2 of 3</span>
+      </div>
+      <h2>When will you do it?</h2>
+      <p class="hint">
+        Pick something you already do every day. {{ habit().trim() }} comes right after it.
+      </p>
+      <div class="options" role="radiogroup" aria-label="Anchors">
+        @for (a of starterAnchors; track a.anchor) {
+          <button
+            type="button"
+            role="radio"
+            class="option"
+            [class.selected]="anchor() === a.anchor"
+            [attr.aria-checked]="anchor() === a.anchor"
+            (click)="anchor.set(a.anchor)"
+          >
+            <span class="radio" aria-hidden="true"></span>{{ a.anchor }}
+          </button>
+        }
+      </div>
+      <label class="field-label own" for="anchor-own">Or write your own</label>
+      <input
+        id="anchor-own"
+        class="text-input"
+        type="text"
+        placeholder="After I..."
+        autocomplete="off"
+        [value]="isPresetAnchor() ? '' : anchor()"
+        (input)="anchor.set($any($event.target).value)"
+        (keydown.enter)="toMini()"
+      />
+      <div class="spacer"></div>
+      <button type="button" class="btn-primary" [disabled]="!anchor().trim()" (click)="toMini()">
+        Next
+      </button>
+    </main>
+  }
+
+  @case ('mini') {
+    <main class="screen">
+      <div class="topbar">
+        <button type="button" class="back" aria-label="Back" (click)="go('anchor')">
+          <svg
+            width="22"
+            height="22"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+          >
+            <path d="M15 5l-7 7 7 7" />
+          </svg>
+        </button>
+        <span class="step-count">Step 3 of 3</span>
+      </div>
+      <h2>Now make it tiny.</h2>
+      <p class="hint">What's the 2-minute version? On busy days, the tiny version still counts.</p>
+      <label class="field-label" for="mini-input">2-minute version</label>
+      <input
+        id="mini-input"
+        class="text-input"
+        type="text"
+        autocomplete="off"
+        [value]="mini()"
+        (input)="mini.set($any($event.target).value)"
+        (keydown.enter)="start()"
+      />
+      <section class="preview" aria-label="Your first chain">
+        <div class="preview-label">Your first chain</div>
+        <p class="preview-sentence">
+          {{ anchor().trim() }}, <em>and then</em> I'll {{ habitLower() }}.
+        </p>
+        @if (miniLower()) {
+          <p class="preview-note">Busy day? Just {{ miniLower() }}.</p>
+        }
+      </section>
+      <div class="spacer"></div>
+      <button
+        type="button"
+        class="btn-primary"
+        [disabled]="!mini().trim() || saving()"
+        (click)="start()"
+      >
+        Start my chain
+      </button>
+    </main>
+  }
+}

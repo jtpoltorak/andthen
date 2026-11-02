@@ -1,0 +1,141 @@
+<main class="today">
+  <header>
+    <div class="date">{{ dateLabel() }}</div>
+    <h1>Today</h1>
+  </header>
+
+  @for (chain of chains(); track chain.routine.id) {
+    @if (chain.routine.id === openRoutineId()) {
+      <section class="card" [attr.aria-label]="chain.routine.anchor">
+        <div class="card-head">
+          <div class="anchor">
+            <span class="anchor-dot" aria-hidden="true"></span>
+            <span>{{ chain.routine.anchor }}</span>
+          </div>
+          <span class="count">{{ chain.doneCount }} of {{ chain.total }}</span>
+        </div>
+
+        <ol class="links">
+          @for (link of chain.links; track link.habit.id; let last = $last) {
+            <li class="link">
+              <div class="rail" aria-hidden="true">
+                <span
+                  class="ring"
+                  [class.ring-full]="link.status === 'full'"
+                  [class.ring-mini]="link.status === 'mini'"
+                  [class.ring-skip]="link.status === 'skip'"
+                  [class.ring-next]="link.isNext"
+                >
+                  @if (link.status === 'full') {
+                    <svg
+                      width="15"
+                      height="15"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="3"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    >
+                      <path d="M5 12.5l4.5 4.5L19 7.5" />
+                    </svg>
+                  } @else if (link.status === 'mini') {
+                    2m
+                  }
+                </span>
+                @if (!last) {
+                  <span class="line"></span>
+                }
+              </div>
+
+              <div class="link-body">
+                <div class="link-name">{{ link.habit.name }}</div>
+                @if (link.isNext && link.missedYesterday) {
+                  <div class="badge">Missed yesterday · don't miss twice</div>
+                }
+                <div class="link-sub">
+                  {{ subtitle(link) }}
+                  @if (link.status !== 'pending') {
+                    <button type="button" class="undo" (click)="undo(link)">
+                      Undo<span class="visually-hidden"> {{ link.habit.name }}</span>
+                    </button>
+                  }
+                </div>
+
+                @if (link.isNext) {
+                  <div class="actions" [class.nudge]="link.missedYesterday">
+                    <button type="button" class="act act-done" (click)="answer(link, 'full')">
+                      Done
+                    </button>
+                    <button type="button" class="act act-mini" (click)="answer(link, 'mini')">
+                      Did 2 min
+                    </button>
+                    <button type="button" class="act act-skip" (click)="answer(link, 'skip')">
+                      Skip
+                    </button>
+                  </div>
+                }
+              </div>
+            </li>
+          }
+        </ol>
+
+        @if (chain.complete) {
+          <div class="complete" role="status">
+            <div class="complete-title">Chain complete</div>
+            <div class="complete-note">Small still counts. See you tomorrow.</div>
+          </div>
+        }
+
+        @if (addingTo() === chain.routine.id) {
+          <form class="add-form" (submit)="$event.preventDefault(); addLink(chain.routine.id)">
+            <label class="field-label" for="next-link">And then I'll...</label>
+            <div class="add-row">
+              <input
+                id="next-link"
+                class="text-input"
+                type="text"
+                placeholder="e.g. Stretch"
+                autocomplete="off"
+                [value]="draft()"
+                (input)="draft.set($any($event.target).value)"
+              />
+              <button type="submit" class="add-btn">Add</button>
+            </div>
+          </form>
+        } @else {
+          <button type="button" class="and-then" (click)="startAdding(chain.routine.id)">
+            + and then...
+          </button>
+        }
+      </section>
+    } @else {
+      <button
+        type="button"
+        class="collapsed"
+        aria-expanded="false"
+        (click)="open(chain.routine.id)"
+      >
+        <span class="collapsed-anchor">{{ chain.routine.anchor }}</span>
+        <span class="collapsed-meta">
+          {{ chain.doneCount }} of {{ chain.total }}
+          <svg
+            width="18"
+            height="18"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+          >
+            <path d="M6 9l6 6 6-6" />
+          </svg>
+        </span>
+      </button>
+    }
+  }
+
+  <p class="footnote">Missed a day? No streak to lose. Just don't miss twice.</p>
+</main>
