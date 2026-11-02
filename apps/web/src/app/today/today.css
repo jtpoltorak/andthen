@@ -51,6 +51,26 @@ h1 {
   background: var(--muted);
 }
 
+.head-meta {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+.edit-link {
+  padding: 4px 6px;
+  color: var(--accent-ink);
+  font-size: 13px;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.footnote a {
+  color: var(--accent-ink);
+  font-weight: 700;
+}
+
 .count {
   flex-shrink: 0;
   padding: 4px 10px;

@@ -16,6 +16,8 @@ export interface HabitRepository {
   loadAll(): Promise<HabitSnapshot>;
   putRoutine(routine: Routine): Promise<void>;
   putHabit(habit: Habit): Promise<void>;
+  /** Saves several habits in one go (used when reordering a chain). */
+  putHabits(habits: readonly Habit[]): Promise<void>;
   putCheckIn(checkIn: CheckIn): Promise<void>;
   deleteCheckIn(habitId: string, date: DayKey): Promise<void>;
 }
@@ -40,6 +42,10 @@ export class InMemoryHabitRepository implements HabitRepository {
 
   async putHabit(habit: Habit): Promise<void> {
     this.data.habits = [...this.data.habits.filter((h) => h.id !== habit.id), habit];
+  }
+
+  async putHabits(habits: readonly Habit[]): Promise<void> {
+    for (const habit of habits) await this.putHabit(habit);
   }
 
   async putCheckIn(checkIn: CheckIn): Promise<void> {

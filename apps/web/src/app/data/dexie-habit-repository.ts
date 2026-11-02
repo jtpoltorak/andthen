@@ -39,6 +39,10 @@ export class DexieHabitRepository implements HabitRepository {
     await this.db.habits.put(habit);
   }
 
+  async putHabits(habits: readonly Habit[]): Promise<void> {
+    await this.db.habits.bulkPut([...habits]);
+  }
+
   async putCheckIn(checkIn: CheckIn): Promise<void> {
     await this.db.checkIns.put(checkIn);
   }

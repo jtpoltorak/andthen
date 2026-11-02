@@ -1,0 +1,306 @@
+/* Shared by the Routines list, the chain editor, and the new-routine form. */
+
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 28px 20px 24px;
+}
+
+h1 {
+  margin: 0 0 4px;
+  font-size: 32px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+.hint,
+.empty {
+  font-size: 15px;
+  line-height: 1.5;
+  color: var(--muted);
+}
+
+.tip {
+  font-size: 13px;
+}
+
+.back-link {
+  align-self: flex-start;
+  margin-bottom: -4px;
+  color: var(--accent-ink);
+  font-size: 15px;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.anchor-dot {
+  flex-shrink: 0;
+  width: 12px;
+  height: 12px;
+  border-radius: 6px;
+  background: var(--muted);
+}
+
+/* Routines list */
+
+.routine-card {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 6px 12px;
+  padding: 18px 20px;
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  background: var(--surface);
+  color: inherit;
+  text-decoration: none;
+}
+.routine-anchor {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 15px;
+  font-weight: 700;
+}
+.routine-habits {
+  grid-column: 1;
+  padding-left: 22px;
+  font-size: 14px;
+  line-height: 1.4;
+  color: var(--muted);
+}
+.routine-edit {
+  grid-row: 1 / span 2;
+  grid-column: 2;
+  align-self: center;
+  color: var(--accent-ink);
+  font-size: 14px;
+  font-weight: 700;
+}
+
+/* Chain editor */
+
+.chain {
+  list-style: none;
+  margin: 0;
+  padding: 20px 20px 4px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  background: var(--surface);
+}
+
+.chain-row {
+  display: flex;
+  gap: 14px;
+}
+
+.rail {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex-shrink: 0;
+  width: 28px;
+  padding-top: 8px;
+}
+.chain-row:not(:first-child) .rail {
+  padding-top: 2px;
+}
+
+.ring {
+  width: 24px;
+  height: 24px;
+  border-radius: 12px;
+  border: 2px solid var(--accent);
+  background: var(--surface);
+}
+
+.line {
+  flex: 1;
+  width: 2px;
+  min-height: 20px;
+  margin: 6px 0;
+  background: var(--line);
+}
+
+.row-body {
+  flex: 1;
+  min-width: 0;
+  padding-bottom: 14px;
+}
+
+.row-main {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+}
+.row-text {
+  flex: 1;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.anchor-text {
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 28px;
+  color: var(--muted);
+}
+.habit-name {
+  font-size: 17px;
+  font-weight: 700;
+  line-height: 28px;
+}
+.row-sub {
+  font-size: 13px;
+  line-height: 1.4;
+  color: var(--muted);
+}
+
+.and-then-label {
+  margin-top: 10px;
+  font-size: 12px;
+  font-weight: 700;
+  font-style: italic;
+  color: var(--accent-ink);
+}
+
+.row-tools {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  flex-shrink: 0;
+}
+
+.icon-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border: none;
+  border-radius: 10px;
+  background: none;
+  color: var(--ink);
+}
+.icon-btn:disabled {
+  color: var(--disabled);
+}
+
+.btn-text {
+  min-height: 40px;
+  padding: 0 10px;
+  border: none;
+  background: none;
+  color: var(--accent-ink);
+  font-size: 14px;
+  font-weight: 700;
+}
+.btn-text.danger {
+  color: var(--danger);
+}
+
+.btn-small {
+  height: 44px;
+  padding: 0 18px;
+  border: none;
+  border-radius: 12px;
+  background: var(--accent);
+  color: #fff;
+  font-size: 15px;
+  font-weight: 700;
+}
+.btn-small:disabled {
+  background: var(--disabled);
+}
+.btn-small.danger-fill {
+  background: var(--danger);
+}
+
+.edit-form,
+.add-card,
+form {
+  display: flex;
+  flex-direction: column;
+}
+.edit-form .field-label,
+.add-card .field-label {
+  margin-top: 10px;
+}
+.edit-form .field-label:first-child,
+.add-card .field-label:first-child {
+  margin-top: 0;
+}
+.edit-form .text-input,
+.add-card .text-input {
+  height: 48px;
+}
+
+.form-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px;
+  margin: 12px 0 6px;
+}
+
+.add-card {
+  padding: 18px 20px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  background: var(--surface);
+}
+
+.and-then {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 48px;
+  border: 1.5px dashed #b9beb3;
+  border-radius: var(--radius-control);
+  background: none;
+  color: var(--accent-ink);
+  font-size: 15px;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.danger-zone {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border);
+}
+
+/* New routine */
+
+form > .field-label {
+  margin-top: 18px;
+}
+form > .btn-primary {
+  margin-top: 24px;
+}
+
+fieldset {
+  margin: 0;
+  padding: 0;
+  border: none;
+}
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+.chip {
+  padding: 10px 14px;
+  border: 1.5px solid var(--input-border);
+  border-radius: 999px;
+  background: var(--surface);
+  font-size: 14px;
+  font-weight: 600;
+}
+.chip.selected {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+  color: var(--accent-ink);
+}

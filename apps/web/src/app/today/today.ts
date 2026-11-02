@@ -6,6 +6,7 @@ import {
   pickActiveRoutine,
   suggestTwoMinuteVersion,
 } from '@andthen/core';
+import { RouterLink } from '@angular/router';
 import { HabitStore } from '../data/habit-store';
 
 const lowerFirst = (text: string) => (text ? text.charAt(0).toLowerCase() + text.slice(1) : '');
@@ -13,6 +14,7 @@ const lowerFirst = (text: string) => (text ? text.charAt(0).toLowerCase() + text
 /** Today: each routine is a card; the active one is open and asks "what's next?" */
 @Component({
   selector: 'app-today',
+  imports: [RouterLink],
   templateUrl: './today.html',
   styleUrl: './today.css',
   changeDetection: ChangeDetectionStrategy.OnPush,

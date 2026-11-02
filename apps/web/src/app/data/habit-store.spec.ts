@@ -21,7 +21,7 @@ describe('HabitStore', () => {
   });
 
   it('creates a first chain and persists it', async () => {
-    await store.createFirstChain({
+    await store.createChain({
       anchor: 'After I pour my coffee',
       usualTime: '07:30',
       habitName: 'Stretch',
@@ -39,7 +39,7 @@ describe('HabitStore', () => {
   });
 
   it('checks in, replaces, and undoes for today', async () => {
-    const routine = await store.createFirstChain({
+    const routine = await store.createChain({
       anchor: 'After lunch',
       habitName: 'Walk',
       twoMinuteVersion: 'Put on my shoes',
@@ -55,6 +55,76 @@ describe('HabitStore', () => {
     await store.undoCheckIn(walk);
     expect(store.chains()[0].links[0].status).toBe('pending');
     expect((await repo.loadAll()).checkIns).toEqual([]);
+  });
+
+  describe('editing a chain', () => {
+    async function chain() {
+      const routine = await store.createChain({
+        anchor: 'After I pour my coffee',
+        habitName: 'Water',
+        twoMinuteVersion: 'One sip',
+      });
+      await store.addLink(routine.id, 'Stretch', 'Touch my toes');
+      await store.addLink(routine.id, 'Plan', 'Write one task');
+      return routine;
+    }
+    const names = (routineId: string) => store.habitsOf(routineId).map((h) => h.name);
+
+    it('reorders habits and saves the new order', async () => {
+      const routine = await chain();
+      const plan = store.habitsOf(routine.id)[2];
+
+      await store.moveHabit(plan.id, -1);
+      expect(names(routine.id)).toEqual(['Water', 'Plan', 'Stretch']);
+      await store.moveHabit(plan.id, -1);
+      expect(names(routine.id)).toEqual(['Plan', 'Water', 'Stretch']);
+      await store.moveHabit(plan.id, -1); // already first: no-op
+      expect(names(routine.id)).toEqual(['Plan', 'Water', 'Stretch']);
+
+      const saved = (await repo.loadAll()).habits.sort((a, b) => a.order - b.order);
+      expect(saved.map((h) => h.name)).toEqual(['Plan', 'Water', 'Stretch']);
+      expect(store.chains()[0].links[0].habit.name).toBe('Plan');
+    });
+
+    it('edits a habit, trimming text and refusing a blank name', async () => {
+      const routine = await chain();
+      const water = store.habitsOf(routine.id)[0];
+
+      await store.updateHabit(water.id, { name: '  Drink water ', twoMinuteVersion: 'Sip' });
+      await store.updateHabit(water.id, { name: '   ' });
+      expect(store.habitsOf(routine.id)[0]).toMatchObject({
+        name: 'Drink water',
+        twoMinuteVersion: 'Sip',
+      });
+    });
+
+    it('removes a habit from today on but keeps its history', async () => {
+      const routine = await chain();
+      const stretch = store.habitsOf(routine.id)[1];
+      store.today.set('2026-11-02');
+      await store.archiveHabit(stretch.id);
+
+      expect(names(routine.id)).toEqual(['Water', 'Plan']);
+      const saved = (await repo.loadAll()).habits.find((h) => h.id === stretch.id);
+      expect(saved?.archivedOn).toBe('2026-11-02');
+    });
+
+    it('edits the anchor and clears the usual time', async () => {
+      const routine = await chain();
+      await store.updateRoutine(routine.id, { anchor: 'After I wake up', usualTime: '07:00' });
+      await store.updateRoutine(routine.id, { usualTime: undefined });
+      await store.updateRoutine(routine.id, { anchor: ' ' });
+      const saved = (await repo.loadAll()).routines[0];
+      expect(saved.anchor).toBe('After I wake up');
+      expect(saved.usualTime).toBeUndefined();
+    });
+
+    it('removes a routine from today', async () => {
+      const routine = await chain();
+      await store.archiveRoutine(routine.id);
+      expect(store.activeRoutines()).toEqual([]);
+      expect(store.chains()).toEqual([]);
+    });
   });
 
   it('rolls today over on refresh', () => {

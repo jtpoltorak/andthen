@@ -5,6 +5,8 @@ import {
   type Habit,
   type Routine,
   buildDay,
+  chainHabits,
+  moveItem,
   nextOrder,
   removeCheckIn,
   toDayKey,
@@ -12,7 +14,10 @@ import {
 } from '@andthen/core';
 import { HABIT_REPOSITORY } from './habit-repository';
 
-export interface FirstChainInput {
+export type RoutineEdit = Partial<Pick<Routine, 'anchor' | 'usualTime' | 'name'>>;
+export type HabitEdit = Partial<Pick<Habit, 'name' | 'twoMinuteVersion'>>;
+
+export interface ChainInput {
   anchor: string;
   usualTime?: string;
   habitName: string;
@@ -20,6 +25,13 @@ export interface FirstChainInput {
 }
 
 const newId = () => crypto.randomUUID();
+
+/** Trims every string field of an edit, leaving other values as they are. */
+function trimmed<T extends object>(edit: T): T {
+  return Object.fromEntries(
+    Object.entries(edit).map(([k, v]) => [k, typeof v === 'string' ? v.trim() : v]),
+  ) as T;
+}
 
 /**
  * App-wide state as signals. Screens read from here and call its methods;
@@ -56,7 +68,25 @@ export class HabitStore {
     if (day !== this.today()) this.today.set(day);
   }
 
-  async createFirstChain(input: FirstChainInput): Promise<Routine> {
+  /** Active routines in display order. */
+  readonly activeRoutines = computed(() => {
+    const day = this.today();
+    return this.routines()
+      .filter((r) => r.createdOn <= day && (!r.archivedOn || r.archivedOn > day))
+      .sort((a, b) => a.order - b.order);
+  });
+
+  routine(id: string): Routine | undefined {
+    return this.routines().find((r) => r.id === id);
+  }
+
+  /** The habits in a routine's chain today, in order. */
+  habitsOf(routineId: string): Habit[] {
+    return chainHabits(routineId, this.habits(), this.today());
+  }
+
+  /** Starts a new routine with its anchor and first habit. */
+  async createChain(input: ChainInput): Promise<Routine> {
     const today = this.today();
     const routine: Routine = {
       id: newId(),
@@ -83,6 +113,56 @@ export class HabitStore {
     await this.repo.putHabit(habit);
     this.habits.update((list) => [...list, habit]);
     return habit;
+  }
+
+  async updateRoutine(id: string, edit: RoutineEdit): Promise<void> {
+    const current = this.routine(id);
+    if (!current) return;
+    const next: Routine = { ...current, ...trimmed(edit) };
+    if (!next.anchor) return; // A chain always needs an anchor.
+    if (!next.usualTime) delete next.usualTime;
+    await this.repo.putRoutine(next);
+    this.routines.update((list) => list.map((r) => (r.id === id ? next : r)));
+  }
+
+  /** Removes a routine from today on. Its habits and past check-ins are kept for history. */
+  async archiveRoutine(id: string): Promise<void> {
+    const current = this.routine(id);
+    if (!current) return;
+    const next: Routine = { ...current, archivedOn: this.today() };
+    await this.repo.putRoutine(next);
+    this.routines.update((list) => list.map((r) => (r.id === id ? next : r)));
+  }
+
+  async updateHabit(id: string, edit: HabitEdit): Promise<void> {
+    const current = this.habits().find((h) => h.id === id);
+    if (!current) return;
+    const next: Habit = { ...current, ...trimmed(edit) };
+    if (!next.name || !next.twoMinuteVersion) return;
+    await this.repo.putHabit(next);
+    this.habits.update((list) => list.map((h) => (h.id === id ? next : h)));
+  }
+
+  /** Takes a habit out of its chain from today on. Past check-ins are kept. */
+  async archiveHabit(id: string): Promise<void> {
+    const current = this.habits().find((h) => h.id === id);
+    if (!current) return;
+    const next: Habit = { ...current, archivedOn: this.today() };
+    await this.repo.putHabit(next);
+    this.habits.update((list) => list.map((h) => (h.id === id ? next : h)));
+  }
+
+  /** Moves a habit up (-1) or down (+1) in its chain. */
+  async moveHabit(id: string, by: number): Promise<void> {
+    const habit = this.habits().find((h) => h.id === id);
+    if (!habit) return;
+    const chain = this.habitsOf(habit.routineId);
+    const from = chain.findIndex((h) => h.id === id);
+    const changed = moveItem(chain, from, from + by);
+    if (!changed.length) return;
+    await this.repo.putHabits(changed);
+    const byId = new Map(changed.map((h) => [h.id, h]));
+    this.habits.update((list) => list.map((h) => byId.get(h.id) ?? h));
   }
 
   async checkIn(habitId: string, kind: CheckInKind): Promise<void> {
