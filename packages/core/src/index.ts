@@ -5,3 +5,4 @@ export * from './starters';
 export * from './editing';
 export * from './history';
 export * from './backup';
+export * from './reminders';
