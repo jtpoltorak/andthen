@@ -25,7 +25,10 @@ docker run --rm -p 8080:8080 andthen   # http://localhost:8080
 1. In Railway, **New Project → Deploy from GitHub repo → jtpoltorak/andthen**.
 2. Railway picks up `railway.json` and builds with the Dockerfile. No variables are needed (Railway sets `PORT` itself).
    - Railway may notice the npm workspaces and offer (or create) one service per package, such as `@andthen/web` and `@andthen/core`. You only need **one** service: delete any extra ones, and in the one you keep make sure **Settings → Source → Root Directory** is empty or `/` (the Dockerfile builds the whole repo).
-   - If **Settings → Deploy → Custom Start Command** shows an `npm …` command, clear it. `railway.json` sets the right one and takes precedence anyway.
+   - Railway's npm detection also fills in dashboard settings that fight the Dockerfile. Fix them in the service **Settings**:
+     - **Deploy → Custom Start Command:** set it to `caddy run --config /etc/caddy/Caddyfile --adapter caddyfile`. (In practice the dashboard value won over `railway.json`, and clearing it didn't stick.)
+     - **Build → Custom Build Command:** clear it. The Dockerfile does the build.
+     - **Build → Watch Paths:** remove `/apps/web/**`. Otherwise changes outside `apps/web` (such as `packages/core`, the Dockerfile, or `railway.json`) don't deploy.
 3. In the service's **Settings**, confirm **Source → Branch** is `main` so pushes to `main` deploy.
 4. **Settings → Networking → Generate Domain** gives a `*.up.railway.app` address. Open it on your phone and check: the app loads, a deep link like `/progress` loads, and "Add to Home Screen" / "Install app" is offered.
 
@@ -49,5 +52,6 @@ Each domain is its own browser origin: data saved on the `up.railway.app` addres
 
 - **Build fails at `npm ci`:** make sure `package-lock.json` is committed and up to date (`npm install` locally, then commit).
 - **Old version still showing after a deploy:** the service worker updates in the background. Close all AndThen tabs (or the installed app) and reopen it.
-- **Deploy fails with "The executable `npm` could not be found":** a start command from Railway's npm detection is being used instead of Caddy's. Make sure `railway.json` has `deploy.startCommand` and clear any custom start command in the service settings.
+- **Deploy fails with "The executable `npm` could not be found":** a start command from Railway's npm detection is being used instead of Caddy's. Set **Settings → Deploy → Custom Start Command** to `caddy run --config /etc/caddy/Caddyfile --adapter caddyfile`, then redeploy.
+- **A merge to `main` didn't deploy:** check **Settings → Build → Watch Paths**. Use **Deployments → ⋮ → Deploy latest commit** to deploy by hand.
 - **Too many redirects on the custom domain:** Cloudflare SSL/TLS mode is set to Flexible; change it to Full.
