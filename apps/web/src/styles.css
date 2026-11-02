@@ -1,0 +1,116 @@
+:root {
+  --bg: #f5f5ef;
+  --surface: #ffffff;
+  --ink: #1b2420;
+  --muted: #5b6660;
+  --line: #dde0d8;
+  --border: #e2e4dc;
+  --input-border: #cdd1c7;
+  --accent: #1e6b5c;
+  --accent-ink: #1e5a4e;
+  --accent-soft: #e3efea;
+  --amber: #f2b544;
+  --amber-ink: #3d2b04;
+  --amber-soft: #fbefd3;
+  --amber-soft-ink: #5c4106;
+  --disabled: #c9cec4;
+  --radius-card: 22px;
+  --radius-control: 14px;
+  --font: 'Manrope', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  color-scheme: light;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  min-height: 100%;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font);
+  -webkit-font-smoothing: antialiased;
+}
+
+button,
+input {
+  font: inherit;
+  color: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+button:disabled {
+  cursor: default;
+}
+
+:focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: 2px;
+}
+
+h1,
+h2,
+p {
+  margin: 0;
+}
+
+/* Shared building blocks */
+
+.btn-primary {
+  height: 56px;
+  border: none;
+  border-radius: 16px;
+  background: var(--accent);
+  color: #fff;
+  font-size: 17px;
+  font-weight: 700;
+}
+
+.btn-primary:disabled {
+  background: var(--disabled);
+}
+
+.field-label {
+  display: block;
+  margin: 0 0 8px;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.text-input {
+  width: 100%;
+  height: 52px;
+  padding: 0 16px;
+  border-radius: var(--radius-control);
+  border: 1.5px solid var(--input-border);
+  background: var(--surface);
+  font-size: 16px;
+}
+
+.text-input:focus {
+  border-color: var(--accent);
+  outline: none;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation: none !important;
+    transition: none !important;
+  }
+}

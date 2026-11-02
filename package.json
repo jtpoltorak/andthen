@@ -1,0 +1,20 @@
+{
+  "name": "andthen",
+  "private": true,
+  "description": "Small habits, linked to what you already do.",
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
+  "scripts": {
+    "start": "npm run start -w @andthen/web",
+    "build": "npm run build -w @andthen/web",
+    "test": "npm test -w @andthen/core && npm test -w @andthen/web -- --watch=false",
+    "test:core": "npm test -w @andthen/core",
+    "typecheck": "npm run typecheck -w @andthen/core"
+  },
+  "engines": {
+    "node": ">=22.22.3"
+  },
+  "packageManager": "npm@10.9.9"
+}
