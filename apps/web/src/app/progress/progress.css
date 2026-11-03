@@ -120,6 +120,12 @@ h1 {
 .dot-open {
   border: 1.5px solid var(--accent);
 }
+.dot-rest {
+  width: 6px;
+  height: 6px;
+  margin: 3px;
+  background: var(--line);
+}
 .dot-off {
   background: transparent;
 }
@@ -321,4 +327,13 @@ details summary {
 .stats .at-risk {
   color: var(--amber-soft-ink);
   font-weight: 600;
+}
+
+.schedule-tag {
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: var(--accent-soft);
+  color: var(--accent-ink);
+  font-size: 12px;
+  font-weight: 700;
 }

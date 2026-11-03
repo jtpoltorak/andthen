@@ -1,9 +1,12 @@
 import { addDays, minutesOf } from './dates';
-import { dayStatus } from './history';
+import { dayStatus, doneThisWeek } from './history';
 import type { CheckIn, CheckInKind, DayKey, Habit, LinkStatus, Routine } from './model';
+import type { WeekStart } from './preferences';
+import { weeklyTarget } from './schedule';
 
 /**
- * A gentle cue on a habit that wasn't checked in yesterday.
+ * A gentle cue on a habit that wasn't checked in the last day it was planned
+ * (yesterday, for an every-day habit). Rest days in between don't count.
  * - `dont-miss-twice`: one missed day, so the chain is still alive. Today keeps it going.
  * - `welcome-back`: two or more missed days in a row. No guilt, just an easy restart.
  * A skip is a conscious choice, not a miss, so it never brings a nudge.
@@ -21,8 +24,12 @@ export interface ChainLink {
    * Drives the "don't miss twice" nudge, which offers the 2-minute version first.
    */
   missedYesterday: boolean;
-  /** Set while the habit is still open today and yesterday got no check-in at all. */
+  /** Set while the habit is still open today and its last planned day got no check-in at all. */
   nudge?: Nudge;
+  /** The missed day behind a nudge (yesterday for an every-day habit). */
+  missedOn?: DayKey;
+  /** For "N times a week" habits: days done this week (today included) out of the target. */
+  week?: { done: number; target: number };
 }
 
 export interface Chain {
@@ -35,6 +42,8 @@ export interface Chain {
   complete: boolean;
   /** Open links whose chain is one miss from breaking ("don't miss twice"). */
   atRisk: number;
+  /** Habits in this routine that have a rest day today (by their schedule), so aren't listed. */
+  resting: number;
 }
 
 const isActiveOn = (item: { createdOn: DayKey; archivedOn?: DayKey }, day: DayKey) =>
@@ -62,16 +71,42 @@ export function missedYesterday(
   return !countsAsDone(checkIns.get(`${habit.id}|${yesterday}`)?.kind);
 }
 
-/** The nudge for a habit today, if yesterday went by without a check-in. */
+/** How far back to look for a habit's last planned day (a week, plus room for odd schedules). */
+const LOOK_BACK_DAYS = 14;
+
+/** The last day before `day` that the habit was planned for (not a rest day), and how it went. */
+function lastPlannedDay(
+  habit: Habit,
+  routine: Routine | undefined,
+  checkIns: ReadonlyMap<string, CheckIn>,
+  day: DayKey,
+  today: DayKey,
+  weekStartsOn: WeekStart,
+) {
+  for (let i = 1; i <= LOOK_BACK_DAYS; i++) {
+    const date = addDays(day, -i);
+    const status = dayStatus(habit, routine, checkIns, date, today, weekStartsOn);
+    if (status !== 'rest') return { date, status };
+  }
+  return undefined;
+}
+
+/**
+ * The nudge for a habit today, if its last planned day went by without a check-in.
+ * "N times a week" habits never miss a single day, so they never get one.
+ */
 export function nudgeFor(
   habit: Habit,
   routine: Routine | undefined,
   checkIns: ReadonlyMap<string, CheckIn>,
   today: DayKey,
-): Nudge | undefined {
-  if (dayStatus(habit, routine, checkIns, addDays(today, -1), today) !== 'missed') return undefined;
-  const dayBefore = dayStatus(habit, routine, checkIns, addDays(today, -2), today);
-  return dayBefore === 'missed' ? 'welcome-back' : 'dont-miss-twice';
+  weekStartsOn: WeekStart = 1,
+): { nudge: Nudge; missedOn: DayKey } | undefined {
+  const last = lastPlannedDay(habit, routine, checkIns, today, today, weekStartsOn);
+  if (last?.status !== 'missed') return undefined;
+  const before = lastPlannedDay(habit, routine, checkIns, last.date, today, weekStartsOn);
+  const nudge = before?.status === 'missed' ? 'welcome-back' : 'dont-miss-twice';
+  return { nudge, missedOn: last.date };
 }
 
 /** Builds the chain for one routine on one day. */
@@ -80,8 +115,13 @@ export function buildChain(
   habits: readonly Habit[],
   checkIns: ReadonlyMap<string, CheckIn>,
   day: DayKey,
+  weekStartsOn: WeekStart = 1,
 ): Chain {
-  const own = habits.filter((h) => h.routineId === routine.id && isActiveOn(h, day)).sort(byOrder);
+  const active = habits.filter((h) => h.routineId === routine.id && isActiveOn(h, day));
+  // A habit resting today (an off day, or a weekly count already reached) stays off the list.
+  const own = active
+    .filter((h) => dayStatus(h, routine, checkIns, day, day, weekStartsOn) !== 'rest')
+    .sort(byOrder);
 
   let nextFound = false;
   const links = own.map((habit): ChainLink => {
@@ -94,8 +134,16 @@ export function buildChain(
       isNext,
       missedYesterday: missedYesterday(habit, checkIns, day),
     };
-    const nudge = status === 'pending' ? nudgeFor(habit, routine, checkIns, day) : undefined;
-    if (nudge) link.nudge = nudge;
+    const nudge =
+      status === 'pending' ? nudgeFor(habit, routine, checkIns, day, weekStartsOn) : undefined;
+    if (nudge) {
+      link.nudge = nudge.nudge;
+      link.missedOn = nudge.missedOn;
+    }
+    const target = weeklyTarget(habit.schedule);
+    if (target !== undefined) {
+      link.week = { done: doneThisWeek(habit, checkIns, day, weekStartsOn), target };
+    }
     return link;
   });
 
@@ -106,6 +154,7 @@ export function buildChain(
     total: links.length,
     complete: links.length > 0 && !nextFound,
     atRisk: links.filter((l) => l.nudge === 'dont-miss-twice').length,
+    resting: active.length - own.length,
   };
 }
 
@@ -115,12 +164,13 @@ export function buildDay(
   habits: readonly Habit[],
   checkIns: readonly CheckIn[],
   day: DayKey,
+  weekStartsOn: WeekStart = 1,
 ): Chain[] {
   const index = indexCheckIns(checkIns);
   return routines
     .filter((r) => isActiveOn(r, day))
     .sort(byOrder)
-    .map((r) => buildChain(r, habits, index, day));
+    .map((r) => buildChain(r, habits, index, day, weekStartsOn));
 }
 
 /**

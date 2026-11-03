@@ -18,6 +18,13 @@ export interface Routine {
   archivedOn?: DayKey;
 }
 
+/**
+ * How often a habit is meant to happen. A habit with no schedule is every day.
+ * - `days`: only on these weekdays, as `Date.getDay()` numbers (0 = Sunday). Weekdays are 1 to 5.
+ * - `weekly`: any days, `times` times a week. It leaves Today once the week's count is reached.
+ */
+export type Schedule = { kind: 'days'; days: number[] } | { kind: 'weekly'; times: number };
+
 /** A habit is one link in a routine's chain. */
 export interface Habit {
   id: string;
@@ -29,6 +36,8 @@ export interface Habit {
   makeItEasier?: string;
   /** Optional: what tends to get in the way, e.g. "I'm tired after work". */
   obstacle?: string;
+  /** Optional: when it's due. Missing means every day. */
+  schedule?: Schedule;
   order: number;
   createdOn: DayKey;
   archivedOn?: DayKey;

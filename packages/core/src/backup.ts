@@ -1,5 +1,6 @@
 import type { CheckIn, CheckInKind, DayKey, Habit, Reflection, Routine } from './model';
 import { cleanNote } from './reflection';
+import { parseSchedule } from './schedule';
 
 /** Everything AndThen stores on a device. */
 export interface BackupData {
@@ -155,6 +156,10 @@ function readHabit(raw: unknown, i: number): Habit {
   if (makeItEasier) habit.makeItEasier = makeItEasier;
   const obstacle = text(raw, 'obstacle', where, false)?.trim();
   if (obstacle) habit.obstacle = obstacle;
+  // Optional: older backups were made before schedules, and every habit was every day.
+  const schedule = parseSchedule(raw['schedule']);
+  if (schedule === null) fail(`${where} has a schedule AndThen can't read.`);
+  if (schedule) habit.schedule = schedule;
   const archivedOn = day(raw, 'archivedOn', where, false);
   if (archivedOn) habit.archivedOn = archivedOn;
   return habit;

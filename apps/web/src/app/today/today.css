@@ -435,3 +435,21 @@ h1 {
   font-size: 14px;
   font-weight: 600;
 }
+
+.week-count {
+  margin-top: -2px;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--accent-ink);
+}
+
+.resting {
+  margin: 0 4px;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--muted);
+}
+.resting a {
+  color: var(--accent-ink);
+  font-weight: 700;
+}

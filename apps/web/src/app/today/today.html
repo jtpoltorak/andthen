@@ -64,8 +64,11 @@
 
               <div class="link-body">
                 <div class="link-name">{{ link.habit.name }}</div>
+                @if (link.week; as week) {
+                  <div class="week-count">{{ week.done }} of {{ week.target }} this week</div>
+                }
                 @if (link.nudge === 'dont-miss-twice') {
-                  <div class="badge">Missed yesterday · don't miss twice</div>
+                  <div class="badge">{{ missedLabel(link) }} · don't miss twice</div>
                 } @else if (link.nudge === 'welcome-back') {
                   <div class="badge badge-soft">Welcome back · 2 minutes counts</div>
                 }
@@ -199,11 +202,28 @@
       </button>
     }
   } @empty {
-    <section class="empty-card">
-      <h2>Nothing on today's list</h2>
-      <p>Pick something you already do every day, and chain one tiny habit after it.</p>
-      <a class="empty-action" routerLink="/routines/new">Start a routine</a>
-    </section>
+    @if (resting().length) {
+      <section class="empty-card">
+        <h2>A rest day</h2>
+        <p>Nothing is planned for today. Enjoy it. Your chains carry on tomorrow.</p>
+      </section>
+    } @else {
+      <section class="empty-card">
+        <h2>Nothing on today's list</h2>
+        <p>Pick something you already do every day, and chain one tiny habit after it.</p>
+        <a class="empty-action" routerLink="/routines/new">Start a routine</a>
+      </section>
+    }
+  }
+
+  @if (resting().length) {
+    <p class="resting">
+      Resting today:
+      @for (chain of resting(); track chain.routine.id; let last = $last) {
+        <a [routerLink]="['/routines', chain.routine.id]">{{ chain.routine.anchor }}</a
+        >{{ last ? '' : ', ' }}
+      }
+    </p>
   }
 
   @if (reflection.show()) {
@@ -219,7 +239,7 @@
     </section>
   }
 
-  @if (chains().length) {
+  @if (chains().length || resting().length) {
     <p class="footnote">Missed a day? No streak to lose. Just don't miss twice.</p>
   }
 </main>
