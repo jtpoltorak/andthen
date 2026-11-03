@@ -2,7 +2,7 @@ import { ApplicationConfig, provideBrowserGlobalErrorListeners, isDevMode } from
 import { provideRouter, withComponentInputBinding, withInMemoryScrolling } from '@angular/router';
 import { provideServiceWorker } from '@angular/service-worker';
 import { routes } from './app.routes';
-import { DexieHabitRepository } from './data/dexie-habit-repository';
+import { SyncingHabitRepository } from './data/syncing-habit-repository';
 import { HABIT_REPOSITORY } from './data/habit-repository';
 
 export const appConfig: ApplicationConfig = {
@@ -14,7 +14,7 @@ export const appConfig: ApplicationConfig = {
       // Each screen opens at the top; Back returns to where you were.
       withInMemoryScrolling({ scrollPositionRestoration: 'enabled' }),
     ),
-    { provide: HABIT_REPOSITORY, useFactory: () => new DexieHabitRepository() },
+    { provide: HABIT_REPOSITORY, useFactory: () => new SyncingHabitRepository() },
     provideServiceWorker('ngsw-worker.js', {
       enabled: !isDevMode(),
       registrationStrategy: 'registerWhenStable:30000',
