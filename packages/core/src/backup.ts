@@ -191,6 +191,42 @@ function readReflection(raw: unknown, i: number): Reflection {
   return reflection;
 }
 
+/** The kinds of record AndThen stores, by the name of their list in a backup. */
+export type RecordCollection = 'routines' | 'habits' | 'checkIns' | 'reflections';
+
+export interface RecordTypes {
+  routines: Routine;
+  habits: Habit;
+  checkIns: CheckIn;
+  reflections: Reflection;
+}
+
+export type ParsedRecord<C extends RecordCollection> =
+  { ok: true; record: RecordTypes[C] } | { ok: false; error: string };
+
+const READERS: { [C in RecordCollection]: (raw: unknown, i: number) => RecordTypes[C] } = {
+  routines: readRoutine,
+  habits: readHabit,
+  checkIns: readCheckIn,
+  reflections: readReflection,
+};
+
+/**
+ * Checks one record with the same rules a backup uses, keeping only known fields.
+ * Sync uses it on both ends, so a bad record is refused before it's stored.
+ */
+export function parseRecord<C extends RecordCollection>(
+  collection: C,
+  raw: unknown,
+): ParsedRecord<C> {
+  try {
+    return { ok: true, record: READERS[collection](raw, 0) };
+  } catch (e) {
+    if (e instanceof BackupError) return { ok: false, error: e.message.replace(/ 1\b/, '') };
+    throw e;
+  }
+}
+
 function uniqueIds(items: { id: string }[], label: string): Set<string> {
   const ids = new Set<string>();
   for (const item of items) {

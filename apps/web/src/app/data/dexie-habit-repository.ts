@@ -1,16 +1,29 @@
-import Dexie, { type EntityTable } from 'dexie';
-import type { CheckIn, DayKey, Habit, Reflection, Routine } from '@andthen/core';
+import Dexie, { type DexieOptions, type EntityTable } from 'dexie';
+import type { CheckIn, DayKey, Habit, Reflection, Routine, SyncChange } from '@andthen/core';
 import type { HabitRepository, HabitSnapshot } from './habit-repository';
 
+/** Sync bookkeeping, one row per key. Only used once sync is set up. */
+export interface SyncStateRow {
+  key: 'state';
+  /** A random id for this device, made the first time sync is turned on. */
+  deviceId: string;
+  enabled: boolean;
+  /** The server cursor from the last successful sync. */
+  cursor: number;
+}
+
 /** The on-device database (IndexedDB), named `andthen`. */
-class AndThenDb extends Dexie {
+export class AndThenDb extends Dexie {
   routines!: EntityTable<Routine, 'id'>;
   habits!: EntityTable<Habit, 'id'>;
   checkIns!: Dexie.Table<CheckIn, [string, DayKey]>;
   reflections!: EntityTable<Reflection, 'week'>;
+  /** Changes waiting to be sent, at most one per record (the latest). */
+  outbox!: Dexie.Table<SyncChange, [string, string]>;
+  syncState!: EntityTable<SyncStateRow, 'key'>;
 
-  constructor() {
-    super('andthen');
+  constructor(name = 'andthen', options?: DexieOptions) {
+    super(name, options);
     this.version(1).stores({
       routines: 'id, order',
       habits: 'id, routineId, order',
@@ -19,11 +32,13 @@ class AndThenDb extends Dexie {
     });
     // v2 adds weekly reflections, one per week. Existing tables carry over untouched.
     this.version(2).stores({ reflections: 'week' });
+    // v3 adds sync bookkeeping. Both tables stay empty until sync is turned on.
+    this.version(3).stores({ outbox: '[collection+key]', syncState: 'key' });
   }
 }
 
 export class DexieHabitRepository implements HabitRepository {
-  private readonly db = new AndThenDb();
+  constructor(protected readonly db = new AndThenDb()) {}
 
   async loadAll(): Promise<HabitSnapshot> {
     const [routines, habits, checkIns, reflections] = await Promise.all([

@@ -10,3 +10,4 @@ export * from './reminders';
 export * from './preferences';
 export * from './templates';
 export * from './reflection';
+export * from './sync';
