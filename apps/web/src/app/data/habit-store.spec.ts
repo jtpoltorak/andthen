@@ -52,6 +52,9 @@ describe('HabitStore', () => {
     const saved = await repo.loadAll();
     expect(saved.routines).toHaveLength(1);
     expect(saved.habits).toHaveLength(template.habits.length);
+    expect(saved.habits.find((h) => h.name === 'Drink a glass of water')?.makeItEasier).toBe(
+      template.habits[0].makeItEasier,
+    );
   });
 
   it('checks in, replaces, and undoes for today', async () => {
@@ -112,6 +115,25 @@ describe('HabitStore', () => {
         name: 'Drink water',
         twoMinuteVersion: 'Sip',
       });
+    });
+
+    it('saves "make it easier" notes and clears them when left blank', async () => {
+      const routine = await chain();
+      const water = store.habitsOf(routine.id)[0];
+
+      await store.updateHabit(water.id, {
+        makeItEasier: '  Leave a glass by the sink ',
+        obstacle: 'I forget',
+      });
+      expect(store.habitsOf(routine.id)[0]).toMatchObject({
+        makeItEasier: 'Leave a glass by the sink',
+        obstacle: 'I forget',
+      });
+
+      await store.updateHabit(water.id, { makeItEasier: '', obstacle: '   ' });
+      const saved = (await repo.loadAll()).habits.find((h) => h.id === water.id)!;
+      expect('makeItEasier' in saved).toBe(false);
+      expect('obstacle' in saved).toBe(false);
     });
 
     it('removes a habit from today on but keeps its history', async () => {

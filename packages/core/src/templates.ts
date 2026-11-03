@@ -2,6 +2,8 @@
 export interface TemplateHabit {
   name: string;
   twoMinuteVersion: string;
+  /** A starting idea for making it easier. The person can change or clear it. */
+  makeItEasier?: string;
 }
 
 /**
@@ -26,7 +28,11 @@ export const ROUTINE_TEMPLATES: readonly RoutineTemplate[] = [
     anchor: 'After I wake up',
     usualTime: '07:00',
     habits: [
-      { name: 'Drink a glass of water', twoMinuteVersion: 'Take one sip of water' },
+      {
+        name: 'Drink a glass of water',
+        twoMinuteVersion: 'Take one sip of water',
+        makeItEasier: 'Leave a glass by the sink the night before',
+      },
       { name: 'Make my bed', twoMinuteVersion: 'Straighten my pillow' },
       { name: 'Stretch', twoMinuteVersion: 'Touch my toes once' },
     ],
@@ -38,7 +44,11 @@ export const ROUTINE_TEMPLATES: readonly RoutineTemplate[] = [
     anchor: 'After lunch',
     usualTime: '12:30',
     habits: [
-      { name: 'Take a short walk', twoMinuteVersion: 'Stand up and walk to the window' },
+      {
+        name: 'Take a short walk',
+        twoMinuteVersion: 'Stand up and walk to the window',
+        makeItEasier: 'Keep comfortable shoes under my desk',
+      },
       { name: 'Rest my eyes', twoMinuteVersion: 'Look at something far away for 20 seconds' },
       { name: 'Refill my water', twoMinuteVersion: 'Fill my glass once' },
     ],
@@ -52,7 +62,11 @@ export const ROUTINE_TEMPLATES: readonly RoutineTemplate[] = [
     habits: [
       { name: 'Put my keys and bag in their spot', twoMinuteVersion: 'Hang up my keys' },
       { name: 'Tidy for 10 minutes', twoMinuteVersion: 'Put away one thing' },
-      { name: 'Go for a walk', twoMinuteVersion: 'Put on my walking shoes' },
+      {
+        name: 'Go for a walk',
+        twoMinuteVersion: 'Put on my walking shoes',
+        makeItEasier: 'Leave my shoes by the door',
+      },
     ],
   },
   {
@@ -65,9 +79,14 @@ export const ROUTINE_TEMPLATES: readonly RoutineTemplate[] = [
       {
         name: 'Charge my phone outside the bedroom',
         twoMinuteVersion: 'Put my phone across the room',
+        makeItEasier: 'Keep the charger outside the bedroom',
       },
       { name: "Plan tomorrow's first task", twoMinuteVersion: 'Write down one word for tomorrow' },
-      { name: 'Read', twoMinuteVersion: 'Read one page' },
+      {
+        name: 'Read',
+        twoMinuteVersion: 'Read one page',
+        makeItEasier: 'Leave a book on my pillow',
+      },
     ],
   },
 ];

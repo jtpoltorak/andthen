@@ -147,6 +147,10 @@ function readHabit(raw: unknown, i: number): Habit {
     order: order(raw, where),
     createdOn: day(raw, 'createdOn', where)!,
   };
+  const makeItEasier = text(raw, 'makeItEasier', where, false)?.trim();
+  if (makeItEasier) habit.makeItEasier = makeItEasier;
+  const obstacle = text(raw, 'obstacle', where, false)?.trim();
+  if (obstacle) habit.obstacle = obstacle;
   const archivedOn = day(raw, 'archivedOn', where, false);
   if (archivedOn) habit.archivedOn = archivedOn;
   return habit;

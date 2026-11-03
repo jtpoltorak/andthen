@@ -25,6 +25,10 @@ export interface Habit {
   name: string;
   /** The 2-minute version that still counts on a busy day. */
   twoMinuteVersion: string;
+  /** Optional: one thing that makes the habit easier to start, e.g. "Lay out my shoes the night before". */
+  makeItEasier?: string;
+  /** Optional: what tends to get in the way, e.g. "I'm tired after work". */
+  obstacle?: string;
   order: number;
   createdOn: DayKey;
   archivedOn?: DayKey;

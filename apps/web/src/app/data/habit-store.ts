@@ -19,7 +19,9 @@ import {
 import { HABIT_REPOSITORY } from './habit-repository';
 
 export type RoutineEdit = Partial<Pick<Routine, 'anchor' | 'usualTime' | 'name'>>;
-export type HabitEdit = Partial<Pick<Habit, 'name' | 'twoMinuteVersion'>>;
+export type HabitEdit = Partial<
+  Pick<Habit, 'name' | 'twoMinuteVersion' | 'makeItEasier' | 'obstacle'>
+>;
 
 export interface ChainInput {
   anchor: string;
@@ -124,6 +126,7 @@ export class HabitStore {
       routineId: routine.id,
       name: h.name,
       twoMinuteVersion: h.twoMinuteVersion,
+      ...(h.makeItEasier ? { makeItEasier: h.makeItEasier } : {}),
       order,
       createdOn: today,
     }));
@@ -172,6 +175,9 @@ export class HabitStore {
     if (!current) return;
     const next: Habit = { ...current, ...trimmed(edit) };
     if (!next.name || !next.twoMinuteVersion) return;
+    // The optional notes are cleared by leaving them blank.
+    if (!next.makeItEasier) delete next.makeItEasier;
+    if (!next.obstacle) delete next.obstacle;
     await this.repo.putHabit(next);
     this.habits.update((list) => list.map((h) => (h.id === id ? next : h)));
   }

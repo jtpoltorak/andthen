@@ -75,6 +75,9 @@
                   }
                 </div>
 
+                @if (link.isNext && link.habit.makeItEasier) {
+                  <div class="easier-note">Make it easy: {{ link.habit.makeItEasier }}</div>
+                }
                 @if (link.isNext) {
                   <!-- After a miss, the 2-minute version comes first, in reading and tab order too. -->
                   <div class="actions" [class.nudge]="link.missedYesterday">
