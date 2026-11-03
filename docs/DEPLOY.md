@@ -10,7 +10,6 @@ Railway builds and deploys on every push to `main`.
 | --------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `Dockerfile`    | Two stages: Node 22 runs `npm ci` and `npm run build`, then a Caddy image serves `apps/web/dist/web/browser`.                                                                                                                                                                                                                                                             |
 | `Caddyfile`     | Listens on Railway's `$PORT`. Deep links like `/routines` get `index.html` so the Angular router takes over. Hashed build files (`main-*.js`, `styles-*.css`, …) are cached for a year; everything else, including `index.html` and the service worker files, is `no-cache` so updates reach people on their next visit. Also gzip/zstd and a few basic security headers. |
-| `railway.json`  | Tells Railway to build with the Dockerfile, start Caddy, and health-check `/`. The start command is set here on purpose: Railway detects the npm workspaces and otherwise fills in an `npm` start command, which fails because the final image only contains Caddy.                                                                                                       |
 | `.dockerignore` | Keeps `node_modules`, `dist` and git history out of the build.                                                                                                                                                                                                                                                                                                            |
 
 To try the production container locally (needs Docker):
@@ -23,12 +22,13 @@ docker run --rm -p 8080:8080 andthen   # http://localhost:8080
 ## One-time setup in Railway
 
 1. In Railway, **New Project → Deploy from GitHub repo → jtpoltorak/andthen**.
-2. Railway picks up `railway.json` and builds with the Dockerfile. Railway has deprecated `railway.json` (it stops working on 2026-12-01), so also set **Settings → Deploy → Healthcheck Path** to `/` in the dashboard; the start command below is already a dashboard setting. No variables are needed (Railway sets `PORT` itself).
+2. Railway detects the root `Dockerfile` and builds with it. All settings live in the dashboard (Railway has deprecated `railway.json` config files, and a root one gets applied to _every_ service built from this repo, which broke the api service). No variables are needed (Railway sets `PORT` itself).
    - Railway may notice the npm workspaces and offer (or create) one service per package, such as `@andthen/web` and `@andthen/core`. You only need **one** service: delete any extra ones, and in the one you keep make sure **Settings → Source → Root Directory** is empty or `/` (the Dockerfile builds the whole repo).
    - Railway's npm detection also fills in dashboard settings that fight the Dockerfile. Fix them in the service **Settings**:
-     - **Deploy → Custom Start Command:** set it to `caddy run --config /etc/caddy/Caddyfile --adapter caddyfile`. (In practice the dashboard value won over `railway.json`, and clearing it didn't stick.)
+     - **Deploy → Custom Start Command:** set it to `caddy run --config /etc/caddy/Caddyfile --adapter caddyfile`.
+     - **Deploy → Healthcheck Path:** `/`.
      - **Build → Custom Build Command:** clear it. The Dockerfile does the build.
-     - **Build → Watch Paths:** remove `/apps/web/**`. Otherwise changes outside `apps/web` (such as `packages/core`, the Dockerfile, or `railway.json`) don't deploy.
+     - **Build → Watch Paths:** remove `/apps/web/**`. Otherwise changes outside `apps/web` (such as `packages/core` or the Dockerfile) don't deploy.
 3. In the service's **Settings**, confirm **Source → Branch** is `main` so pushes to `main` deploy.
 4. **Settings → Networking → Generate Domain** gives a `*.up.railway.app` address. Open it on your phone and check: the app loads, a deep link like `/progress` loads, and "Add to Home Screen" / "Install app" is offered.
 
@@ -67,7 +67,7 @@ Sync is optional: the web app above works on its own. The sync server is a secon
    - **Build → Watch Paths:** `/apps/api/**`, `/packages/core/**` and `/package-lock.json`, so the API only redeploys when it changes.
    - **Deploy → Pre-deploy step:** `node dist/migrate.js`. It brings the database up to date before each deploy, and a failed migration stops the deploy before new code takes traffic.
    - **Deploy → Healthcheck Path:** `/health`.
-   - **Config-as-code:** leave empty. Railway has deprecated config files (`railway.json`), and a service that never used one can't opt in.
+   - **Config-as-code:** leave empty. Don't add a `railway.json` to the repo root either: Railway applies it to every service built from the repo, which overrides these settings.
    - **Build → Custom Build Command** and **Deploy → Custom Start Command:** leave empty, and clear them if Railway filled them in. The Dockerfile builds and starts the API.
 4. In the `api` service's **Variables**, add:
    - `DATABASE_URL` = `${{Postgres.DATABASE_URL}}` (a reference: pick it from the dropdown). It uses Railway's private network, so the database is never exposed to the internet.
@@ -116,6 +116,6 @@ The API tests don't need any of that: they run against PGlite, a real Postgres c
 - **A merge to `main` didn't deploy:** check **Settings → Build → Watch Paths**. Use **Deployments → ⋮ → Deploy latest commit** to deploy by hand.
 - **The api deploy fails in the pre-deploy step:** a migration failed, and the previous version keeps running. The deploy log shows the SQL error. Check that `DATABASE_URL` is set as a reference to the Postgres service.
 - **Sign-in answers 503 `email_not_set_up`:** `RESEND_API_KEY` isn't set on the `api` service. `email_failed` means Resend refused: the deploy log shows why (often an unverified domain).
-- **`api.andthenhabits.com/health` shows the web app, and the api deploy log mentions Caddy:** the api service built the web app's Dockerfile. Set **Build → Dockerfile Path** to `/apps/api/Dockerfile`, clear any `caddy` start command, and redeploy.
+- **`api.andthenhabits.com/health` shows the web app, and the api build log mentions Caddy:** the api service built the web app's Dockerfile. Make sure there's no `railway.json` at the repo root (it overrides every service), set **Build → Dockerfile Path** to `/apps/api/Dockerfile`, clear any `caddy` start command, and redeploy.
 - **`/health` answers 503:** the API is up but can't reach Postgres. Check the `DATABASE_URL` reference and that the Postgres service is running.
 - **Too many redirects on the custom domain:** Cloudflare SSL/TLS mode is set to Flexible; change it to Full.
