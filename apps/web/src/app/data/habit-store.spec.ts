@@ -1,4 +1,5 @@
 import { TestBed } from '@angular/core/testing';
+import { addDays, routineTemplate } from '@andthen/core';
 import { HABIT_REPOSITORY, InMemoryHabitRepository } from './habit-repository';
 import { HabitStore } from './habit-store';
 
@@ -36,6 +37,21 @@ describe('HabitStore', () => {
     const saved = await repo.loadAll();
     expect(saved.routines).toHaveLength(1);
     expect(saved.habits).toHaveLength(1);
+  });
+
+  it('starts a whole routine from a template', async () => {
+    const template = routineTemplate('morning-reset')!;
+    const routine = await store.createFromTemplate(template);
+
+    expect(routine.name).toBe('Morning reset');
+    expect(routine.usualTime).toBe(template.usualTime);
+    const [chain] = store.chains();
+    expect(chain.routine.anchor).toBe(template.anchor);
+    expect(chain.links.map((l) => l.habit.name)).toEqual(template.habits.map((h) => h.name));
+
+    const saved = await repo.loadAll();
+    expect(saved.routines).toHaveLength(1);
+    expect(saved.habits).toHaveLength(template.habits.length);
   });
 
   it('checks in, replaces, and undoes for today', async () => {
@@ -101,12 +117,14 @@ describe('HabitStore', () => {
     it('removes a habit from today on but keeps its history', async () => {
       const routine = await chain();
       const stretch = store.habitsOf(routine.id)[1];
-      store.today.set('2026-11-02');
+      // Remove it on a later day, so the habit existed before it was removed.
+      const later = addDays(store.today(), 1);
+      store.today.set(later);
       await store.archiveHabit(stretch.id);
 
       expect(names(routine.id)).toEqual(['Water', 'Plan']);
       const saved = (await repo.loadAll()).habits.find((h) => h.id === stretch.id);
-      expect(saved?.archivedOn).toBe('2026-11-02');
+      expect(saved?.archivedOn).toBe(later);
     });
 
     it('edits the anchor and clears the usual time', async () => {

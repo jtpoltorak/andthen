@@ -14,7 +14,14 @@ import { HabitStore } from '../data/habit-store';
       </p>
 
       @for (item of items(); track item.routine.id) {
-        <a class="routine-card" [routerLink]="['/routines', item.routine.id]">
+        <a
+          class="routine-card"
+          [class.named]="!!item.routine.name"
+          [routerLink]="['/routines', item.routine.id]"
+        >
+          @if (item.routine.name) {
+            <span class="routine-name">{{ item.routine.name }}</span>
+          }
           <span class="routine-anchor">
             <span class="anchor-dot" aria-hidden="true"></span>{{ item.routine.anchor }}
           </span>

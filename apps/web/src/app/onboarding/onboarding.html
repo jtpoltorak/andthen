@@ -51,7 +51,41 @@
       <h1 tabindex="-1">Small habits, linked to what you already do.</h1>
       <p class="lede">Start with one tiny habit. No account, no setup marathon.</p>
       <button type="button" class="btn-primary" (click)="go('habit')">Get started</button>
+      <button type="button" class="btn-secondary" (click)="go('template')">
+        Or pick a ready-made routine
+      </button>
       <app-data-backup class="restore" restoreOnly (restored)="afterRestore()" />
+    </main>
+  }
+
+  @case ('template') {
+    <main class="screen">
+      <div class="topbar">
+        <button type="button" class="back" aria-label="Back" (click)="go('welcome')">
+          <svg
+            width="22"
+            height="22"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+          >
+            <path d="M15 5l-7 7 7 7" />
+          </svg>
+        </button>
+      </div>
+      <h1 class="step-title" tabindex="-1">Pick a ready-made routine</h1>
+      <p class="hint">
+        Each one is a few tiny habits after something you already do. Tap one to start. You can
+        change, reorder, or remove anything later.
+      </p>
+      <app-template-list [disabled]="saving()" (picked)="useTemplate($event)" />
+      <button type="button" class="btn-secondary build-own" (click)="go('habit')">
+        I'd rather build my own
+      </button>
     </main>
   }
 

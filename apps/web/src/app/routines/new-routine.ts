@@ -1,12 +1,18 @@
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
-import { STARTER_ANCHORS, suggestTwoMinuteVersion } from '@andthen/core';
+import {
+  type RoutineTemplate,
+  ROUTINE_TEMPLATES,
+  STARTER_ANCHORS,
+  suggestTwoMinuteVersion,
+} from '@andthen/core';
 import { HabitStore } from '../data/habit-store';
+import { TemplateList } from './template-list';
 
-/** Starts another routine: an anchor and its first habit, on one screen. */
+/** Starts another routine: an anchor and its first habit, or a whole ready-made routine. */
 @Component({
   selector: 'app-new-routine',
-  imports: [RouterLink],
+  imports: [RouterLink, TemplateList],
   template: `
     <main class="page">
       <a class="back-link" routerLink="/routines">‹ Routines</a>
@@ -64,6 +70,18 @@ import { HabitStore } from '../data/habit-store';
 
         <button type="submit" class="btn-primary" [disabled]="!canSave()">Add routine</button>
       </form>
+
+      @if (unusedTemplates().length) {
+        <section class="from-template" aria-labelledby="templates-title">
+          <h2 id="templates-title">Or start from a ready-made routine</h2>
+          <p class="hint">Tap one to add it. You can edit it right after.</p>
+          <app-template-list
+            [templates]="unusedTemplates()"
+            [disabled]="saving()"
+            (picked)="useTemplate($event)"
+          />
+        </section>
+      }
     </main>
   `,
   styleUrl: './routines.css',
@@ -76,17 +94,33 @@ export class NewRoutine {
   protected readonly anchor = signal('');
   protected readonly habit = signal('');
   protected readonly mini = signal('');
-  private readonly saving = signal(false);
+  protected readonly saving = signal(false);
 
   /** Starter anchors the person isn't already using. */
   protected readonly unusedAnchors = computed(() => {
     const used = new Set(this.store.activeRoutines().map((r) => r.anchor.toLowerCase()));
     return STARTER_ANCHORS.filter((a) => !used.has(a.anchor.toLowerCase()));
   });
+  /** Templates the person hasn't already added (matched by routine name). */
+  protected readonly unusedTemplates = computed(() => {
+    const used = new Set(this.store.activeRoutines().map((r) => r.name?.toLowerCase()));
+    return ROUTINE_TEMPLATES.filter((t) => !used.has(t.name.toLowerCase()));
+  });
   protected readonly suggestion = computed(() => suggestTwoMinuteVersion(this.habit()));
   protected readonly canSave = computed(
     () => !!this.anchor().trim() && !!this.habit().trim() && !this.saving(),
   );
+
+  protected async useTemplate(template: RoutineTemplate): Promise<void> {
+    if (this.saving()) return;
+    this.saving.set(true);
+    try {
+      const routine = await this.store.createFromTemplate(template);
+      await this.router.navigate(['/routines', routine.id]);
+    } finally {
+      this.saving.set(false);
+    }
+  }
 
   protected async save(): Promise<void> {
     if (!this.canSave()) return;
