@@ -72,7 +72,7 @@ Sync is optional: the web app above works on its own. The sync server is a secon
    - `APP_ORIGIN` = `https://andthenhabits.com`
    - `RESEND_API_KEY` = your Resend API key (see "Sign-in emails" below). Until it's set, the API runs but sign-in answers "not set up yet".
 5. **Deploy.** The deploy log should show `Database is up to date.` from the pre-deploy step, then the server listening.
-6. **Domain.** **Settings → Networking → Custom Domain** → `api.andthenhabits.com`. In Cloudflare **DNS → Records**, add a `CNAME` named `api` pointing at the target Railway shows (plus its `TXT` record, if any), proxied, the same as the root domain.
+6. **Domain.** **Settings → Networking → Custom Domain** → `api.andthenhabits.com`. If Railway asks for a port, use the one in the deploy log's `Server listening at http://0.0.0.0:…` line (usually `8080`). Railway sets `PORT` for the service and the API listens on it, so don't add a `PORT` variable yourself. In Cloudflare **DNS → Records**, add a `CNAME` named `api` pointing at the target Railway shows (plus its `TXT` record, if any), proxied, the same as the root domain.
 7. **Check it:** <https://api.andthenhabits.com/health> should show `{"ok":true}`.
 
 **Watch the web service too.** Adding `apps/api` changes the shared lockfile, so the web service redeploys on the same merge. That's expected.
