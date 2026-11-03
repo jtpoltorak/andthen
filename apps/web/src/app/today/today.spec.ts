@@ -87,6 +87,36 @@ describe('Today', () => {
     expect(actions[0]).toMatch(/^Did 2 min/);
   });
 
+  it('highlights every habit missed yesterday, not just the next one', async () => {
+    const { root } = await setup({ startedYesterday: true });
+    expect(root.querySelectorAll('.badge')).toHaveLength(2);
+    expect(root.querySelectorAll('.ring-nudge')).toHaveLength(2);
+  });
+
+  it('drops the nudge once the habit is answered today', async () => {
+    const { fixture, root } = await setup({ startedYesterday: true });
+    buttonsByText(root, 'Did 2 min')[0].click();
+    await fixture.whenStable();
+    expect(root.querySelectorAll('.badge')).toHaveLength(1);
+  });
+
+  it('shows a collapsed routine has a habit to keep alive', async () => {
+    const { fixture, root } = await setup({ startedYesterday: true });
+    const store = TestBed.inject(HabitStore);
+    // A second routine, also started yesterday, shows collapsed below the open one.
+    const yesterday = new Date(Date.now() - 24 * 60 * 60 * 1000);
+    store.refreshDay(yesterday);
+    await store.createChain({
+      anchor: 'After I get home',
+      habitName: 'Walk',
+      twoMinuteVersion: 'Shoes on',
+    });
+    store.refreshDay(new Date());
+    await fixture.whenStable();
+    const collapsed = root.querySelector('.collapsed');
+    expect(collapsed?.textContent).toContain('1 habit to keep alive today');
+  });
+
   it('closes "+ and then..." with Escape and returns focus to it', async () => {
     const { fixture, root } = await setup();
     buttonsByText(root, '+ and then')[0].click();

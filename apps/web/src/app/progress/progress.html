@@ -136,6 +136,9 @@
           <dt>{{ row.retiredOn ? 'History' : 'Chain' }}</dt>
           <dd class="chain" [class.chain-on]="!row.retiredOn && row.stats.currentChain > 0">
             {{ chainLabel(row) }}
+            @if (!row.retiredOn && row.stats.atRisk) {
+              <span class="sub at-risk">Missed yesterday. Today keeps it going.</span>
+            }
           </dd>
         </div>
         @if (!row.retiredOn && row.stats.bestChain > row.stats.currentChain) {

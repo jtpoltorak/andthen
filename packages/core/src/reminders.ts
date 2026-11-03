@@ -51,11 +51,14 @@ export function parseReminderPrefs(raw: unknown): ReminderPrefs {
 
 /** The gentle message for a routine: its anchor, then the next habit. No streak talk, no guilt. */
 export function reminderMessage(chain: Chain): { title: string; body: string } {
-  const next = chain.links.find((l) => l.isNext)?.habit;
+  const link = chain.links.find((l) => l.isNext);
+  const next = link?.habit;
   const title = chain.routine.anchor;
-  const body = next
-    ? `And then: ${next.name}. Even the 2-minute version counts.`
-    : 'Your routine is ready when you are.';
+  const body = !next
+    ? 'Your routine is ready when you are.'
+    : link.nudge === 'dont-miss-twice'
+      ? `And then: ${next.name}. Two minutes today keeps the chain alive.`
+      : `And then: ${next.name}. Even the 2-minute version counts.`;
   return { title, body };
 }
 

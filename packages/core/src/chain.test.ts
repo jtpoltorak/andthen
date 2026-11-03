@@ -4,6 +4,7 @@ import {
   buildDay,
   indexCheckIns,
   missedYesterday,
+  nudgeFor,
   nextOrder,
   pickActiveRoutine,
   removeCheckIn,
@@ -111,6 +112,58 @@ describe('missedYesterday (never miss twice)', () => {
     expect(missedYesterday(habit('water', 0, { createdOn: '2026-10-01' }), idx, '2026-11-01')).toBe(
       false,
     );
+  });
+});
+
+describe('nudgeFor and chain.atRisk', () => {
+  const water = habit('water', 0, { createdOn: '2026-10-01' });
+  const r = routine({ createdOn: '2026-10-01' });
+  const DAY_BEFORE = '2026-11-04';
+
+  it('says "don\'t miss twice" after one missed day', () => {
+    const idx = indexCheckIns([{ habitId: 'water', date: DAY_BEFORE, kind: 'full' }]);
+    expect(nudgeFor(water, r, idx, TODAY)).toBe('dont-miss-twice');
+  });
+
+  it('welcomes you back after two or more missed days', () => {
+    expect(nudgeFor(water, r, new Map(), TODAY)).toBe('welcome-back');
+  });
+
+  it('never nudges after a skip or a done day', () => {
+    for (const kind of ['skip', 'full', 'mini'] as const) {
+      const idx = indexCheckIns([{ habitId: 'water', date: YESTERDAY, kind }]);
+      expect(nudgeFor(water, r, idx, TODAY)).toBeUndefined();
+    }
+  });
+
+  it('does not nudge a habit that started today', () => {
+    expect(nudgeFor(habit('water', 0, { createdOn: TODAY }), r, new Map(), TODAY)).toBeUndefined();
+  });
+
+  it('treats a habit that started yesterday as one miss, not a comeback', () => {
+    const fresh = habit('water', 0, { createdOn: YESTERDAY });
+    expect(nudgeFor(fresh, r, new Map(), TODAY)).toBe('dont-miss-twice');
+  });
+
+  it('puts the nudge on every open link and counts the ones at risk', () => {
+    const habits = [water, habit('stretch', 1, { createdOn: '2026-10-01' })];
+    const checkIns = [
+      { habitId: 'water', date: DAY_BEFORE, kind: 'full' as const },
+      { habitId: 'stretch', date: DAY_BEFORE, kind: 'full' as const },
+    ];
+    const chain = buildChain(r, habits, indexCheckIns(checkIns), TODAY);
+    expect(chain.links.map((l) => l.nudge)).toEqual(['dont-miss-twice', 'dont-miss-twice']);
+    expect(chain.atRisk).toBe(2);
+
+    // Once a habit is answered today, its nudge goes away.
+    const answered = buildChain(
+      r,
+      habits,
+      indexCheckIns([...checkIns, { habitId: 'water', date: TODAY, kind: 'mini' }]),
+      TODAY,
+    );
+    expect(answered.links[0].nudge).toBeUndefined();
+    expect(answered.atRisk).toBe(1);
   });
 });
 
