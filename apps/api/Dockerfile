@@ -1,5 +1,8 @@
 # The AndThen sync API. Built from the repo root (Railway's default), because it
 # bundles @andthen/core from packages/core.
+# On Railway, the api service points at this file with Settings → Build →
+# Dockerfile Path = /apps/api/Dockerfile. Keep the repo root free of a
+# railway.json: Railway applies it to every service and would override that.
 
 FROM node:22-slim AS build
 WORKDIR /app
