@@ -23,7 +23,7 @@ docker run --rm -p 8080:8080 andthen   # http://localhost:8080
 ## One-time setup in Railway
 
 1. In Railway, **New Project → Deploy from GitHub repo → jtpoltorak/andthen**.
-2. Railway picks up `railway.json` and builds with the Dockerfile. No variables are needed (Railway sets `PORT` itself).
+2. Railway picks up `railway.json` and builds with the Dockerfile. Railway has deprecated `railway.json` (it stops working on 2026-12-01), so also set **Settings → Deploy → Healthcheck Path** to `/` in the dashboard; the start command below is already a dashboard setting. No variables are needed (Railway sets `PORT` itself).
    - Railway may notice the npm workspaces and offer (or create) one service per package, such as `@andthen/web` and `@andthen/core`. You only need **one** service: delete any extra ones, and in the one you keep make sure **Settings → Source → Root Directory** is empty or `/` (the Dockerfile builds the whole repo).
    - Railway's npm detection also fills in dashboard settings that fight the Dockerfile. Fix them in the service **Settings**:
      - **Deploy → Custom Start Command:** set it to `caddy run --config /etc/caddy/Caddyfile --adapter caddyfile`. (In practice the dashboard value won over `railway.json`, and clearing it didn't stick.)
@@ -52,11 +52,10 @@ Each domain is its own browser origin: data saved on the `up.railway.app` addres
 
 Sync is optional: the web app above works on its own. The sync server is a second Railway service, `api`, with a Postgres database next to it. Both live in the same Railway project as the web service.
 
-| File                    | Purpose                                                                                                                                                                        |
-| ----------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `apps/api/Dockerfile`   | Bundles the API (and `packages/core`) into `dist/` with esbuild, then runs it on a plain Node 22 image.                                                                        |
-| `apps/api/railway.json` | Build with that Dockerfile, run the database migrations before each deploy, health-check `/health`, and only redeploy when `apps/api`, `packages/core` or the lockfile change. |
-| `apps/api/drizzle/`     | The SQL migrations. `npm run db:generate -w @andthen/api` writes a new one after a change to `src/db/schema.ts`.                                                               |
+| File                  | Purpose                                                                                                          |
+| --------------------- | ---------------------------------------------------------------------------------------------------------------- |
+| `apps/api/Dockerfile` | Bundles the API (and `packages/core`) into `dist/` with esbuild, then runs it on a plain Node 22 image.          |
+| `apps/api/drizzle/`   | The SQL migrations. `npm run db:generate -w @andthen/api` writes a new one after a change to `src/db/schema.ts`. |
 
 ### One-time setup
 
@@ -64,9 +63,12 @@ Sync is optional: the web app above works on its own. The sync server is a secon
 2. **Add the api service.** **Create → GitHub Repo → jtpoltorak/andthen**. Rename the new service to `api`.
 3. In the `api` service's **Settings**:
    - **Source → Root Directory:** leave empty (the Dockerfile builds from the repo root).
-   - **Config-as-code → Railway Config File:** `/apps/api/railway.json`, with the leading slash (the path is from the repo root). This is what makes the service build the API instead of the web app. Check it took: **Build → Dockerfile Path** should now show `apps/api/Dockerfile` and **Deploy → Pre-deploy Command** `node dist/migrate.js`. If they don't, add the variable `RAILWAY_DOCKERFILE_PATH` = `apps/api/Dockerfile` as a fallback.
-   - **Build → Custom Build Command** and **Deploy → Custom Start Command:** clear them if Railway filled them in. `apps/api/railway.json` sets the start command, and the dashboard value would win over it (as it did for the web service).
-   - **Build → Watch Paths:** clear anything Railway filled in. `apps/api/railway.json` sets its own.
+   - **Build → Dockerfile Path:** `/apps/api/Dockerfile`. This is what makes the service build the API instead of the web app.
+   - **Build → Watch Paths:** `/apps/api/**`, `/packages/core/**` and `/package-lock.json`, so the API only redeploys when it changes.
+   - **Deploy → Pre-deploy step:** `node dist/migrate.js`. It brings the database up to date before each deploy, and a failed migration stops the deploy before new code takes traffic.
+   - **Deploy → Healthcheck Path:** `/health`.
+   - **Config-as-code:** leave empty. Railway has deprecated config files (`railway.json`), and a service that never used one can't opt in.
+   - **Build → Custom Build Command** and **Deploy → Custom Start Command:** leave empty, and clear them if Railway filled them in. The Dockerfile builds and starts the API.
 4. In the `api` service's **Variables**, add:
    - `DATABASE_URL` = `${{Postgres.DATABASE_URL}}` (a reference: pick it from the dropdown). It uses Railway's private network, so the database is never exposed to the internet.
    - `APP_ORIGIN` = `https://andthenhabits.com`
@@ -113,6 +115,6 @@ The API tests don't need any of that: they run against PGlite, a real Postgres c
 - **A merge to `main` didn't deploy:** check **Settings → Build → Watch Paths**. Use **Deployments → ⋮ → Deploy latest commit** to deploy by hand.
 - **The api deploy fails in the pre-deploy step:** a migration failed, and the previous version keeps running. The deploy log shows the SQL error. Check that `DATABASE_URL` is set as a reference to the Postgres service.
 - **Sign-in answers 503 `email_not_set_up`:** `RESEND_API_KEY` isn't set on the `api` service. `email_failed` means Resend refused: the deploy log shows why (often an unverified domain).
-- **`api.andthenhabits.com/health` shows the web app, and the api deploy log mentions Caddy:** the api service built the web app's Dockerfile, so it isn't reading `/apps/api/railway.json`. Set the config file path (with the leading slash), clear any `caddy` start command, and redeploy.
+- **`api.andthenhabits.com/health` shows the web app, and the api deploy log mentions Caddy:** the api service built the web app's Dockerfile. Set **Build → Dockerfile Path** to `/apps/api/Dockerfile`, clear any `caddy` start command, and redeploy.
 - **`/health` answers 503:** the API is up but can't reach Postgres. Check the `DATABASE_URL` reference and that the Postgres service is running.
 - **Too many redirects on the custom domain:** Cloudflare SSL/TLS mode is set to Flexible; change it to Full.
