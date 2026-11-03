@@ -28,6 +28,7 @@ const goodBackup = () =>
         { habitId: 'h1', date: '2026-10-02', kind: 'full' },
         { habitId: 'h1', date: '2026-10-05', kind: 'mini' },
       ],
+      reflections: [],
     }),
   );
 

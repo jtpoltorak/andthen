@@ -38,6 +38,14 @@ const sample = (): BackupData => ({
     { habitId: 'h1', date: '2026-10-02', kind: 'full' },
     { habitId: 'h1', date: '2026-10-03', kind: 'skip' },
   ],
+  reflections: [
+    {
+      week: '2026-09-28',
+      wentWell: 'Stretched most days',
+      tweak: 'Water by the bed',
+      savedOn: '2026-10-04',
+    },
+  ],
 });
 
 const file = (over: Record<string, unknown> = {}) =>
@@ -109,6 +117,25 @@ describe('parseBackup', () => {
     expect(result.ok && result.data.habits.every((h) => !('obstacle' in h))).toBe(true);
   });
 
+  it('keeps weekly reflections', () => {
+    const result = parseBackup(file());
+    expect(result.ok && result.data.reflections).toEqual(sample().reflections);
+  });
+
+  it('reads older backups that have no reflections', () => {
+    const backup = createBackup(sample()) as unknown as { data: Record<string, unknown> };
+    delete backup.data['reflections'];
+    const result = parseBackup(backup);
+    expect(result.ok && result.data.reflections).toEqual([]);
+  });
+
+  it('rejects two reflections for the same week', () => {
+    const backup = createBackup(sample());
+    backup.data.reflections.push({ ...backup.data.reflections[0] });
+    const result = parseBackup(backup);
+    expect(!result.ok && result.error).toContain('two reflections');
+  });
+
   it('rejects a note that is not text', () => {
     const backup = createBackup(sample());
     (backup.data.habits[0] as unknown as Record<string, unknown>)['obstacle'] = 42;
@@ -158,7 +185,9 @@ describe('parseBackup', () => {
   });
 
   it('accepts an empty backup', () => {
-    const result = parseBackup(createBackup({ routines: [], habits: [], checkIns: [] }));
+    const result = parseBackup(
+      createBackup({ routines: [], habits: [], checkIns: [], reflections: [] }),
+    );
     expect(result.ok && result.summary.firstDay).toBeUndefined();
   });
 });

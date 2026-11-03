@@ -196,6 +196,19 @@
     </section>
   }
 
+  @if (reflection.show()) {
+    <section class="reflect-card" aria-labelledby="reflect-title">
+      <h2 id="reflect-title">Weekly reflection</h2>
+      <p>Two minutes: what went well, and what could be easier next week?</p>
+      <div class="reflect-actions">
+        <a class="reflect-go" routerLink="/reflect">Reflect</a>
+        <button type="button" class="reflect-later" (click)="reflection.dismiss()">
+          Not this week
+        </button>
+      </div>
+    </section>
+  }
+
   @if (chains().length) {
     <p class="footnote">Missed a day? No streak to lose. Just don't miss twice.</p>
   }

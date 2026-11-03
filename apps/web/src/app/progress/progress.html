@@ -21,6 +21,7 @@
         Small and steady beats big and rare.
       }
     </p>
+    <a class="reflect-link" routerLink="/reflect">Reflect on your week</a>
   </section>
 
   @if (sections().length || retiredSections().length) {
@@ -49,6 +50,23 @@
         <ng-container
           *ngTemplateOutlet="routineCard; context: { $implicit: section }"
         ></ng-container>
+      }
+    </details>
+  }
+
+  @if (reflections().length) {
+    <details class="retired">
+      <summary>Past reflections ({{ reflections().length }})</summary>
+      @for (r of reflections(); track r.week) {
+        <div class="reflection">
+          <h3 class="reflection-week">Week of {{ shortDate(r.week) }}</h3>
+          @if (r.wentWell) {
+            <p><span class="reflection-label">Went well:</span> {{ r.wentWell }}</p>
+          }
+          @if (r.tweak) {
+            <p><span class="reflection-label">Tweak:</span> {{ r.tweak }}</p>
+          }
+        </div>
       }
     </details>
   }

@@ -18,6 +18,7 @@ import {
 import { RouterLink } from '@angular/router';
 import { HabitStore } from '../data/habit-store';
 import { PreferencesStore } from '../data/preferences';
+import { ReflectionPrompt } from '../reflection/reflection-prompt';
 import { Autofocus, byId, focusAfterRender } from '../shared/focus';
 
 const lowerFirst = (text: string) => (text ? text.charAt(0).toLowerCase() + text.slice(1) : '');
@@ -41,6 +42,7 @@ export class Today {
   protected readonly draft = signal('');
 
   protected readonly chains = this.store.chains;
+  protected readonly reflection = inject(ReflectionPrompt);
   private readonly preferences = inject(PreferencesStore);
 
   /** "Good morning, Sam" when there's a name; nothing extra when there isn't. */

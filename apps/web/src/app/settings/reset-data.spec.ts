@@ -85,7 +85,12 @@ describe('ResetData', () => {
 
     expect(store.routines()).toEqual([]);
     expect(store.checkIns()).toEqual([]);
-    expect(await repo.loadAll()).toEqual({ routines: [], habits: [], checkIns: [] });
+    expect(await repo.loadAll()).toEqual({
+      routines: [],
+      habits: [],
+      checkIns: [],
+      reflections: [],
+    });
     expect(prefs.prefs()).toEqual({ name: '', theme: 'system', weekStartsOn: 1 });
     expect(reminders.prefs().enabled).toBe(false);
     expect(localStorage.getItem('andthen.prefs')).toBeNull();

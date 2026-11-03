@@ -3,6 +3,7 @@ import { onlyNewUsers, requireRoutines } from './data/guards';
 import { Onboarding } from './onboarding/onboarding';
 import { ChainEditor } from './routines/chain-editor';
 import { Progress } from './progress/progress';
+import { Reflection } from './reflection/reflection';
 import { NewRoutine } from './routines/new-routine';
 import { Routines } from './routines/routines';
 import { Settings } from './settings/settings';
@@ -27,6 +28,7 @@ export const routes: Routes = [
       { path: 'routines/new', component: NewRoutine, title: 'New routine · AndThen' },
       { path: 'routines/:id', component: ChainEditor, title: 'Edit routine · AndThen' },
       { path: 'progress', component: Progress, title: 'Progress · AndThen' },
+      { path: 'reflect', component: Reflection, title: 'Weekly reflection · AndThen' },
       { path: 'settings', component: Settings, title: 'Settings · AndThen' },
     ],
   },

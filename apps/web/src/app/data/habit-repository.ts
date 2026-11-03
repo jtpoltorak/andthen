@@ -1,10 +1,11 @@
 import { InjectionToken } from '@angular/core';
-import type { CheckIn, DayKey, Habit, Routine } from '@andthen/core';
+import type { CheckIn, DayKey, Habit, Reflection, Routine } from '@andthen/core';
 
 export interface HabitSnapshot {
   routines: Routine[];
   habits: Habit[];
   checkIns: CheckIn[];
+  reflections: Reflection[];
 }
 
 /**
@@ -20,6 +21,8 @@ export interface HabitRepository {
   putHabits(habits: readonly Habit[]): Promise<void>;
   putCheckIn(checkIn: CheckIn): Promise<void>;
   deleteCheckIn(habitId: string, date: DayKey): Promise<void>;
+  /** Saves (or replaces) the reflection for its week. */
+  putReflection(reflection: Reflection): Promise<void>;
   /** Replaces everything with a snapshot, all or nothing (used to restore a backup). */
   replaceAll(snapshot: HabitSnapshot): Promise<void>;
 }
@@ -31,7 +34,7 @@ export class InMemoryHabitRepository implements HabitRepository {
   private data: HabitSnapshot;
 
   constructor(seed: Partial<HabitSnapshot> = {}) {
-    this.data = { routines: [], habits: [], checkIns: [], ...seed };
+    this.data = { routines: [], habits: [], checkIns: [], reflections: [], ...seed };
   }
 
   async loadAll(): Promise<HabitSnapshot> {
@@ -59,6 +62,13 @@ export class InMemoryHabitRepository implements HabitRepository {
     this.data.checkIns = this.data.checkIns.filter(
       (c) => !(c.habitId === habitId && c.date === date),
     );
+  }
+
+  async putReflection(reflection: Reflection): Promise<void> {
+    this.data.reflections = [
+      ...this.data.reflections.filter((r) => r.week !== reflection.week),
+      reflection,
+    ];
   }
 
   async replaceAll(snapshot: HabitSnapshot): Promise<void> {

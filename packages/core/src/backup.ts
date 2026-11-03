@@ -1,10 +1,13 @@
-import type { CheckIn, CheckInKind, DayKey, Habit, Routine } from './model';
+import type { CheckIn, CheckInKind, DayKey, Habit, Reflection, Routine } from './model';
+import { cleanNote } from './reflection';
 
 /** Everything AndThen stores on a device. */
 export interface BackupData {
   routines: Routine[];
   habits: Habit[];
   checkIns: CheckIn[];
+  /** Weekly reflections. Backups made before reflections existed don't have this list. */
+  reflections: Reflection[];
 }
 
 /** The JSON file written by "Back up my data". */
@@ -46,6 +49,7 @@ export function createBackup(data: BackupData, now = new Date()): BackupFile {
       checkIns: [...data.checkIns].sort(
         (a, b) => a.date.localeCompare(b.date) || a.habitId.localeCompare(b.habitId),
       ),
+      reflections: [...data.reflections].sort((a, b) => a.week.localeCompare(b.week)),
     },
   };
 }
@@ -168,6 +172,20 @@ function readCheckIn(raw: unknown, i: number): CheckIn {
   };
 }
 
+function readReflection(raw: unknown, i: number): Reflection {
+  const where = `Reflection ${i + 1}`;
+  if (!isObject(raw)) fail(`${where} isn't valid.`);
+  const reflection: Reflection = {
+    week: day(raw, 'week', where)!,
+    savedOn: day(raw, 'savedOn', where)!,
+  };
+  const wentWell = cleanNote(text(raw, 'wentWell', where, false));
+  if (wentWell) reflection.wentWell = wentWell;
+  const tweak = cleanNote(text(raw, 'tweak', where, false));
+  if (tweak) reflection.tweak = tweak;
+  return reflection;
+}
+
 function uniqueIds(items: { id: string }[], label: string): Set<string> {
   const ids = new Set<string>();
   for (const item of items) {
@@ -205,6 +223,9 @@ export function parseBackup(input: string | unknown): ParsedBackup {
     const routines = list(raw, 'routines').map(readRoutine);
     const habits = list(raw, 'habits').map(readHabit);
     const checkIns = list(raw, 'checkIns').map(readCheckIn);
+    // Optional: older backups were made before weekly reflections.
+    const reflections =
+      raw['reflections'] === undefined ? [] : list(raw, 'reflections').map(readReflection);
 
     const routineIds = uniqueIds(routines, 'routines');
     const habitIds = uniqueIds(habits, 'habits');
@@ -220,8 +241,13 @@ export function parseBackup(input: string | unknown): ParsedBackup {
       if (seen.has(key)) fail(`A habit has two check-ins on ${c.date}.`);
       seen.add(key);
     }
+    const weeks = new Set<DayKey>();
+    for (const r of reflections) {
+      if (weeks.has(r.week)) fail(`There are two reflections for the week of ${r.week}.`);
+      weeks.add(r.week);
+    }
 
-    const data: BackupData = { routines, habits, checkIns };
+    const data: BackupData = { routines, habits, checkIns, reflections };
     const exportedAt = typeof json['exportedAt'] === 'string' ? json['exportedAt'] : undefined;
     return { ok: true, data, summary: summarizeBackup(data, exportedAt) };
   } catch (e) {
