@@ -6,6 +6,7 @@ import { HabitStore } from './data/habit-store';
 import { PreferencesStore } from './data/preferences';
 import { Reminders } from './reminders/reminders';
 import { focusAfterRender } from './shared/focus';
+import { SyncService } from './sync/sync.service';
 
 /** The new screen's main heading, made focusable so focus can move to it. */
 function pageHeading(): HTMLElement | null {
@@ -40,6 +41,8 @@ export class App {
 
   constructor() {
     this.reminders.start();
+    // Does nothing unless sync was turned on, on this device.
+    void inject(SyncService).start();
 
     // After moving to another screen, put focus on its heading. Without this, focus stays on
     // the link that was pressed (or drops to the page), and screen readers don't hear the change.

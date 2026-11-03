@@ -10,6 +10,10 @@ export interface SyncStateRow {
   enabled: boolean;
   /** The server cursor from the last successful sync. */
   cursor: number;
+  /** The signed-in account's email, while sync is on. */
+  email?: string;
+  /** The session token from signing in, while sync is on. Sent as a Bearer token. */
+  token?: string;
 }
 
 /** The on-device database (IndexedDB), named `andthen`. */

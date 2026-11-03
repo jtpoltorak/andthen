@@ -14,7 +14,9 @@ export const appConfig: ApplicationConfig = {
       // Each screen opens at the top; Back returns to where you were.
       withInMemoryScrolling({ scrollPositionRestoration: 'enabled' }),
     ),
-    { provide: HABIT_REPOSITORY, useFactory: () => new SyncingHabitRepository() },
+    // One repository, reachable two ways: screens see the plain interface, sync sees the rest.
+    { provide: SyncingHabitRepository, useFactory: () => new SyncingHabitRepository() },
+    { provide: HABIT_REPOSITORY, useExisting: SyncingHabitRepository },
     provideServiceWorker('ngsw-worker.js', {
       enabled: !isDevMode(),
       registrationStrategy: 'registerWhenStable:30000',

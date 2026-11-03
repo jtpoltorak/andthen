@@ -24,6 +24,14 @@ export interface SyncStatus {
   cursor: number;
   /** Changes waiting to be sent. */
   pending: number;
+  /** The signed-in account's email, while sync is on. */
+  email?: string;
+}
+
+/** The account this device is signed in to. */
+export interface SyncAccount {
+  email: string;
+  token: string;
 }
 
 const STATE_KEY = 'state' as const;
@@ -38,6 +46,9 @@ const STATE_KEY = 'state' as const;
  * uses `pendingChanges`, `acknowledge` and `applyRemote`.
  */
 export class SyncingHabitRepository extends DexieHabitRepository {
+  /** Called after a local edit was queued for sending. The sync engine uses it to sync soon. */
+  onLocalChange?: () => void;
+
   constructor(
     db = new AndThenDb(),
     private readonly now: () => number = Date.now,
@@ -100,18 +111,21 @@ export class SyncingHabitRepository extends DexieHabitRepository {
   /** Restoring a backup syncs too: every restored record, and a tombstone for each one it removed. */
   override async replaceAll(snapshot: HabitSnapshot): Promise<void> {
     const { routines, habits, checkIns, reflections } = this.db;
-    await this.db.transaction(
-      'rw',
-      [routines, habits, checkIns, reflections, this.db.outbox, this.db.syncState],
-      async () => {
-        const state = await this.enabledState();
-        const before = state ? await this.loadAll() : undefined;
-        await super.replaceAll(snapshot);
-        if (state && before) {
-          await this.enqueue(replaceChanges(before, snapshot, state.deviceId, this.now()));
-        }
-      },
-    );
+    await this.db
+      .transaction(
+        'rw',
+        [routines, habits, checkIns, reflections, this.db.outbox, this.db.syncState],
+        async () => {
+          const state = await this.enabledState();
+          const before = state ? await this.loadAll() : undefined;
+          await super.replaceAll(snapshot);
+          if (state && before) {
+            await this.enqueue(replaceChanges(before, snapshot, state.deviceId, this.now()));
+          }
+          return !!state;
+        },
+      )
+      .then((queued) => queued && this.onLocalChange?.());
   }
 
   /** Where sync stands on this device. */
@@ -125,14 +139,26 @@ export class SyncingHabitRepository extends DexieHabitRepository {
       deviceId: state?.deviceId,
       cursor: state?.cursor ?? 0,
       pending,
+      ...(state?.enabled && state.email ? { email: state.email } : {}),
     };
+  }
+
+  /** The session token, while sync is on. */
+  async token(): Promise<string | undefined> {
+    return (await this.enabledState())?.token;
   }
 
   /**
    * Turns sync on and queues every record on the device, so the first sync
    * merges this device's data with the account's instead of overwriting either.
+   *
+   * The records are stamped as the oldest possible edit (time 0). Records the
+   * account doesn't have yet are added, but where the account already has a
+   * copy, the account's copy wins. That matters when sync is turned back on
+   * after a break: this device's older copies must not overwrite edits made
+   * on other devices in the meantime.
    */
-  async enable(): Promise<void> {
+  async enable(account?: SyncAccount): Promise<void> {
     const { routines, habits, checkIns, reflections, outbox, syncState } = this.db;
     await this.db.transaction(
       'rw',
@@ -144,20 +170,31 @@ export class SyncingHabitRepository extends DexieHabitRepository {
           deviceId: existing?.deviceId ?? crypto.randomUUID(),
           enabled: true,
           cursor: 0,
+          ...account,
         };
         await syncState.put(state);
         await outbox.clear();
-        await this.enqueue(snapshotChanges(await this.loadAll(), state.deviceId, this.now()));
+        await this.enqueue(snapshotChanges(await this.loadAll(), state.deviceId, 0));
       },
     );
   }
 
-  /** Turns sync off on this device. Local data stays; anything not yet sent is dropped. */
+  /**
+   * Turns sync off on this device and forgets the account. Local data stays;
+   * anything not yet sent is dropped. The device id is kept.
+   */
   async disable(): Promise<void> {
     await this.db.transaction('rw', [this.db.outbox, this.db.syncState], async () => {
       await this.db.outbox.clear();
       const state = await this.db.syncState.get(STATE_KEY);
-      if (state) await this.db.syncState.put({ ...state, enabled: false, cursor: 0 });
+      if (state) {
+        await this.db.syncState.put({
+          key: STATE_KEY,
+          deviceId: state.deviceId,
+          enabled: false,
+          cursor: 0,
+        });
+      }
     });
   }
 
@@ -222,11 +259,17 @@ export class SyncingHabitRepository extends DexieHabitRepository {
     save: () => Promise<void>,
     changes: (deviceId: string) => SyncChange[],
   ): Promise<void> {
-    await this.db.transaction('rw', [...tables, this.db.outbox, this.db.syncState], async () => {
-      await save();
-      const state = await this.enabledState();
-      if (state) await this.enqueue(changes(state.deviceId));
-    });
+    const queued = await this.db.transaction(
+      'rw',
+      [...tables, this.db.outbox, this.db.syncState],
+      async () => {
+        await save();
+        const state = await this.enabledState();
+        if (state) await this.enqueue(changes(state.deviceId));
+        return !!state;
+      },
+    );
+    if (queued) this.onLocalChange?.();
   }
 
   private async enabledState(): Promise<SyncStateRow | undefined> {

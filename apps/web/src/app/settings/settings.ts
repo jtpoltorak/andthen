@@ -3,11 +3,12 @@ import { DataBackup } from './data-backup';
 import { PreferenceSettings } from './preference-settings';
 import { ReminderSettings } from './reminder-settings';
 import { ResetData } from './reset-data';
+import { SyncSettings } from '../sync/sync-settings';
 
 /** Settings tab: preferences, reminders, backup, and starting over. */
 @Component({
   selector: 'app-settings',
-  imports: [PreferenceSettings, ReminderSettings, DataBackup, ResetData],
+  imports: [PreferenceSettings, ReminderSettings, DataBackup, ResetData, SyncSettings],
   template: `
     <main class="page">
       <h1>Settings</h1>
@@ -20,6 +21,11 @@ import { ResetData } from './reset-data';
       <section aria-labelledby="reminders-heading">
         <h2 id="reminders-heading">Reminders</h2>
         <app-reminder-settings />
+      </section>
+
+      <section aria-labelledby="sync-heading">
+        <h2 id="sync-heading">Sync across devices</h2>
+        <app-sync-settings />
       </section>
 
       <section aria-labelledby="data-heading">

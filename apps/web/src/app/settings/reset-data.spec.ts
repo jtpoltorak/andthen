@@ -5,6 +5,8 @@ import { HabitStore } from '../data/habit-store';
 import { PreferencesStore } from '../data/preferences';
 import { Notifier } from '../reminders/notifier';
 import { Reminders } from '../reminders/reminders';
+import { signal } from '@angular/core';
+import { SyncService } from '../sync/sync.service';
 import { ResetData } from './reset-data';
 
 const button = (root: HTMLElement, text: string) =>
@@ -19,14 +21,22 @@ const fakeNotifier = {
 describe('ResetData', () => {
   beforeEach(() => localStorage.clear());
 
-  async function setup() {
+  async function setup(syncOn = false) {
     const repo = new InMemoryHabitRepository();
+    const order: string[] = [];
+    const sync = {
+      enabled: signal(syncOn),
+      turnOff: vi.fn(async () => {
+        order.push(`sync off with ${(await repo.loadAll()).routines.length} routine(s)`);
+      }),
+    };
     TestBed.configureTestingModule({
       imports: [ResetData],
       providers: [
         provideRouter([{ path: 'welcome', children: [] }]),
         { provide: HABIT_REPOSITORY, useValue: repo },
         { provide: Notifier, useValue: fakeNotifier },
+        { provide: SyncService, useValue: sync },
       ],
     });
     const store = TestBed.inject(HabitStore);
@@ -48,7 +58,16 @@ describe('ResetData', () => {
 
     const fixture = TestBed.createComponent(ResetData);
     await fixture.whenStable();
-    return { fixture, store, repo, prefs, reminders, root: fixture.nativeElement as HTMLElement };
+    return {
+      fixture,
+      store,
+      repo,
+      prefs,
+      reminders,
+      sync,
+      order,
+      root: fixture.nativeElement as HTMLElement,
+    };
   }
 
   async function openAndType(
@@ -108,5 +127,18 @@ describe('ResetData', () => {
 
     expect(button(root, 'Reset everything…')).toBeTruthy();
     expect(store.routines()).toHaveLength(1);
+  });
+
+  it('turns sync off before deleting, so the reset never reaches other devices', async () => {
+    const { fixture, store, sync, order, root } = await setup(true);
+    await openAndType(fixture, root, 'reset');
+    expect(root.textContent).toContain('This device will also stop syncing');
+
+    button(root, 'Delete everything')!.click();
+    await fixture.whenStable();
+
+    expect(sync.turnOff).toHaveBeenCalledTimes(1);
+    expect(order).toEqual(['sync off with 1 routine(s)']);
+    expect(store.routines()).toEqual([]);
   });
 });

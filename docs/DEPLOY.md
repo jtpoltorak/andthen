@@ -71,7 +71,7 @@ Sync is optional: the web app above works on its own. The sync server is a secon
    - **Build → Custom Build Command** and **Deploy → Custom Start Command:** leave empty, and clear them if Railway filled them in. The Dockerfile builds and starts the API.
 4. In the `api` service's **Variables**, add:
    - `DATABASE_URL` = `${{Postgres.DATABASE_URL}}` (a reference: pick it from the dropdown). It uses Railway's private network, so the database is never exposed to the internet.
-   - `APP_ORIGIN` = `https://andthenhabits.com`
+   - `APP_ORIGIN` = `https://andthenhabits.com`. This is the site allowed to call the API from the browser, and where the link in sign-in emails points. To sync from another address too (such as the `*.up.railway.app` one), list both, comma-separated, with the main one first.
    - `RAILWAY_DOCKERFILE_PATH` = `apps/api/Dockerfile`
    - `RESEND_API_KEY` = your Resend API key (see "Sign-in emails" below). Until it's set, the API runs but sign-in answers "not set up yet".
 5. **Deploy.** The deploy log should show `Database is up to date.` from the pre-deploy step, then the server listening.
@@ -105,6 +105,8 @@ npm run build:api && npm run db:migrate -w @andthen/api
 npm run start:api          # http://localhost:3000/health
                            # sign-in codes are printed here instead of emailed
 ```
+
+With the API running, `npm start` serves the app in dev mode, which talks to `http://localhost:3000` instead of `api.andthenhabits.com` (see `apps/web/src/app/sync/sync-api.ts`). Turn sync on in **Settings → Sync across devices** and copy the code from the API's log. The `.env` copied from `.env.example` already allows `http://localhost:4200` to call it.
 
 The API tests don't need any of that: they run against PGlite, a real Postgres compiled to WebAssembly, inside the test process.
 

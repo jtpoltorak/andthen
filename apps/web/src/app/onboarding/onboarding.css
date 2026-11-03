@@ -250,6 +250,15 @@ h1 {
 }
 
 /* "Restore from a backup" under Get started, for people moving to a new device. */
+.sign-in-link {
+  align-self: center;
+  min-height: 44px;
+  line-height: 44px;
+  color: var(--accent-ink);
+  font-size: 15px;
+  font-weight: 700;
+  text-align: center;
+}
 .restore {
   margin-top: 8px;
   align-items: center;

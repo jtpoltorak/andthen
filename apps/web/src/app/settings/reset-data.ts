@@ -12,6 +12,7 @@ import { HabitStore } from '../data/habit-store';
 import { clearLocalSettings } from '../data/local-store';
 import { PreferencesStore } from '../data/preferences';
 import { Reminders } from '../reminders/reminders';
+import { SyncService } from '../sync/sync.service';
 import { downloadBackup } from './data-backup';
 
 /** The word to type before the delete button wakes up. */
@@ -41,6 +42,9 @@ const plural = (n: number, word: string) => `${n} ${word}${n === 1 ? '' : 's'}`;
         <p>
           This deletes {{ summary() }}, plus your name, look and reminder settings, from this
           device. It can't be undone.
+          @if (sync.enabled()) {
+            This device will also stop syncing. Your account and other devices keep their copy.
+          }
         </p>
 
         @if (hasData()) {
@@ -179,6 +183,7 @@ export class ResetData {
   private readonly store = inject(HabitStore);
   private readonly preferences = inject(PreferencesStore);
   private readonly reminders = inject(Reminders);
+  protected readonly sync = inject(SyncService);
   private readonly router = inject(Router);
   private readonly injector = inject(Injector);
 
@@ -217,6 +222,9 @@ export class ResetData {
     this.busy.set(true);
     this.error.set('');
     try {
+      // Sync goes off first. Otherwise the reset would sync as deleting everything,
+      // on every device.
+      await this.sync.turnOff();
       await this.store.resetAll();
     } catch {
       this.busy.set(false);

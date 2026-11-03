@@ -6,7 +6,7 @@ import {
   inject,
   signal,
 } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import {
   type RoutineTemplate,
   STARTER_ANCHORS,
@@ -28,7 +28,7 @@ const lowerFirst = (text: string) => (text ? text.charAt(0).toLowerCase() + text
  */
 @Component({
   selector: 'app-onboarding',
-  imports: [DataBackup, TemplateList],
+  imports: [DataBackup, TemplateList, RouterLink],
   templateUrl: './onboarding.html',
   styleUrl: './onboarding.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
