@@ -117,6 +117,27 @@ describe('parseBackup', () => {
     expect(result.ok && result.data.habits.every((h) => !('obstacle' in h))).toBe(true);
   });
 
+  it('keeps habit schedules, and reads older habits without one as every day', () => {
+    const backup = createBackup(sample());
+    backup.data.habits[0].schedule = { kind: 'weekly', times: 3 };
+    const result = parseBackup(JSON.stringify(backup));
+    expect(result.ok && result.data.habits.find((h) => h.id === 'h1')?.schedule).toEqual({
+      kind: 'weekly',
+      times: 3,
+    });
+    expect(result.ok && 'schedule' in result.data.habits.find((h) => h.id === 'h2')!).toBe(false);
+  });
+
+  it('rejects a schedule it cannot read', () => {
+    const backup = createBackup(sample());
+    (backup.data.habits[0] as unknown as Record<string, unknown>)['schedule'] = {
+      kind: 'days',
+      days: [8],
+    };
+    const result = parseBackup(backup);
+    expect(!result.ok && result.error).toContain("schedule AndThen can't read");
+  });
+
   it('keeps weekly reflections', () => {
     const result = parseBackup(file());
     expect(result.ok && result.data.reflections).toEqual(sample().reflections);

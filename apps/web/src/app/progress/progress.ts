@@ -10,6 +10,7 @@ import {
   addDays,
   chainHabits,
   dayStatus,
+  describeSchedule,
   fromDayKey,
   habitSpan,
   habitStats,
@@ -41,6 +42,8 @@ interface HabitRow {
   gridLabel: string;
   /** Started in the last week, so most of the grid is still blank. */
   isNew: boolean;
+  /** "Weekdays", "3 times a week"... Empty for every day. */
+  schedule: string;
 }
 
 interface RoutineSection {
@@ -55,6 +58,7 @@ const STATUS_WORDS: Record<DayStatus, string> = {
   skip: 'skipped',
   missed: 'not checked in',
   open: 'not checked in yet',
+  rest: 'rest day',
   off: 'not in a routine',
 };
 
@@ -97,6 +101,9 @@ export class Progress {
       .sort((a, b) => b.week.localeCompare(a.week)),
   );
 
+  /** Shows "Rest day" in the legend once any habit has a schedule. */
+  protected readonly hasSchedules = computed(() => this.store.habits().some((h) => h.schedule));
+
   protected readonly sections = computed(() => {
     const today = this.store.today();
     return this.store.activeRoutines().map((routine): RoutineSection => {
@@ -134,9 +141,9 @@ export class Progress {
   });
 
   protected chainLabel(row: HabitRow): string {
-    const { currentChain, bestChain } = row.stats;
-    if (row.retiredOn) return bestChain ? `Best chain: ${plural(bestChain, 'day')}` : 'Retired';
-    if (currentChain) return plural(currentChain, 'day');
+    const { currentChain, bestChain, unit } = row.stats;
+    if (row.retiredOn) return bestChain ? `Best chain: ${plural(bestChain, unit)}` : 'Retired';
+    if (currentChain) return plural(currentChain, unit);
     return bestChain ? 'Pick it back up today' : 'Starts with one check-in';
   }
 
@@ -157,7 +164,7 @@ export class Progress {
     const weeks = weekGrid(lastDay < today ? lastDay : today, WEEKS, this.weekStartsOn()).map(
       (week) =>
         week.map((date): Dot => {
-          const status = dayStatus(habit, routine, index, date, today);
+          const status = dayStatus(habit, routine, index, date, today, this.weekStartsOn());
           return { date, status, title: `${shortDate(date)}: ${STATUS_WORDS[status]}` };
         }),
     );
@@ -174,10 +181,11 @@ export class Progress {
     return {
       habit,
       weeks,
-      stats: habitStats(habit, routine, index, today),
+      stats: habitStats(habit, routine, index, today, this.weekStartsOn()),
       retiredOn,
       gridLabel,
       isNew,
+      schedule: habit.schedule ? describeSchedule(habit.schedule) : '',
     };
   }
 }

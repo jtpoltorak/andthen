@@ -10,6 +10,7 @@ import { NgTemplateOutlet } from '@angular/common';
 import {
   type ChainLink,
   type CheckInKind,
+  addDays,
   fromDayKey,
   greeting,
   pickActiveRoutine,
@@ -41,7 +42,13 @@ export class Today {
   protected readonly addingTo = signal<string | undefined>(undefined);
   protected readonly draft = signal('');
 
-  protected readonly chains = this.store.chains;
+  /** Routines with something planned today. A routine whose habits all rest today is listed apart. */
+  protected readonly chains = computed(() =>
+    this.store.chains().filter((c) => c.total > 0 || c.resting === 0),
+  );
+  protected readonly resting = computed(() =>
+    this.store.chains().filter((c) => c.total === 0 && c.resting > 0),
+  );
   protected readonly reflection = inject(ReflectionPrompt);
   private readonly preferences = inject(PreferencesStore);
 
@@ -108,6 +115,13 @@ export class Today {
       default:
         return `Tiny version: ${lowerFirst(link.habit.twoMinuteVersion)}`;
     }
+  }
+
+  /** "Missed yesterday", or the weekday for a habit that isn't every day. */
+  protected missedLabel(link: ChainLink): string {
+    const on = link.missedOn;
+    if (!on || on === addDays(this.store.today(), -1)) return 'Missed yesterday';
+    return `Missed ${fromDayKey(on).toLocaleDateString(undefined, { weekday: 'long' })}`;
   }
 
   protected startAdding(routineId: string): void {

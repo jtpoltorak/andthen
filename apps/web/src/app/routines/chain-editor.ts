@@ -8,7 +8,27 @@ import {
   signal,
 } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
-import { type Habit, suggestTwoMinuteVersion } from '@andthen/core';
+import {
+  type Habit,
+  type Schedule,
+  MAX_TIMES_A_WEEK,
+  WEEKDAYS,
+  describeSchedule,
+  suggestTwoMinuteVersion,
+} from '@andthen/core';
+
+type ScheduleKind = 'daily' | 'days' | 'weekly';
+
+/** Day toggles, Monday first. Values are `Date.getDay()` numbers. */
+const DAY_TOGGLES = [
+  { value: 1, short: 'M', long: 'Monday' },
+  { value: 2, short: 'T', long: 'Tuesday' },
+  { value: 3, short: 'W', long: 'Wednesday' },
+  { value: 4, short: 'T', long: 'Thursday' },
+  { value: 5, short: 'F', long: 'Friday' },
+  { value: 6, short: 'S', long: 'Saturday' },
+  { value: 0, short: 'S', long: 'Sunday' },
+];
 import { HabitStore } from '../data/habit-store';
 import { Autofocus, byId, focusAfterRender } from '../shared/focus';
 
@@ -50,6 +70,18 @@ export class ChainEditor {
   protected readonly draftMini = signal('');
   protected readonly draftEasier = signal('');
   protected readonly draftObstacle = signal('');
+  protected readonly draftScheduleKind = signal<ScheduleKind>('daily');
+  protected readonly draftDays = signal<number[]>([...WEEKDAYS]);
+  protected readonly draftTimes = signal(3);
+
+  protected readonly dayToggles = DAY_TOGGLES;
+  protected readonly scheduleOptions: readonly { kind: ScheduleKind; label: string }[] = [
+    { kind: 'daily', label: 'Every day' },
+    { kind: 'days', label: 'Some days' },
+    { kind: 'weekly', label: 'Times a week' },
+  ];
+  protected readonly timesOptions = Array.from({ length: MAX_TIMES_A_WEEK }, (_, i) => i + 1);
+  protected readonly describeSchedule = describeSchedule;
 
   // The "+ and then..." form.
   protected readonly adding = signal(false);
@@ -84,6 +116,10 @@ export class ChainEditor {
     this.draftMini.set(habit.twoMinuteVersion);
     this.draftEasier.set(habit.makeItEasier ?? '');
     this.draftObstacle.set(habit.obstacle ?? '');
+    const schedule = habit.schedule;
+    this.draftScheduleKind.set(schedule?.kind ?? 'daily');
+    this.draftDays.set(schedule?.kind === 'days' ? [...schedule.days] : [...WEEKDAYS]);
+    this.draftTimes.set(schedule?.kind === 'weekly' ? schedule.times : 3);
     this.adding.set(false);
     this.editing.set({ kind: 'habit', id: habit.id });
   }
@@ -96,9 +132,39 @@ export class ChainEditor {
       twoMinuteVersion: this.draftMini().trim() || suggestTwoMinuteVersion(name),
       makeItEasier: this.draftEasier(),
       obstacle: this.draftObstacle(),
+      schedule: this.draftSchedule(),
     });
     this.cancel();
   }
+
+  /** The schedule the form describes. Undefined means every day. */
+  private draftSchedule(): Schedule | undefined {
+    switch (this.draftScheduleKind()) {
+      case 'days':
+        return { kind: 'days', days: this.draftDays() };
+      case 'weekly':
+        return { kind: 'weekly', times: this.draftTimes() };
+      default:
+        return undefined;
+    }
+  }
+
+  protected toggleDay(day: number): void {
+    this.draftDays.update((days) =>
+      days.includes(day) ? days.filter((d) => d !== day) : [...days, day],
+    );
+  }
+
+  protected setDays(days: readonly number[]): void {
+    this.draftDays.set([...days]);
+  }
+
+  protected readonly weekdays = WEEKDAYS;
+
+  /** "Some days" needs at least one day picked. */
+  protected readonly scheduleValid = computed(
+    () => this.draftScheduleKind() !== 'days' || this.draftDays().length > 0,
+  );
 
   protected async removeHabit(habit: Habit): Promise<void> {
     await this.store.archiveHabit(habit.id);

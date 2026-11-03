@@ -13,6 +13,8 @@ AndThen is a simple, low-friction habit app built around **routine chains**: pic
 
 Data stays on the device in IndexedDB (via [Dexie](https://dexie.org)). No account is needed. Screens talk to a `HabitRepository` interface, so a sync-backed store can be added later without touching the UI.
 
+Habits can run every day, on chosen days (like weekdays), or N times a week. Off days are rest days: they never count as a miss, so streaks, the "don't miss twice" nudge, Progress, reminders and backups all follow the schedule (`packages/core/src/schedule.ts`).
+
 Once a week (the last day of the week, with the next day as a grace day), Today offers a two-minute **weekly reflection**: how each habit went, a one-tap way to make a hard one easier (shrink it to its 2-minute version, move it to another anchor, or do it first), and two optional notes. The logic lives in `packages/core/src/reflection.ts`.
 
 Because data never leaves the browser, **Settings → Your data** can save everything to a JSON backup file and restore it later (also offered on the welcome screen, for a new device). The file format and its validation live in `packages/core/src/backup.ts`; restoring checks every record and asks before replacing anything.

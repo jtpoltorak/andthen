@@ -122,11 +122,11 @@ describe('nudgeFor and chain.atRisk', () => {
 
   it('says "don\'t miss twice" after one missed day', () => {
     const idx = indexCheckIns([{ habitId: 'water', date: DAY_BEFORE, kind: 'full' }]);
-    expect(nudgeFor(water, r, idx, TODAY)).toBe('dont-miss-twice');
+    expect(nudgeFor(water, r, idx, TODAY)?.nudge).toBe('dont-miss-twice');
   });
 
   it('welcomes you back after two or more missed days', () => {
-    expect(nudgeFor(water, r, new Map(), TODAY)).toBe('welcome-back');
+    expect(nudgeFor(water, r, new Map(), TODAY)?.nudge).toBe('welcome-back');
   });
 
   it('never nudges after a skip or a done day', () => {
@@ -142,7 +142,7 @@ describe('nudgeFor and chain.atRisk', () => {
 
   it('treats a habit that started yesterday as one miss, not a comeback', () => {
     const fresh = habit('water', 0, { createdOn: YESTERDAY });
-    expect(nudgeFor(fresh, r, new Map(), TODAY)).toBe('dont-miss-twice');
+    expect(nudgeFor(fresh, r, new Map(), TODAY)?.nudge).toBe('dont-miss-twice');
   });
 
   it('puts the nudge on every open link and counts the ones at risk', () => {

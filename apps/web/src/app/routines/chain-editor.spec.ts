@@ -137,4 +137,77 @@ describe('ChainEditor', () => {
     // "Up" is now disabled, so focus moves to its "down" arrow.
     expect(document.activeElement?.getAttribute('aria-label')).toBe('Move Stretch down');
   });
+
+  describe('how often', () => {
+    async function openEdit() {
+      const ctx = await setup();
+      const water = ctx.store.habitsOf(ctx.routine.id)[0];
+      (ctx.root.querySelector(`#edit-${water.id}`) as HTMLButtonElement).click();
+      await ctx.fixture.whenStable();
+      const radio = (label: string) =>
+        [...ctx.root.querySelectorAll<HTMLLabelElement>('.segment')]
+          .find((l) => l.textContent?.trim() === label)!
+          .querySelector('input')!;
+      const save = () => button(ctx.root, 'Save');
+      return { ...ctx, water, radio, save };
+    }
+
+    it('saves weekdays only, and shows it in the chain', async () => {
+      const { fixture, root, store, water, radio, save } = await openEdit();
+      radio('Some days').click();
+      await fixture.whenStable();
+      // Weekdays are picked to start with.
+      const pressed = [...root.querySelectorAll('.day[aria-pressed="true"]')];
+      expect(pressed.map((b) => b.getAttribute('aria-label'))).toEqual([
+        'Monday',
+        'Tuesday',
+        'Wednesday',
+        'Thursday',
+        'Friday',
+      ]);
+      save().click();
+      await fixture.whenStable();
+      expect(store.habits().find((h) => h.id === water.id)?.schedule).toEqual({
+        kind: 'days',
+        days: [1, 2, 3, 4, 5],
+      });
+      expect(root.textContent).toContain('Weekdays');
+    });
+
+    it('needs at least one day picked', async () => {
+      const { fixture, root, radio, save } = await openEdit();
+      radio('Some days').click();
+      await fixture.whenStable();
+      for (const day of root.querySelectorAll<HTMLButtonElement>('.day[aria-pressed="true"]')) {
+        day.click();
+      }
+      await fixture.whenStable();
+      expect(save().disabled).toBe(true);
+      expect(root.textContent).toContain('Pick at least one day.');
+    });
+
+    it('saves N times a week, and goes back to every day', async () => {
+      const { fixture, root, store, water, radio, save } = await openEdit();
+      radio('Times a week').click();
+      await fixture.whenStable();
+      const select = root.querySelector('select')!;
+      select.value = '2';
+      select.dispatchEvent(new Event('change'));
+      save().click();
+      await fixture.whenStable();
+      expect(store.habits().find((h) => h.id === water.id)?.schedule).toEqual({
+        kind: 'weekly',
+        times: 2,
+      });
+      expect(root.textContent).toContain('2 times a week');
+
+      (root.querySelector(`#edit-${water.id}`) as HTMLButtonElement).click();
+      await fixture.whenStable();
+      radio('Every day').click();
+      await fixture.whenStable();
+      save().click();
+      await fixture.whenStable();
+      expect('schedule' in store.habits().find((h) => h.id === water.id)!).toBe(false);
+    });
+  });
 });

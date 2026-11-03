@@ -356,3 +356,92 @@ fieldset {
   text-transform: uppercase;
   color: var(--accent-ink);
 }
+
+/* How often (habit schedule) */
+
+.schedule {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 0 0 12px;
+  padding: 0;
+  border: none;
+}
+.schedule legend {
+  padding: 0;
+}
+
+.segmented {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 4px;
+  padding: 4px;
+  border-radius: var(--radius-control);
+  background: var(--bg);
+}
+.segment {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 40px;
+  padding: 4px 6px;
+  border-radius: 10px;
+  color: var(--muted);
+  font-size: 14px;
+  font-weight: 700;
+  text-align: center;
+  cursor: pointer;
+}
+.segment.on {
+  background: var(--surface);
+  color: var(--accent-ink);
+  box-shadow: 0 1px 2px rgb(0 0 0 / 0.08);
+}
+.segment:has(input:focus-visible) {
+  outline: 3px solid var(--focus);
+  outline-offset: 2px;
+}
+
+.days {
+  display: flex;
+  gap: 6px;
+}
+.day {
+  flex: 1;
+  min-width: 0;
+  height: 40px;
+  border: 1.5px solid var(--input-border);
+  border-radius: 10px;
+  background: var(--surface);
+  color: var(--muted);
+  font-size: 14px;
+  font-weight: 700;
+}
+.day.on {
+  border-color: var(--accent);
+  background: var(--accent);
+  color: var(--on-accent);
+}
+.preset {
+  align-self: flex-start;
+  margin-top: -6px;
+  padding: 0;
+}
+
+.times {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 15px;
+  font-weight: 600;
+}
+.times select {
+  width: 84px;
+  height: 44px;
+  padding: 0 12px;
+}
+
+.schedule-sub {
+  color: var(--accent-ink);
+  font-weight: 600;
+}

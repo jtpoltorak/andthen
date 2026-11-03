@@ -195,3 +195,9 @@ h1 {
 .notes .btn-primary {
   margin-top: 4px;
 }
+.dot-rest {
+  width: 6px;
+  height: 6px;
+  margin: 3px;
+  background: var(--line);
+}

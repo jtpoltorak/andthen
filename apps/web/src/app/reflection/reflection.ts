@@ -16,6 +16,7 @@ import {
   summarize,
 } from '@andthen/core';
 import { HabitStore } from '../data/habit-store';
+import { PreferencesStore } from '../data/preferences';
 import { ReflectionPrompt } from './reflection-prompt';
 
 /** A one-tap change offered for a habit that had a hard week. */
@@ -52,6 +53,8 @@ export class Reflection {
   private readonly store = inject(HabitStore);
   private readonly router = inject(Router);
   private readonly prompt = inject(ReflectionPrompt);
+  private readonly preferences = inject(PreferencesStore);
+  private readonly weekStartsOn = computed(() => this.preferences.prefs().weekStartsOn);
 
   protected readonly maxLength = MAX_REFLECTION_LENGTH;
   protected readonly week = this.prompt.week;
@@ -89,18 +92,24 @@ export class Reflection {
     const week = this.week();
     const index = indexCheckIns(this.store.checkIns());
     const routines = this.store.activeRoutines();
-    return habitWeeks(routines, this.store.habits(), index, week, today).map((entry): HabitRow => {
-      const dots = [];
-      for (let d = week.from; d <= week.to; d = addDays(d, 1)) {
-        dots.push({ date: d, status: dayStatus(entry.habit, entry.routine, index, d, today) });
-      }
-      return {
-        ...entry,
-        dots,
-        summary: this.describe(entry),
-        tweaks: entry.struggling ? this.tweaksFor(entry.habit, routines) : [],
-      };
-    });
+    const startsOn = this.weekStartsOn();
+    return habitWeeks(routines, this.store.habits(), index, week, today, startsOn).map(
+      (entry): HabitRow => {
+        const dots = [];
+        for (let d = week.from; d <= week.to; d = addDays(d, 1)) {
+          dots.push({
+            date: d,
+            status: dayStatus(entry.habit, entry.routine, index, d, today, startsOn),
+          });
+        }
+        return {
+          ...entry,
+          dots,
+          summary: this.describe(entry),
+          tweaks: entry.struggling ? this.tweaksFor(entry.habit, routines) : [],
+        };
+      },
+    );
   });
 
   protected readonly bestRow = computed(() => {
@@ -111,7 +120,15 @@ export class Reflection {
   protected readonly hasStruggles = computed(() => this.rows().some((r) => r.struggling));
 
   private describe(row: HabitWeek): string {
-    if (row.done === row.days) return `Every day so far (${plural(row.done, 'day')})`;
+    if (row.target !== undefined) {
+      return row.done >= row.target
+        ? `Reached ${row.target} this week`
+        : `${row.done} of ${row.target} this week`;
+    }
+    if (row.done === row.days) {
+      const which = row.habit.schedule ? 'Every planned day' : 'Every day';
+      return `${which} so far (${plural(row.done, 'day')})`;
+    }
     const done = `${row.done} of ${row.days} days`;
     return row.mini ? `${done}, ${row.mini} as the 2-minute version` : done;
   }

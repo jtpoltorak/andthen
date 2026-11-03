@@ -135,4 +135,35 @@ describe('Today', () => {
     expect(root.textContent).toContain("Nothing on today's list");
     expect(root.querySelector('a')?.textContent?.trim()).toBe('Start a routine');
   });
+
+  describe('with schedules', () => {
+    it('leaves a resting habit off the list, and says when a whole routine rests', async () => {
+      const { fixture, root } = await setup();
+      const store = TestBed.inject(HabitStore);
+      const [water, stretch] = store.habitsOf(store.activeRoutines()[0].id);
+      const today = new Date(store.today() + 'T12:00:00').getDay();
+      const notToday = [0, 1, 2, 3, 4, 5, 6].filter((d) => d !== today);
+      await store.updateHabit(water.id, { schedule: { kind: 'days', days: notToday } });
+      await fixture.whenStable();
+      expect(root.textContent).not.toContain('Drink water');
+      expect(root.textContent).toContain('Stretch');
+
+      await store.updateHabit(stretch.id, { schedule: { kind: 'days', days: notToday } });
+      await fixture.whenStable();
+      expect(root.textContent).toContain('A rest day');
+      expect(root.textContent).toContain('Resting today: After I pour my coffee');
+    });
+
+    it('shows the week’s count for a times-a-week habit', async () => {
+      const { fixture, root } = await setup();
+      const store = TestBed.inject(HabitStore);
+      const [water] = store.habitsOf(store.activeRoutines()[0].id);
+      await store.updateHabit(water.id, { schedule: { kind: 'weekly', times: 3 } });
+      await fixture.whenStable();
+      expect(root.textContent).toContain('0 of 3 this week');
+      buttonsByText(root, 'Done')[0].click();
+      await fixture.whenStable();
+      expect(root.textContent).toContain('1 of 3 this week');
+    });
+  });
 });

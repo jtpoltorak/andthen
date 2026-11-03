@@ -15,15 +15,17 @@ import {
   chainHabits,
   moveItem,
   nextOrder,
+  normalizeSchedule,
   removeCheckIn,
   toDayKey,
   upsertCheckIn,
 } from '@andthen/core';
 import { HABIT_REPOSITORY } from './habit-repository';
+import { PreferencesStore } from './preferences';
 
 export type RoutineEdit = Partial<Pick<Routine, 'anchor' | 'usualTime' | 'name'>>;
 export type HabitEdit = Partial<
-  Pick<Habit, 'name' | 'twoMinuteVersion' | 'makeItEasier' | 'obstacle'>
+  Pick<Habit, 'name' | 'twoMinuteVersion' | 'makeItEasier' | 'obstacle' | 'schedule'>
 >;
 
 export interface ChainInput {
@@ -49,6 +51,7 @@ function trimmed<T extends object>(edit: T): T {
 @Injectable({ providedIn: 'root' })
 export class HabitStore {
   private readonly repo = inject(HABIT_REPOSITORY);
+  private readonly preferences = inject(PreferencesStore);
   private loading?: Promise<void>;
 
   readonly routines = signal<Routine[]>([]);
@@ -59,7 +62,13 @@ export class HabitStore {
 
   readonly hasRoutines = computed(() => this.routines().some((r) => !r.archivedOn));
   readonly chains = computed(() =>
-    buildDay(this.routines(), this.habits(), this.checkIns(), this.today()),
+    buildDay(
+      this.routines(),
+      this.habits(),
+      this.checkIns(),
+      this.today(),
+      this.preferences.prefs().weekStartsOn,
+    ),
   );
 
   /** Loads everything once; later calls reuse the same promise. */
@@ -183,6 +192,10 @@ export class HabitStore {
     // The optional notes are cleared by leaving them blank.
     if (!next.makeItEasier) delete next.makeItEasier;
     if (!next.obstacle) delete next.obstacle;
+    // No schedule means every day.
+    const schedule = normalizeSchedule(next.schedule);
+    if (schedule) next.schedule = schedule;
+    else delete next.schedule;
     await this.repo.putHabit(next);
     this.habits.update((list) => list.map((h) => (h.id === id ? next : h)));
   }

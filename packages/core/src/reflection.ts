@@ -1,5 +1,6 @@
 import { addDays } from './dates';
 import { dayStatus, habitSpan, weekStart } from './history';
+import { weeklyTarget } from './schedule';
 import type { CheckIn, DayKey, Habit, Reflection, Routine } from './model';
 import type { WeekStart } from './preferences';
 
@@ -40,8 +41,13 @@ export interface HabitWeek {
   done: number;
   mini: number;
   skips: number;
-  /** Days the habit was in a chain, up to yesterday, plus today once it's answered. */
+  /**
+   * Days the habit was planned, up to yesterday, plus today once it's answered.
+   * For an "N times a week" habit this is its weekly count instead.
+   */
   days: number;
+  /** Set for "N times a week" habits: the week's count. */
+  target?: number;
   /** True when the habit got done on fewer than half its days. A cue to make it easier, never a judgment. */
   struggling: boolean;
 }
@@ -53,6 +59,7 @@ export function habitWeeks(
   checkIns: ReadonlyMap<string, CheckIn>,
   week: ReflectionWeek,
   today: DayKey,
+  weekStartsOn: WeekStart = 1,
 ): HabitWeek[] {
   const last = week.to < today ? week.to : today;
   const result: HabitWeek[] = [];
@@ -76,15 +83,29 @@ export function habitWeeks(
         struggling: false,
       };
       for (let d = week.from; d <= last; d = addDays(d, 1)) {
-        const status = dayStatus(habit, routine, checkIns, d, today);
+        const status = dayStatus(habit, routine, checkIns, d, today, weekStartsOn);
         // Today only counts once it's answered, so an unfinished day never reads as a miss.
-        if (status === 'off' || status === 'open') continue;
+        // Rest days (by the habit's schedule) don't count either way.
+        if (status === 'off' || status === 'open' || status === 'rest') continue;
         entry.days++;
         if (status === 'full' || status === 'mini') entry.done++;
         if (status === 'mini') entry.mini++;
         if (status === 'skip') entry.skips++;
       }
-      if (entry.days === 0) continue; // Not in a chain this week (started later).
+      const target = weeklyTarget(habit.schedule);
+      if (target !== undefined) {
+        const { from } = habitSpan(habit, routine);
+        if (from > last) continue; // Not in a chain this week (starts later).
+        entry.target = target;
+        entry.days = target;
+        // Hard only once there's too little week left to reach half the count.
+        let daysLeft = 0;
+        for (let d = today; d <= week.to; d = addDays(d, 1)) daysLeft++;
+        entry.struggling = entry.done * 2 < target && entry.done + daysLeft < target;
+        result.push(entry);
+        continue;
+      }
+      if (entry.days === 0) continue; // Not in a chain this week (started later, or all rest days).
       // A few days are needed before "hard this week" means anything.
       entry.struggling = entry.days >= 3 && entry.done * 2 < entry.days;
       result.push(entry);

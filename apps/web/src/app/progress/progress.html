@@ -30,6 +30,9 @@
       <span><i class="dot dot-mini"></i>2 min</span>
       <span><i class="dot dot-skip"></i>Skipped</span>
       <span><i class="dot dot-missed"></i>No check-in</span>
+      @if (hasSchedules()) {
+        <span><i class="dot dot-rest"></i>Rest day</span>
+      }
     </div>
   }
 
@@ -107,6 +110,9 @@
   <div class="habit">
     <div class="habit-head">
       <h3 class="habit-name">{{ row.habit.name }}</h3>
+      @if (row.schedule) {
+        <span class="schedule-tag">{{ row.schedule }}</span>
+      }
       @if (row.retiredOn) {
         <span class="retired-tag">Retired {{ shortDate(row.retiredOn) }}</span>
       }
@@ -137,14 +143,21 @@
           <dd class="chain" [class.chain-on]="!row.retiredOn && row.stats.currentChain > 0">
             {{ chainLabel(row) }}
             @if (!row.retiredOn && row.stats.atRisk) {
-              <span class="sub at-risk">Missed yesterday. Today keeps it going.</span>
+              <span class="sub at-risk">{{
+                row.stats.unit === 'week'
+                  ? 'Last week fell short. This week keeps it going.'
+                  : 'Missed last time. The next one keeps it going.'
+              }}</span>
             }
           </dd>
         </div>
         @if (!row.retiredOn && row.stats.bestChain > row.stats.currentChain) {
           <div>
             <dt>Best</dt>
-            <dd>{{ row.stats.bestChain }} {{ row.stats.bestChain === 1 ? 'day' : 'days' }}</dd>
+            <dd>
+              {{ row.stats.bestChain }}
+              {{ row.stats.unit }}{{ row.stats.bestChain === 1 ? '' : 's' }}
+            </dd>
           </div>
         }
         <div>

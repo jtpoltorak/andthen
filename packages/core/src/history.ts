@@ -1,15 +1,20 @@
 import { addDays, fromDayKey } from './dates';
 import type { CheckIn, DayKey, Habit, Routine } from './model';
 import type { WeekStart } from './preferences';
+import { isPlannedDay, weeklyTarget } from './schedule';
 
 /**
  * How one habit went on one day.
  * - `full` / `mini` / `skip`: the check-in for that day.
  * - `missed`: the habit was in its chain but got no answer.
  * - `open`: today, not answered yet. Never counted against anyone.
+ * - `rest`: the habit's schedule didn't ask for it that day (an off day, or a weekly
+ *   habit on a day it wasn't done). Never counted for or against anyone.
  * - `off`: the habit wasn't in a chain that day (not started yet, retired, or in the future).
  */
-export type DayStatus = 'full' | 'mini' | 'skip' | 'missed' | 'open' | 'off';
+export type DayStatus = 'full' | 'mini' | 'skip' | 'missed' | 'open' | 'rest' | 'off';
+
+const isDone = (s: DayStatus) => s === 'full' || s === 'mini';
 
 export interface HabitDay {
   date: DayKey;
@@ -32,8 +37,10 @@ export interface HabitStats {
   skips: number;
   /** The most recent day done (full or 2-minute). */
   lastDone?: DayKey;
-  /** The chain is alive but the last finished day was a miss: one more and it ends. */
+  /** The chain is alive but the last finished day (or week) was a miss: one more and it ends. */
   atRisk: boolean;
+  /** What the chain counts: days, or weeks for an "N times a week" habit. */
+  unit: 'day' | 'week';
 }
 
 /** Totals across every habit for a span of days (e.g. this week). */
@@ -61,13 +68,44 @@ export function dayStatus(
   checkIns: ReadonlyMap<string, CheckIn>,
   day: DayKey,
   today: DayKey,
+  weekStartsOn: WeekStart = 1,
 ): DayStatus {
   // A check-in always wins, so history survives later edits to start or end dates.
   const kind = checkIns.get(`${habit.id}|${day}`)?.kind;
   if (kind && day <= today) return kind;
   const { from, until } = habitSpan(habit, routine);
   if (day > today || day < from || (until && day >= until)) return 'off';
+  if (!isPlannedDay(habit.schedule, day)) return 'rest';
+  const target = weeklyTarget(habit.schedule);
+  if (target !== undefined) {
+    // "N times a week": a day without a check-in is never a miss. Today stays open
+    // until the week's count is reached.
+    if (day < today) return 'rest';
+    return doneThisWeek(habit, checkIns, day, weekStartsOn, false) >= target ? 'rest' : 'open';
+  }
   return day === today ? 'open' : 'missed';
+}
+
+/**
+ * Days done (full or 2-minute) in the week that holds `day`, up to `day`.
+ * `includeDay` decides whether `day` itself counts.
+ */
+export function doneThisWeek(
+  habit: Habit,
+  checkIns: ReadonlyMap<string, CheckIn>,
+  day: DayKey,
+  weekStartsOn: WeekStart = 1,
+  includeDay = true,
+): number {
+  let done = 0;
+  for (
+    let d = weekStart(day, weekStartsOn);
+    d < day || (includeDay && d === day);
+    d = addDays(d, 1)
+  ) {
+    if (isDone(checkIns.get(`${habit.id}|${d}`)?.kind ?? 'off')) done++;
+  }
+  return done;
 }
 
 /** The habit's days from `from` to `to`, both inclusive. */
@@ -78,27 +116,35 @@ export function habitDays(
   from: DayKey,
   to: DayKey,
   today: DayKey,
+  weekStartsOn: WeekStart = 1,
 ): HabitDay[] {
   const days: HabitDay[] = [];
   for (let d = from; d <= to; d = addDays(d, 1)) {
-    days.push({ date: d, status: dayStatus(habit, routine, checkIns, d, today) });
+    days.push({ date: d, status: dayStatus(habit, routine, checkIns, d, today, weekStartsOn) });
   }
   return days;
 }
 
-const isDone = (s: DayStatus) => s === 'full' || s === 'mini';
+/** One step of a chain: a day, or a week for "N times a week" habits. */
+type Mark = 'done' | 'skip' | 'missed';
 
 /**
  * Lifetime stats for one habit. A chain starts on a day the habit is done and
- * keeps going through skips and single misses. Two misses in a row end it, and
- * neither of those two days counts toward its length.
+ * keeps going through skips, rest days and single misses. Two misses in a row end it,
+ * and neither of those two days counts toward its length.
+ *
+ * An "N times a week" habit chains whole weeks instead: a week that reaches its
+ * count is a link, a finished week that falls short is a miss, and the week in
+ * progress only counts once it's reached.
  */
 export function habitStats(
   habit: Habit,
   routine: Routine | undefined,
   checkIns: ReadonlyMap<string, CheckIn>,
   today: DayKey,
+  weekStartsOn: WeekStart = 1,
 ): HabitStats {
+  const target = weeklyTarget(habit.schedule);
   const stats: HabitStats = {
     currentChain: 0,
     bestChain: 0,
@@ -106,8 +152,9 @@ export function habitStats(
     mini: 0,
     skips: 0,
     atRisk: false,
+    unit: target === undefined ? 'day' : 'week',
   };
-  const { from } = habitSpan(habit, routine);
+  const { from, until } = habitSpan(habit, routine);
 
   // Include days with check-ins outside the span, in case dates were edited.
   let start = from;
@@ -115,18 +162,52 @@ export function habitStats(
     if (c.habitId === habit.id && c.date < start) start = c.date;
   }
 
-  let chain = 0; // Length of the running chain, 0 when none.
-  let pendingMiss = false; // A miss that hasn't been followed by a second one (yet).
-  for (const { date, status } of habitDays(habit, routine, checkIns, start, today, today)) {
-    if (status === 'off' || status === 'open') continue; // Today isn't over yet.
+  const marks: Mark[] = [];
+  for (const { date, status } of habitDays(
+    habit,
+    routine,
+    checkIns,
+    start,
+    today,
+    today,
+    weekStartsOn,
+  )) {
     if (status === 'full') stats.full++;
     if (status === 'mini') stats.mini++;
     if (status === 'skip') stats.skips++;
     if (isDone(status)) stats.lastDone = date;
+    if (target !== undefined) continue;
+    if (isDone(status)) marks.push('done');
+    else if (status === 'skip') marks.push('skip');
+    else if (status === 'missed') marks.push('missed');
+    // off, rest, and today while it's open don't move the chain.
+  }
 
-    if (status === 'missed') {
+  if (target !== undefined) {
+    const thisWeek = weekStart(today, weekStartsOn);
+    for (let week = weekStart(start, weekStartsOn); week <= thisWeek; week = addDays(week, 7)) {
+      const end = addDays(week, 6);
+      let done = 0;
+      let available = 0;
+      for (let d = week; d <= end; d = addDays(d, 1)) {
+        if (isDone(checkIns.get(`${habit.id}|${d}`)?.kind ?? 'off')) done++;
+        if (d >= from && (!until || d < until)) available++;
+      }
+      // A habit that starts (or ends) midweek only asks for what fits.
+      const need = Math.min(target, available);
+      if (need === 0 && done === 0) continue;
+      if (done >= need) marks.push('done');
+      else if (end < today) marks.push('missed');
+      // The current week, not reached yet: still open.
+    }
+  }
+
+  let chain = 0; // Length of the running chain, 0 when none.
+  let pendingMiss = false; // A miss that hasn't been followed by a second one (yet).
+  for (const mark of marks) {
+    if (mark === 'missed') {
       if (pendingMiss) {
-        // Second miss in a row: the chain ends without either missed day.
+        // Second miss in a row: the chain ends without either missed step.
         chain = 0;
         pendingMiss = false;
         continue;
@@ -134,13 +215,13 @@ export function habitStats(
       if (chain > 0) pendingMiss = true;
       continue;
     }
-    if (chain === 0 && !isDone(status)) continue; // Chains start with a done day.
+    if (chain === 0 && mark !== 'done') continue; // Chains start with a done step.
     if (pendingMiss) chain++; // The forgiven miss counts as part of the chain.
     pendingMiss = false;
     chain++;
     stats.bestChain = Math.max(stats.bestChain, chain);
   }
-  // A single trailing miss (yesterday) still leaves the chain alive and counted.
+  // A single trailing miss still leaves the chain alive and counted.
   stats.currentChain = chain + (pendingMiss ? 1 : 0);
   stats.atRisk = pendingMiss;
   stats.bestChain = Math.max(stats.bestChain, stats.currentChain);

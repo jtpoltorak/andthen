@@ -94,6 +94,71 @@
                   [value]="draftMini()"
                   (input)="draftMini.set($any($event.target).value)"
                 />
+                <fieldset class="schedule">
+                  <legend class="field-label">How often</legend>
+                  <div class="segmented" role="radiogroup" aria-label="How often">
+                    @for (option of scheduleOptions; track option.kind) {
+                      <label class="segment" [class.on]="draftScheduleKind() === option.kind">
+                        <input
+                          type="radio"
+                          class="visually-hidden"
+                          [name]="'often-' + habit.id"
+                          [checked]="draftScheduleKind() === option.kind"
+                          (change)="draftScheduleKind.set(option.kind)"
+                        />
+                        {{ option.label }}
+                      </label>
+                    }
+                  </div>
+                  @if (draftScheduleKind() === 'days') {
+                    <div class="days" role="group" aria-label="Days">
+                      @for (day of dayToggles; track day.value) {
+                        <button
+                          type="button"
+                          class="day"
+                          [class.on]="draftDays().includes(day.value)"
+                          [attr.aria-pressed]="draftDays().includes(day.value)"
+                          [attr.aria-label]="day.long"
+                          (click)="toggleDay(day.value)"
+                        >
+                          {{ day.short }}
+                        </button>
+                      }
+                    </div>
+                    <button type="button" class="btn-text preset" (click)="setDays(weekdays)">
+                      Weekdays only
+                    </button>
+                    @if (!scheduleValid()) {
+                      <p class="row-sub">Pick at least one day.</p>
+                    }
+                  } @else if (draftScheduleKind() === 'weekly') {
+                    <label class="times">
+                      <select
+                        class="text-input"
+                        [value]="draftTimes()"
+                        (change)="draftTimes.set(+$any($event.target).value)"
+                      >
+                        @for (n of timesOptions; track n) {
+                          <option [value]="n" [selected]="n === draftTimes()">{{ n }}</option>
+                        }
+                      </select>
+                      <span>{{ draftTimes() === 1 ? 'time' : 'times' }} a week, any days</span>
+                    </label>
+                  }
+                  <p class="row-sub">
+                    @switch (draftScheduleKind()) {
+                      @case ('days') {
+                        Other days are rest days. They never count as a miss.
+                      }
+                      @case ('weekly') {
+                        It stays on Today until you reach the week's count.
+                      }
+                      @default {
+                        A miss is fine. Just don't miss twice.
+                      }
+                    }
+                  </p>
+                </fieldset>
                 <details class="easier" [open]="!!habit.makeItEasier || !!habit.obstacle">
                   <summary>Make it easier <span class="optional">(optional)</span></summary>
                   <label class="field-label" [for]="'easier-' + habit.id">
@@ -122,7 +187,11 @@
                   />
                 </details>
                 <div class="form-actions">
-                  <button type="submit" class="btn-small" [disabled]="!draftName().trim()">
+                  <button
+                    type="submit"
+                    class="btn-small"
+                    [disabled]="!draftName().trim() || !scheduleValid()"
+                  >
                     Save
                   </button>
                   <button type="button" class="btn-text" (click)="cancel()">Cancel</button>
@@ -143,6 +212,9 @@
                 <div class="row-text">
                   <div class="habit-name">{{ habit.name }}</div>
                   <div class="row-sub">2 min: {{ habit.twoMinuteVersion }}</div>
+                  @if (habit.schedule) {
+                    <div class="row-sub schedule-sub">{{ describeSchedule(habit.schedule) }}</div>
+                  }
                   @if (habit.makeItEasier) {
                     <div class="row-sub">Easier: {{ habit.makeItEasier }}</div>
                   }
