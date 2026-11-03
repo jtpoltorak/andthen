@@ -1,6 +1,7 @@
 import cors from '@fastify/cors';
 import { sql } from 'drizzle-orm';
 import Fastify, { type FastifyInstance } from 'fastify';
+import { accountRoutes } from './account/routes';
 import { authRoutes } from './auth/routes';
 import type { Db } from './db/client';
 import type { Mailer } from './mail';
@@ -56,6 +57,7 @@ export async function buildApp({
     now,
   });
   await app.register(syncRoutes, { db, now, pageSize: syncPageSize });
+  await app.register(accountRoutes, { db, now });
 
   return app;
 }

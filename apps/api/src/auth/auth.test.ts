@@ -13,6 +13,7 @@ class FakeMailer implements Mailer {
   async sendSignInCode(to: string, code: string, link: string) {
     this.sent.push({ to, code, link });
   }
+  async sendInactiveWarning() {}
   last() {
     return this.sent.at(-1)!;
   }

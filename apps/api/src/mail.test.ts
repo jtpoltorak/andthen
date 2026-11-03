@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { ResendMailer, signInEmail } from './mail';
+import { ResendMailer, inactiveWarningEmail, signInEmail } from './mail';
 
 describe('ResendMailer', () => {
   it('posts the sign-in email to Resend with the API key', async () => {
@@ -34,5 +34,17 @@ describe('ResendMailer', () => {
 
   it('shows the code split in two, like 000 001', () => {
     expect(signInEmail('000001', 'l').subject).toBe('000 001 is your AndThen sign-in code');
+  });
+});
+
+describe('inactiveWarningEmail', () => {
+  it('names the deletion day and links to the app', () => {
+    const mail = inactiveWarningEmail(
+      new Date('2026-12-03T12:00:00Z'),
+      'https://andthenhabits.com',
+    );
+    expect(mail.subject).toBe('Your AndThen sync account will be deleted soon');
+    expect(mail.text).toContain('December 3, 2026');
+    expect(mail.html).toContain('href="https://andthenhabits.com"');
   });
 });

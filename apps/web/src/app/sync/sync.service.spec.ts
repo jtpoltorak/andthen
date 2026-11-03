@@ -39,6 +39,19 @@ class FakeServer {
       case '/v1/auth/logout':
         this.tokens.delete(token!);
         return reply(204);
+      case '/v1/export':
+        if (!token || !this.tokens.has(token)) return reply(401, { error: 'signed_out' });
+        return reply(200, {
+          app: 'andthen',
+          version: 1,
+          exportedAt: '2026-11-03T00:00:00.000Z',
+          data: { routines: [...this.records.values()].map((r) => r.change.data) },
+        });
+      case '/v1/me':
+        if (!token || !this.tokens.has(token)) return reply(401, { error: 'signed_out' });
+        this.tokens.clear();
+        this.records.clear();
+        return reply(204);
       case '/v1/sync':
         if (!token || !this.tokens.has(token)) return reply(401, { error: 'signed_out' });
         return reply(200, this.sync(body));
@@ -295,5 +308,45 @@ describe('SyncService', () => {
       .createChain({ anchor: 'X', habitName: 'Y', twoMinuteVersion: 'Z' });
     expect(soon).toHaveBeenCalled();
     sync.stop();
+  });
+
+  it('downloads what the account holds', async () => {
+    const phone = make();
+    await phone.store.load();
+    await phone.store.createChain({
+      anchor: 'After coffee',
+      habitName: 'Stretch',
+      twoMinuteVersion: 'Touch toes',
+    });
+    await phone.sync.signIn('sam@example.com', CODE);
+    const file = await phone.sync.exportAccount();
+    expect(file.app).toBe('andthen');
+    expect(server.calls.at(-1)).toBe('/v1/export');
+  });
+
+  it('deleting the account turns sync off and keeps the data on the device', async () => {
+    const phone = make();
+    await phone.store.load();
+    await phone.store.createChain({
+      anchor: 'After coffee',
+      habitName: 'Stretch',
+      twoMinuteVersion: 'Touch toes',
+    });
+    await phone.sync.signIn('sam@example.com', CODE);
+
+    await phone.sync.deleteAccount();
+    expect(server.records.size).toBe(0);
+    expect(phone.sync.enabled()).toBe(false);
+    expect(phone.sync.accountDeleted()).toBe(true);
+    expect((await phone.repo.status()).enabled).toBe(false);
+    expect((await phone.repo.loadAll()).routines).toHaveLength(1);
+  });
+
+  it('keeps sync on when deleting the account fails', async () => {
+    const phone = make();
+    await phone.sync.signIn('sam@example.com', CODE);
+    server.online = false;
+    await expect(phone.sync.deleteAccount()).rejects.toThrow();
+    expect(phone.sync.enabled()).toBe(true);
   });
 });

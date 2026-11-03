@@ -84,7 +84,7 @@ Sync is optional: the web app above works on its own. The sync server is a secon
 
 ### Sign-in emails (Resend)
 
-Sign-in codes are emailed through [Resend](https://resend.com) from `hello@andthenhabits.com`. That address only sends; it needs no inbox.
+Sign-in codes (and the inactive-account warnings below) are emailed through [Resend](https://resend.com) from `hello@andthenhabits.com`. Resend only sends. The privacy page also gives that address for questions, so forward replies to your own inbox with Cloudflare **Email → Email Routing** (free): add a custom address `hello` that forwards to your email, and let Cloudflare add the MX records it asks for. They don't clash with Resend's, which live on the `send` subdomain.
 
 1. Create a free Resend account and choose **Domains → Add Domain** → `andthenhabits.com`.
 2. Resend lists a few DNS records (an MX and TXT for a `send` subdomain, and a DKIM `TXT`). Add each in Cloudflare **DNS → Records** exactly as shown, with proxy **off** (grey cloud): email records can't be proxied.
@@ -93,6 +93,10 @@ Sign-in codes are emailed through [Resend](https://resend.com) from `hello@andth
 5. Test it: sign in from the app (once sync is in the app) or run
    `curl -X POST https://api.andthenhabits.com/v1/auth/email/start -H 'Content-Type: application/json' -d '{"email":"you@example.com"}'`
    and check your inbox (and spam folder, the first time).
+
+### Inactive accounts and housekeeping
+
+The API tidies up a minute after it starts and then once a day (`apps/api/src/cleanup.ts`). An account nobody has synced for 2 years minus 30 days gets a warning email. If it's still unused 30 days after that, it's deleted with all its data. Syncing at any point cancels the warning. If an email can't be sent (for example, before `RESEND_API_KEY` is set), that account is simply tried again the next day; nothing is deleted without a warning having gone out 30 days earlier. Expired sessions and sign-in codes are cleared at the same time. The deploy log shows a `Cleanup done` line with the counts.
 
 ### Running the API locally
 

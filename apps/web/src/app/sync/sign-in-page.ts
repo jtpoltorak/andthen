@@ -37,6 +37,7 @@ import { SyncService } from './sync.service';
           <app-sign-in-form [initialEmail]="email() ?? ''" (signedIn)="done()" />
         }
       }
+      <a class="privacy" routerLink="/privacy">How sync handles your data</a>
       <a class="back" routerLink="/">Not now</a>
     </main>
   `,
@@ -60,6 +61,10 @@ import { SyncService } from './sync.service';
     .error {
       color: var(--danger);
       font-weight: 600;
+    }
+    .privacy {
+      color: var(--accent-ink);
+      font-weight: 700;
     }
     .back {
       align-self: center;

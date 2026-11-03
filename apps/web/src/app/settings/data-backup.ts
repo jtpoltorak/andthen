@@ -38,10 +38,12 @@ const dayLabel = (day: string) =>
 
 /** Saves everything on this device as a JSON file in the downloads folder. Returns its name. */
 export function downloadBackup(store: HabitStore, now = new Date()): string {
-  const fileName = backupFileName(toDayKey(now));
-  const blob = new Blob([JSON.stringify(store.backup(now), null, 2)], {
-    type: 'application/json',
-  });
+  return downloadJson(backupFileName(toDayKey(now)), store.backup(now));
+}
+
+/** Saves a value as a JSON file in the downloads folder. Returns the file's name. */
+export function downloadJson(fileName: string, value: unknown): string {
+  const blob = new Blob([JSON.stringify(value, null, 2)], { type: 'application/json' });
   const url = URL.createObjectURL(blob);
   const link = document.createElement('a');
   link.href = url;

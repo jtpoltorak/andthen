@@ -7,6 +7,7 @@ import { Reflection } from './reflection/reflection';
 import { NewRoutine } from './routines/new-routine';
 import { Routines } from './routines/routines';
 import { Settings } from './settings/settings';
+import { Privacy } from './privacy/privacy';
 import { Shell } from './shell/shell';
 import { SignInPage } from './sync/sign-in-page';
 import { Today } from './today/today';
@@ -18,6 +19,7 @@ export const routes: Routes = [
     canActivate: [onlyNewUsers],
     title: 'Welcome · AndThen',
   },
+  { path: 'privacy', component: Privacy, title: 'Privacy · AndThen' },
   {
     // The link in the sign-in email lands here.
     path: 'sign-in',
