@@ -126,7 +126,15 @@ describe('habitStats', () => {
     // Done, done, missed yesterday, today still open.
     const today = addDays(START, 3);
     const s = habitStats(habit(), routine(), indexCheckIns(pattern('FF')), today);
-    expect(s.currentChain).toBe(3);
+    expect(s).toMatchObject({ currentChain: 3, atRisk: true });
+  });
+
+  it('is not at risk once today is done, or when the last day was a skip', () => {
+    const today = addDays(START, 3);
+    const done = habitStats(habit(), routine(), indexCheckIns(pattern('FF.F')), today);
+    expect(done.atRisk).toBe(false);
+    const skipped = habitStats(habit(), routine(), indexCheckIns(pattern('FFS')), today);
+    expect(skipped.atRisk).toBe(false);
   });
 
   it('does not count today until it is answered', () => {

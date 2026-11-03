@@ -32,6 +32,8 @@ export interface HabitStats {
   skips: number;
   /** The most recent day done (full or 2-minute). */
   lastDone?: DayKey;
+  /** The chain is alive but the last finished day was a miss: one more and it ends. */
+  atRisk: boolean;
 }
 
 /** Totals across every habit for a span of days (e.g. this week). */
@@ -97,7 +99,14 @@ export function habitStats(
   checkIns: ReadonlyMap<string, CheckIn>,
   today: DayKey,
 ): HabitStats {
-  const stats: HabitStats = { currentChain: 0, bestChain: 0, full: 0, mini: 0, skips: 0 };
+  const stats: HabitStats = {
+    currentChain: 0,
+    bestChain: 0,
+    full: 0,
+    mini: 0,
+    skips: 0,
+    atRisk: false,
+  };
   const { from } = habitSpan(habit, routine);
 
   // Include days with check-ins outside the span, in case dates were edited.
@@ -133,6 +142,7 @@ export function habitStats(
   }
   // A single trailing miss (yesterday) still leaves the chain alive and counted.
   stats.currentChain = chain + (pendingMiss ? 1 : 0);
+  stats.atRisk = pendingMiss;
   stats.bestChain = Math.max(stats.bestChain, stats.currentChain);
   return stats;
 }

@@ -64,6 +64,12 @@ describe('planReminders', () => {
     expect(coffee.body).toBe('And then: stretch. Even the 2-minute version counts.');
   });
 
+  it('after one missed day, says two minutes keeps the chain alive', () => {
+    const checkIns: CheckIn[] = [{ habitId: 'water', date: '2026-11-04', kind: 'full' }];
+    const [coffee] = planReminders(chains(checkIns), on);
+    expect(coffee.body).toBe('And then: water. Two minutes today keeps the chain alive.');
+  });
+
   it('comes early by the chosen lead, but never before midnight', () => {
     const early = planReminders(
       buildDay([routine('late', '00:05', 0)], [habit('x', 'late')], [], TODAY),

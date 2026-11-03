@@ -317,3 +317,8 @@ details summary {
   font-weight: 700;
   color: var(--muted);
 }
+
+.stats .at-risk {
+  color: var(--amber-soft-ink);
+  font-weight: 600;
+}

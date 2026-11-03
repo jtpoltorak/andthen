@@ -38,6 +38,7 @@
                   [class.ring-mini]="link.status === 'mini'"
                   [class.ring-skip]="link.status === 'skip'"
                   [class.ring-next]="link.isNext"
+                  [class.ring-nudge]="link.nudge === 'dont-miss-twice'"
                 >
                   @if (link.status === 'full') {
                     <svg
@@ -63,8 +64,10 @@
 
               <div class="link-body">
                 <div class="link-name">{{ link.habit.name }}</div>
-                @if (link.isNext && link.missedYesterday) {
+                @if (link.nudge === 'dont-miss-twice') {
                   <div class="badge">Missed yesterday · don't miss twice</div>
+                } @else if (link.nudge === 'welcome-back') {
+                  <div class="badge badge-soft">Welcome back · 2 minutes counts</div>
                 }
                 <div class="link-sub">
                   {{ subtitle(link) }}
@@ -80,8 +83,8 @@
                 }
                 @if (link.isNext) {
                   <!-- After a miss, the 2-minute version comes first, in reading and tab order too. -->
-                  <div class="actions" [class.nudge]="link.missedYesterday">
-                    @if (link.missedYesterday) {
+                  <div class="actions" [class.nudge]="link.nudge">
+                    @if (link.nudge) {
                       <ng-container *ngTemplateOutlet="miniBtn; context: { $implicit: link }" />
                       <ng-container *ngTemplateOutlet="doneBtn; context: { $implicit: link }" />
                     } @else {
@@ -169,7 +172,14 @@
         aria-expanded="false"
         (click)="open(chain.routine.id)"
       >
-        <span class="collapsed-anchor">{{ chain.routine.anchor }}</span>
+        <span class="collapsed-text">
+          <span class="collapsed-anchor">{{ chain.routine.anchor }}</span>
+          @if (chain.atRisk) {
+            <span class="collapsed-nudge">
+              {{ chain.atRisk === 1 ? '1 habit' : chain.atRisk + ' habits' }} to keep alive today
+            </span>
+          }
+        </span>
         <span class="collapsed-meta">
           {{ chain.doneCount }} of {{ chain.total }}
           <svg

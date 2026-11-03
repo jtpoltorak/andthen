@@ -1,5 +1,14 @@
 import { addDays, minutesOf } from './dates';
+import { dayStatus } from './history';
 import type { CheckIn, CheckInKind, DayKey, Habit, LinkStatus, Routine } from './model';
+
+/**
+ * A gentle cue on a habit that wasn't checked in yesterday.
+ * - `dont-miss-twice`: one missed day, so the chain is still alive. Today keeps it going.
+ * - `welcome-back`: two or more missed days in a row. No guilt, just an easy restart.
+ * A skip is a conscious choice, not a miss, so it never brings a nudge.
+ */
+export type Nudge = 'dont-miss-twice' | 'welcome-back';
 
 /** One habit as it appears in today's chain. */
 export interface ChainLink {
@@ -12,6 +21,8 @@ export interface ChainLink {
    * Drives the "don't miss twice" nudge, which offers the 2-minute version first.
    */
   missedYesterday: boolean;
+  /** Set while the habit is still open today and yesterday got no check-in at all. */
+  nudge?: Nudge;
 }
 
 export interface Chain {
@@ -22,6 +33,8 @@ export interface Chain {
   total: number;
   /** Every link has been answered (done, mini or skipped). */
   complete: boolean;
+  /** Open links whose chain is one miss from breaking ("don't miss twice"). */
+  atRisk: number;
 }
 
 const isActiveOn = (item: { createdOn: DayKey; archivedOn?: DayKey }, day: DayKey) =>
@@ -49,6 +62,18 @@ export function missedYesterday(
   return !countsAsDone(checkIns.get(`${habit.id}|${yesterday}`)?.kind);
 }
 
+/** The nudge for a habit today, if yesterday went by without a check-in. */
+export function nudgeFor(
+  habit: Habit,
+  routine: Routine | undefined,
+  checkIns: ReadonlyMap<string, CheckIn>,
+  today: DayKey,
+): Nudge | undefined {
+  if (dayStatus(habit, routine, checkIns, addDays(today, -1), today) !== 'missed') return undefined;
+  const dayBefore = dayStatus(habit, routine, checkIns, addDays(today, -2), today);
+  return dayBefore === 'missed' ? 'welcome-back' : 'dont-miss-twice';
+}
+
 /** Builds the chain for one routine on one day. */
 export function buildChain(
   routine: Routine,
@@ -63,7 +88,15 @@ export function buildChain(
     const status: LinkStatus = checkIns.get(`${habit.id}|${day}`)?.kind ?? 'pending';
     const isNext = !nextFound && status === 'pending';
     if (isNext) nextFound = true;
-    return { habit, status, isNext, missedYesterday: missedYesterday(habit, checkIns, day) };
+    const link: ChainLink = {
+      habit,
+      status,
+      isNext,
+      missedYesterday: missedYesterday(habit, checkIns, day),
+    };
+    const nudge = status === 'pending' ? nudgeFor(habit, routine, checkIns, day) : undefined;
+    if (nudge) link.nudge = nudge;
+    return link;
   });
 
   return {
@@ -72,6 +105,7 @@ export function buildChain(
     doneCount: links.filter((l) => l.status === 'full' || l.status === 'mini').length,
     total: links.length,
     complete: links.length > 0 && !nextFound,
+    atRisk: links.filter((l) => l.nudge === 'dont-miss-twice').length,
   };
 }
 
