@@ -94,6 +94,33 @@
                   [value]="draftMini()"
                   (input)="draftMini.set($any($event.target).value)"
                 />
+                <details class="easier" [open]="!!habit.makeItEasier || !!habit.obstacle">
+                  <summary>Make it easier <span class="optional">(optional)</span></summary>
+                  <label class="field-label" [for]="'easier-' + habit.id">
+                    One thing that makes it easier to start
+                  </label>
+                  <input
+                    class="text-input"
+                    type="text"
+                    autocomplete="off"
+                    placeholder="e.g. Lay out my shoes the night before"
+                    [id]="'easier-' + habit.id"
+                    [value]="draftEasier()"
+                    (input)="draftEasier.set($any($event.target).value)"
+                  />
+                  <label class="field-label" [for]="'obstacle-' + habit.id">
+                    What usually gets in the way?
+                  </label>
+                  <input
+                    class="text-input"
+                    type="text"
+                    autocomplete="off"
+                    placeholder="e.g. I'm too tired after work"
+                    [id]="'obstacle-' + habit.id"
+                    [value]="draftObstacle()"
+                    (input)="draftObstacle.set($any($event.target).value)"
+                  />
+                </details>
                 <div class="form-actions">
                   <button type="submit" class="btn-small" [disabled]="!draftName().trim()">
                     Save
@@ -116,6 +143,12 @@
                 <div class="row-text">
                   <div class="habit-name">{{ habit.name }}</div>
                   <div class="row-sub">2 min: {{ habit.twoMinuteVersion }}</div>
+                  @if (habit.makeItEasier) {
+                    <div class="row-sub">Easier: {{ habit.makeItEasier }}</div>
+                  }
+                  @if (habit.obstacle) {
+                    <div class="row-sub">Gets in the way: {{ habit.obstacle }}</div>
+                  }
                 </div>
                 <div class="row-tools">
                   <button

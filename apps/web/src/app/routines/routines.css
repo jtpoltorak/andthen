@@ -270,6 +270,32 @@ form {
   border-top: 1px solid var(--border);
 }
 
+/* "Make it easier" notes, tucked away until opened. */
+.easier {
+  margin-top: 14px;
+}
+.easier summary {
+  min-height: 40px;
+  display: flex;
+  align-items: center;
+  color: var(--accent-ink);
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+}
+.easier .optional {
+  margin-left: 4px;
+  font-weight: 500;
+  color: var(--muted);
+}
+.easier .field-label {
+  margin-top: 6px;
+}
+.easier .text-input {
+  height: 48px;
+  margin-bottom: 4px;
+}
+
 /* New routine */
 
 form > .field-label {

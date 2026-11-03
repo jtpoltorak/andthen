@@ -18,6 +18,8 @@ const sample = (): BackupData => ({
       routineId: 'r1',
       name: 'Stretch',
       twoMinuteVersion: 'Touch toes',
+      makeItEasier: 'Keep the yoga mat out',
+      obstacle: 'Running late',
       order: 1,
       createdOn: '2026-10-01',
     },
@@ -77,6 +79,41 @@ describe('parseBackup', () => {
       lastDay: '2026-10-03',
       exportedAt: '2026-11-02T12:00:00.000Z',
     });
+  });
+
+  it('keeps "make it easier" notes, trimming them and dropping blank ones', () => {
+    const backup = createBackup(sample());
+    const water = backup.data.habits.find((h) => h.id === 'h1')!;
+    water.makeItEasier = '   ';
+    water.obstacle = '  Forgetting  ';
+    const result = parseBackup(JSON.stringify(backup));
+    expect(result.ok).toBe(true);
+    if (!result.ok) return;
+    const stretch = result.data.habits.find((h) => h.id === 'h2')!;
+    expect(stretch).toMatchObject({
+      makeItEasier: 'Keep the yoga mat out',
+      obstacle: 'Running late',
+    });
+    const restoredWater = result.data.habits.find((h) => h.id === 'h1')!;
+    expect('makeItEasier' in restoredWater).toBe(false);
+    expect(restoredWater.obstacle).toBe('Forgetting');
+  });
+
+  it('reads older backups that have no "make it easier" notes', () => {
+    const backup = createBackup(sample());
+    for (const h of backup.data.habits) {
+      delete h.makeItEasier;
+      delete h.obstacle;
+    }
+    const result = parseBackup(JSON.stringify(backup));
+    expect(result.ok && result.data.habits.every((h) => !('obstacle' in h))).toBe(true);
+  });
+
+  it('rejects a note that is not text', () => {
+    const backup = createBackup(sample());
+    (backup.data.habits[0] as unknown as Record<string, unknown>)['obstacle'] = 42;
+    const result = parseBackup(backup);
+    expect(result.ok).toBe(false);
   });
 
   it('drops unknown fields', () => {

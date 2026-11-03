@@ -48,6 +48,8 @@ export class ChainEditor {
   protected readonly draftTime = signal('');
   protected readonly draftName = signal('');
   protected readonly draftMini = signal('');
+  protected readonly draftEasier = signal('');
+  protected readonly draftObstacle = signal('');
 
   // The "+ and then..." form.
   protected readonly adding = signal(false);
@@ -80,6 +82,8 @@ export class ChainEditor {
   protected editHabit(habit: Habit): void {
     this.draftName.set(habit.name);
     this.draftMini.set(habit.twoMinuteVersion);
+    this.draftEasier.set(habit.makeItEasier ?? '');
+    this.draftObstacle.set(habit.obstacle ?? '');
     this.adding.set(false);
     this.editing.set({ kind: 'habit', id: habit.id });
   }
@@ -90,6 +94,8 @@ export class ChainEditor {
     await this.store.updateHabit(habit.id, {
       name,
       twoMinuteVersion: this.draftMini().trim() || suggestTwoMinuteVersion(name),
+      makeItEasier: this.draftEasier(),
+      obstacle: this.draftObstacle(),
     });
     this.cancel();
   }

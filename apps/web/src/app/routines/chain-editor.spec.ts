@@ -85,6 +85,33 @@ describe('ChainEditor', () => {
     expect(names()).toEqual(['Stretch my back']);
   });
 
+  it('adds and clears "make it easier" notes on a habit', async () => {
+    const { fixture, root, store, routine } = await setup();
+    button(root, 'Edit Stretch').click();
+    await fixture.whenStable();
+    type(root.querySelector<HTMLInputElement>('input[id^="easier-"]')!, 'Keep the mat out');
+    type(root.querySelector<HTMLInputElement>('input[id^="obstacle-"]')!, 'Running late');
+    button(root, 'Save').click();
+    await fixture.whenStable();
+
+    expect(store.habitsOf(routine.id)[1]).toMatchObject({
+      makeItEasier: 'Keep the mat out',
+      obstacle: 'Running late',
+    });
+    expect(root.textContent).toContain('Easier: Keep the mat out');
+    expect(root.textContent).toContain('Gets in the way: Running late');
+
+    button(root, 'Edit Stretch').click();
+    await fixture.whenStable();
+    expect(root.querySelector('details.easier')?.hasAttribute('open')).toBe(true);
+    type(root.querySelector<HTMLInputElement>('input[id^="easier-"]')!, '');
+    type(root.querySelector<HTMLInputElement>('input[id^="obstacle-"]')!, ' ');
+    button(root, 'Save').click();
+    await fixture.whenStable();
+    expect(store.habitsOf(routine.id)[1].makeItEasier).toBeUndefined();
+    expect(root.textContent).not.toContain('Easier:');
+  });
+
   it('focuses the form when editing, and returns focus to Edit on Escape', async () => {
     const { fixture, root } = await setup();
     const edit = () =>

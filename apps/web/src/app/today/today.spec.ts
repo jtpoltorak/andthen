@@ -41,6 +41,19 @@ describe('Today', () => {
     expect(buttonsByText(root, 'Done')).toHaveLength(1);
   });
 
+  it('shows the "make it easy" note only for the habit that is up next', async () => {
+    const { fixture, root } = await setup();
+    const store = TestBed.inject(HabitStore);
+    const [water, stretch] = store.habitsOf(store.activeRoutines()[0].id);
+    await store.updateHabit(stretch.id, { makeItEasier: 'Keep the mat out' });
+    await fixture.whenStable();
+    expect(root.textContent).not.toContain('Make it easy');
+
+    await store.checkIn(water.id, 'full');
+    await fixture.whenStable();
+    expect(root.textContent).toContain('Make it easy: Keep the mat out');
+  });
+
   it('moves to the next link after "Did 2 min", then completes after a skip', async () => {
     const { fixture, root } = await setup();
 

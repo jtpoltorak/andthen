@@ -168,6 +168,13 @@ h1 {
   color: var(--muted);
 }
 
+.easier-note {
+  margin-top: 4px;
+  font-size: 13px;
+  line-height: 1.4;
+  color: var(--accent-ink);
+}
+
 .undo {
   min-height: 24px;
   margin-left: 2px;
