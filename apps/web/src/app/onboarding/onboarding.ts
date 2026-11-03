@@ -7,19 +7,28 @@ import {
   signal,
 } from '@angular/core';
 import { Router } from '@angular/router';
-import { STARTER_ANCHORS, STARTER_HABITS, suggestTwoMinuteVersion } from '@andthen/core';
+import {
+  type RoutineTemplate,
+  STARTER_ANCHORS,
+  STARTER_HABITS,
+  suggestTwoMinuteVersion,
+} from '@andthen/core';
 import { HabitStore } from '../data/habit-store';
+import { TemplateList } from '../routines/template-list';
 import { DataBackup } from '../settings/data-backup';
 import { focusAfterRender } from '../shared/focus';
 
-type Step = 'welcome' | 'habit' | 'anchor' | 'mini';
+type Step = 'welcome' | 'template' | 'habit' | 'anchor' | 'mini';
 
 const lowerFirst = (text: string) => (text ? text.charAt(0).toLowerCase() + text.slice(1) : '');
 
-/** First run: welcome, pick a habit, pick its anchor, make it tiny. Target: under 60 seconds. */
+/**
+ * First run: welcome, pick a habit, pick its anchor, make it tiny. Target: under 60 seconds.
+ * Or, from the welcome screen, start a whole ready-made routine in one tap.
+ */
 @Component({
   selector: 'app-onboarding',
-  imports: [DataBackup],
+  imports: [DataBackup, TemplateList],
   templateUrl: './onboarding.html',
   styleUrl: './onboarding.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -76,6 +85,18 @@ export class Onboarding {
   /** A restored backup with routines skips the rest of first run. */
   protected async afterRestore(): Promise<void> {
     if (this.store.hasRoutines()) await this.router.navigate(['/today']);
+  }
+
+  /** Saves a whole ready-made routine and goes straight to Today. */
+  protected async useTemplate(template: RoutineTemplate): Promise<void> {
+    if (this.saving()) return;
+    this.saving.set(true);
+    try {
+      await this.store.createFromTemplate(template);
+      await this.router.navigate(['/today']);
+    } finally {
+      this.saving.set(false);
+    }
   }
 
   protected async start(): Promise<void> {

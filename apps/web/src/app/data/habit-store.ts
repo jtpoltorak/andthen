@@ -6,6 +6,7 @@ import {
   type CheckInKind,
   type Habit,
   type Routine,
+  type RoutineTemplate,
   buildDay,
   createBackup,
   chainHabits,
@@ -101,6 +102,35 @@ export class HabitStore {
     await this.repo.putRoutine(routine);
     this.routines.update((list) => [...list, routine]);
     await this.addLink(routine.id, input.habitName, input.twoMinuteVersion);
+    return routine;
+  }
+
+  /**
+   * Starts a routine from a template: its anchor, name, and every habit in the chain.
+   * The result is an ordinary routine, so the person can edit it like any other.
+   */
+  async createFromTemplate(template: RoutineTemplate): Promise<Routine> {
+    const today = this.today();
+    const routine: Routine = {
+      id: newId(),
+      name: template.name,
+      anchor: template.anchor,
+      usualTime: template.usualTime,
+      order: nextOrder(this.routines()),
+      createdOn: today,
+    };
+    const habits: Habit[] = template.habits.map((h, order) => ({
+      id: newId(),
+      routineId: routine.id,
+      name: h.name,
+      twoMinuteVersion: h.twoMinuteVersion,
+      order,
+      createdOn: today,
+    }));
+    await this.repo.putRoutine(routine);
+    await this.repo.putHabits(habits);
+    this.routines.update((list) => [...list, routine]);
+    this.habits.update((list) => [...list, ...habits]);
     return routine;
   }
 

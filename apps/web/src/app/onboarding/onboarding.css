@@ -235,6 +235,20 @@ h1 {
   color: var(--ink-soft);
 }
 
+/* Second choice under a primary button, e.g. "Or pick a ready-made routine". */
+.btn-secondary {
+  min-height: 48px;
+  margin-top: 8px;
+  border: none;
+  background: none;
+  color: var(--accent-ink);
+  font-size: 15px;
+  font-weight: 700;
+}
+.build-own {
+  margin-top: 16px;
+}
+
 /* "Restore from a backup" under Get started, for people moving to a new device. */
 .restore {
   margin-top: 8px;
