@@ -4,6 +4,7 @@ import Fastify, { type FastifyInstance } from 'fastify';
 import { authRoutes } from './auth/routes';
 import type { Db } from './db/client';
 import type { Mailer } from './mail';
+import { syncRoutes } from './sync/routes';
 
 export interface AppOptions {
   db: Db;
@@ -12,6 +13,8 @@ export interface AppOptions {
   logger?: boolean;
   /** For tests: a fixed clock. */
   now?: () => Date;
+  /** For tests: a small page size, to exercise paging. */
+  syncPageSize?: number;
 }
 
 /** Builds the API without starting it, so tests can call it directly. */
@@ -21,6 +24,7 @@ export async function buildApp({
   mailer,
   logger = false,
   now,
+  syncPageSize,
 }: AppOptions): Promise<FastifyInstance> {
   // Behind Railway's proxy (and Cloudflare), the client address arrives in
   // X-Forwarded-For. It can be spoofed by a direct caller, so the per-IP sign-in
@@ -51,6 +55,7 @@ export async function buildApp({
     appOrigin: allowedOrigins[0] ?? 'https://andthenhabits.com',
     now,
   });
+  await app.register(syncRoutes, { db, now, pageSize: syncPageSize });
 
   return app;
 }
