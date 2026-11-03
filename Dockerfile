@@ -6,6 +6,7 @@ WORKDIR /app
 COPY package.json package-lock.json ./
 COPY packages/core/package.json packages/core/
 COPY apps/web/package.json apps/web/
+COPY apps/api/package.json apps/api/
 RUN npm ci --no-audit --no-fund
 COPY . .
 RUN npm run build

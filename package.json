@@ -9,9 +9,12 @@
   "scripts": {
     "start": "npm run start -w @andthen/web",
     "build": "npm run build -w @andthen/web",
-    "test": "npm test -w @andthen/core && npm test -w @andthen/web -- --watch=false",
+    "test": "npm test -w @andthen/core && npm test -w @andthen/api && npm test -w @andthen/web -- --watch=false",
     "test:core": "npm test -w @andthen/core",
-    "typecheck": "npm run typecheck -w @andthen/core"
+    "typecheck": "npm run typecheck -w @andthen/core && npm run typecheck -w @andthen/api",
+    "test:api": "npm test -w @andthen/api",
+    "build:api": "npm run build -w @andthen/api",
+    "start:api": "npm run dev -w @andthen/api"
   },
   "engines": {
     "node": ">=22.22.3"
