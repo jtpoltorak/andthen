@@ -64,7 +64,7 @@ Sync is optional: the web app above works on its own. The sync server is a secon
 2. **Add the api service.** **Create → GitHub Repo → jtpoltorak/andthen**. Rename the new service to `api`.
 3. In the `api` service's **Settings**:
    - **Source → Root Directory:** leave empty (the Dockerfile builds from the repo root).
-   - **Config-as-code → Railway Config File:** `apps/api/railway.json`. This is what makes the service build the API instead of the web app.
+   - **Config-as-code → Railway Config File:** `/apps/api/railway.json`, with the leading slash (the path is from the repo root). This is what makes the service build the API instead of the web app. Check it took: **Build → Dockerfile Path** should now show `apps/api/Dockerfile` and **Deploy → Pre-deploy Command** `node dist/migrate.js`. If they don't, add the variable `RAILWAY_DOCKERFILE_PATH` = `apps/api/Dockerfile` as a fallback.
    - **Build → Custom Build Command** and **Deploy → Custom Start Command:** clear them if Railway filled them in. `apps/api/railway.json` sets the start command, and the dashboard value would win over it (as it did for the web service).
    - **Build → Watch Paths:** clear anything Railway filled in. `apps/api/railway.json` sets its own.
 4. In the `api` service's **Variables**, add:
@@ -113,5 +113,6 @@ The API tests don't need any of that: they run against PGlite, a real Postgres c
 - **A merge to `main` didn't deploy:** check **Settings → Build → Watch Paths**. Use **Deployments → ⋮ → Deploy latest commit** to deploy by hand.
 - **The api deploy fails in the pre-deploy step:** a migration failed, and the previous version keeps running. The deploy log shows the SQL error. Check that `DATABASE_URL` is set as a reference to the Postgres service.
 - **Sign-in answers 503 `email_not_set_up`:** `RESEND_API_KEY` isn't set on the `api` service. `email_failed` means Resend refused: the deploy log shows why (often an unverified domain).
+- **`api.andthenhabits.com/health` shows the web app, and the api deploy log mentions Caddy:** the api service built the web app's Dockerfile, so it isn't reading `/apps/api/railway.json`. Set the config file path (with the leading slash), clear any `caddy` start command, and redeploy.
 - **`/health` answers 503:** the API is up but can't reach Postgres. Check the `DATABASE_URL` reference and that the Postgres service is running.
 - **Too many redirects on the custom domain:** Cloudflare SSL/TLS mode is set to Flexible; change it to Full.
