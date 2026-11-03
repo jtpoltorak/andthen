@@ -48,10 +48,55 @@ Cost: Railway's Hobby plan applies. A Caddy container serving static files uses 
 
 Each domain is its own browser origin: data saved on the `up.railway.app` address does **not** carry over to the custom domain. Use **Settings → Your data → Back up** on the old address and restore on the new one if you've been using it for real.
 
+## The sync API (optional sync)
+
+Sync is optional: the web app above works on its own. The sync server is a second Railway service, `api`, with a Postgres database next to it. Both live in the same Railway project as the web service.
+
+| File | Purpose |
+| --- | --- |
+| `apps/api/Dockerfile` | Bundles the API (and `packages/core`) into `dist/` with esbuild, then runs it on a plain Node 22 image. |
+| `apps/api/railway.json` | Build with that Dockerfile, run the database migrations before each deploy, health-check `/health`, and only redeploy when `apps/api`, `packages/core` or the lockfile change. |
+| `apps/api/drizzle/` | The SQL migrations. `npm run db:generate -w @andthen/api` writes a new one after a change to `src/db/schema.ts`. |
+
+### One-time setup
+
+1. **Add the database.** In the Railway project, **Create → Database → Add PostgreSQL**. Railway names it `Postgres` and gives it a `DATABASE_URL` variable.
+2. **Add the api service.** **Create → GitHub Repo → jtpoltorak/andthen**. Rename the new service to `api`.
+3. In the `api` service's **Settings**:
+   - **Source → Root Directory:** leave empty (the Dockerfile builds from the repo root).
+   - **Config-as-code → Railway Config File:** `apps/api/railway.json`. This is what makes the service build the API instead of the web app.
+   - **Build → Custom Build Command** and **Deploy → Custom Start Command:** clear them if Railway filled them in. `apps/api/railway.json` sets the start command, and the dashboard value would win over it (as it did for the web service).
+   - **Build → Watch Paths:** clear anything Railway filled in. `apps/api/railway.json` sets its own.
+4. In the `api` service's **Variables**, add:
+   - `DATABASE_URL` = `${{Postgres.DATABASE_URL}}` (a reference: pick it from the dropdown). It uses Railway's private network, so the database is never exposed to the internet.
+   - `APP_ORIGIN` = `https://andthenhabits.com`
+5. **Deploy.** The deploy log should show `Database is up to date.` from the pre-deploy step, then the server listening.
+6. **Domain.** **Settings → Networking → Custom Domain** → `api.andthenhabits.com`. In Cloudflare **DNS → Records**, add a `CNAME` named `api` pointing at the target Railway shows (plus its `TXT` record, if any), proxied, the same as the root domain.
+7. **Check it:** <https://api.andthenhabits.com/health> should show `{"ok":true}`.
+
+**Watch the web service too.** Adding `apps/api` changes the shared lockfile, so the web service redeploys on the same merge. That's expected.
+
+**Backups.** Check whether your Railway plan includes scheduled backups for the Postgres volume (**Postgres service → Backups**). If it does, turn on daily backups before sync goes live.
+
+### Running the API locally
+
+You need a Postgres. With Docker:
+
+```bash
+docker run -d --name andthen-pg -e POSTGRES_PASSWORD=postgres -e POSTGRES_DB=andthen -p 5432:5432 postgres:16
+cp apps/api/.env.example apps/api/.env
+npm run build:api && npm run db:migrate -w @andthen/api
+npm run start:api          # http://localhost:3000/health
+```
+
+The API tests don't need any of that: they run against PGlite, a real Postgres compiled to WebAssembly, inside the test process.
+
 ## Troubleshooting
 
 - **Build fails at `npm ci`:** make sure `package-lock.json` is committed and up to date (`npm install` locally, then commit).
 - **Old version still showing after a deploy:** the service worker updates in the background. Close all AndThen tabs (or the installed app) and reopen it.
 - **Deploy fails with "The executable `npm` could not be found":** a start command from Railway's npm detection is being used instead of Caddy's. Set **Settings → Deploy → Custom Start Command** to `caddy run --config /etc/caddy/Caddyfile --adapter caddyfile`, then redeploy.
 - **A merge to `main` didn't deploy:** check **Settings → Build → Watch Paths**. Use **Deployments → ⋮ → Deploy latest commit** to deploy by hand.
+- **The api deploy fails in the pre-deploy step:** a migration failed, and the previous version keeps running. The deploy log shows the SQL error. Check that `DATABASE_URL` is set as a reference to the Postgres service.
+- **`/health` answers 503:** the API is up but can't reach Postgres. Check the `DATABASE_URL` reference and that the Postgres service is running.
 - **Too many redirects on the custom domain:** Cloudflare SSL/TLS mode is set to Flexible; change it to Full.
