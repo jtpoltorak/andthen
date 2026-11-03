@@ -1,5 +1,5 @@
 import { Injectable, isDevMode } from '@angular/core';
-import type { SyncRequest, SyncResponse } from '@andthen/core';
+import type { BackupFile, SyncRequest, SyncResponse } from '@andthen/core';
 
 /** Where the sync server lives. `npm run dev -w @andthen/api` serves it on port 3000. */
 export const API_ORIGIN = isDevMode() ? 'http://localhost:3000' : 'https://api.andthenhabits.com';
@@ -48,6 +48,16 @@ export class SyncApi {
 
   async logout(token: string): Promise<void> {
     await this.call('POST', '/v1/auth/logout', undefined, token);
+  }
+
+  /** Everything the account has synced, as a backup file. */
+  async exportData(token: string): Promise<BackupFile> {
+    return (await this.call('GET', '/v1/export', undefined, token)) as BackupFile;
+  }
+
+  /** Deletes the account, its synced data and every signed-in device. */
+  async deleteAccount(token: string): Promise<void> {
+    await this.call('DELETE', '/v1/me', undefined, token);
   }
 
   async sync(token: string, body: SyncRequest): Promise<SyncResponse> {

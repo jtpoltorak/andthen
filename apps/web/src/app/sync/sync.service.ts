@@ -1,4 +1,5 @@
 import { Injectable, computed, inject, signal } from '@angular/core';
+import type { BackupFile } from '@andthen/core';
 import { HabitStore } from '../data/habit-store';
 import { SyncingHabitRepository } from '../data/syncing-habit-repository';
 import { ApiError, OfflineError, SyncApi } from './sync-api';
@@ -36,6 +37,8 @@ export class SyncService {
   readonly problem = signal('');
   /** Set when the server signed this device out (session expired or removed elsewhere). */
   readonly signedOutNotice = signal(false);
+  /** Set right after this device deleted the account. */
+  readonly accountDeleted = signal(false);
   readonly enabled = computed(() => this.phase() !== 'off');
 
   private running?: Promise<void>;
@@ -95,6 +98,7 @@ export class SyncService {
     if (previous) void this.api.logout(previous).catch(() => undefined);
     this.email.set(account.email);
     this.signedOutNotice.set(false);
+    this.accountDeleted.set(false);
     this.problem.set('');
     this.phase.set('idle');
     await this.syncNow();
@@ -106,15 +110,39 @@ export class SyncService {
    */
   async turnOff(): Promise<void> {
     if (!this.repo) return;
-    clearTimeout(this.editTimer);
     const token = await this.repo.token();
-    await this.repo.disable();
+    await this.stopLocally(this.repo);
+    // Best effort: if this fails, the session simply expires on the server.
+    if (token) await this.api.logout(token).catch(() => undefined);
+  }
+
+  /** A copy of everything the account holds on the server, as a backup file. */
+  async exportAccount(): Promise<BackupFile> {
+    const token = await this.repo?.token();
+    if (!token) throw new Error('Sync is off.');
+    return this.api.exportData(token);
+  }
+
+  /**
+   * Deletes the account on the server: its copy of the data and every signed-in
+   * device. Sync turns off here; data on this and other devices stays.
+   */
+  async deleteAccount(): Promise<void> {
+    if (!this.repo) return;
+    const token = await this.repo.token();
+    if (token) await this.api.deleteAccount(token);
+    await this.stopLocally(this.repo);
+    this.accountDeleted.set(true);
+  }
+
+  /** Sync off on this device, and the screens told. */
+  private async stopLocally(repo: SyncingHabitRepository): Promise<void> {
+    clearTimeout(this.editTimer);
+    await repo.disable();
     this.phase.set('off');
     this.email.set(undefined);
     this.lastSyncedAt.set(undefined);
     this.problem.set('');
-    // Best effort: if this fails, the session simply expires on the server.
-    if (token) await this.api.logout(token).catch(() => undefined);
   }
 
   /** Syncs in a few seconds, so several quick edits go up together. */

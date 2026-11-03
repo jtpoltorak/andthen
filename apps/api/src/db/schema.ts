@@ -23,6 +23,8 @@ export const accounts = pgTable('accounts', {
   plan: text('plan').notNull().default('free'),
   /** Last successful sync from any device. Drives the inactive-account cleanup. */
   lastSyncAt: timestamp('last_sync_at', { withTimezone: true }),
+  /** When the "your account will be deleted" email went out. Cleared by the next sync. */
+  inactiveWarnedAt: timestamp('inactive_warned_at', { withTimezone: true }),
 });
 
 /** A signed-in device. Only a hash of its token is stored. */

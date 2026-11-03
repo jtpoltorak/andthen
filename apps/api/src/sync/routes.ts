@@ -109,7 +109,10 @@ export async function syncRoutes(app: FastifyInstance, opts: SyncOptions): Promi
         const more = page.length > pageSize;
         const seen = more ? page.slice(0, pageSize) : page;
 
-        await tx.update(accounts).set({ lastSyncAt: at }).where(eq(accounts.id, accountId));
+        await tx
+          .update(accounts)
+          .set({ lastSyncAt: at, inactiveWarnedAt: null })
+          .where(eq(accounts.id, accountId));
 
         const result: SyncResponse = {
           cursor: seen.at(-1)?.seq ?? req.body.cursor,

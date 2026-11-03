@@ -20,6 +20,7 @@ class FakeMailer implements Mailer {
   async sendSignInCode(_to: string, code: string) {
     this.last = code;
   }
+  async sendInactiveWarning() {}
 }
 
 let db: Db;
