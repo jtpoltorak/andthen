@@ -163,4 +163,34 @@ describe('SyncingHabitRepository', () => {
     await repo.putHabit(habit);
     expect(await repo.pendingChanges()).toEqual([]);
   });
+
+  it('remembers the account while on, stamps the first snapshot as oldest, and forgets it when off', async () => {
+    await repo.putRoutine(routine);
+    await repo.enable({ email: 'sam@example.com', token: 'secret' });
+
+    expect(await repo.token()).toBe('secret');
+    expect((await repo.status()).email).toBe('sam@example.com');
+    // Time 0, so wherever the account already has a copy, the account's copy wins.
+    expect((await repo.pendingChanges())[0].updatedAt).toBe(0);
+
+    await repo.disable();
+    expect(await repo.token()).toBeUndefined();
+    expect((await repo.status()).email).toBeUndefined();
+  });
+
+  it('tells the sync engine about local edits only while sync is on', async () => {
+    const changed = vi.fn();
+    repo.onLocalChange = changed;
+    await repo.putRoutine(routine);
+    expect(changed).not.toHaveBeenCalled();
+
+    await repo.enable();
+    await repo.putHabit(habit);
+    await repo.replaceAll({ routines: [], habits: [], checkIns: [], reflections: [] });
+    expect(changed).toHaveBeenCalledTimes(2);
+
+    // Writing what other devices changed isn't a local edit.
+    await repo.applyRemote([putChange('routines', routine, 'laptop', 5)], 1);
+    expect(changed).toHaveBeenCalledTimes(2);
+  });
 });

@@ -11,7 +11,9 @@ AndThen is a simple, low-friction habit app built around **routine chains**: pic
 | `packages/core` | Framework-free TypeScript: the data model, chain logic, and "never miss twice" rules. Shared by every future client (web, Android, browser extension). |
 | `apps/web` | The Angular web app (standalone components, signals). Installable as a PWA and works offline. |
 
-Data stays on the device in IndexedDB (via [Dexie](https://dexie.org)). No account is needed. Screens talk to a `HabitRepository` interface, so a sync-backed store can be added later without touching the UI.
+Data stays on the device in IndexedDB (via [Dexie](https://dexie.org)). No account is needed. Screens talk to a `HabitRepository` interface; the one in use (`SyncingHabitRepository`) also keeps an outbox of changes while sync is on.
+
+**Sync across devices** is optional and free. Sign in with an emailed code in Settings, and `apps/web/src/app/sync/sync.service.ts` keeps the device in step with `apps/api` in the background: on open, on return to the app, when back online, a few seconds after an edit, and every five minutes. When two devices edit the same thing, the later edit wins.
 
 Habits can run every day, on chosen days (like weekdays), or N times a week. Off days are rest days: they never count as a miss, so streaks, the "don't miss twice" nudge, Progress, reminders and backups all follow the schedule (`packages/core/src/schedule.ts`).
 

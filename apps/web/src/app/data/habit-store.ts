@@ -82,6 +82,16 @@ export class HabitStore {
     return this.loading;
   }
 
+  /** Reads everything again, after sync wrote changes from other devices. */
+  async reload(): Promise<void> {
+    const snap = await this.repo.loadAll();
+    this.routines.set(snap.routines);
+    this.habits.set(snap.habits);
+    this.checkIns.set(snap.checkIns);
+    this.reflections.set(snap.reflections);
+    this.loading = Promise.resolve();
+  }
+
   /** Call when the app comes back to the foreground, so "today" rolls over at midnight. */
   refreshDay(now = new Date()): void {
     const day = toDayKey(now);

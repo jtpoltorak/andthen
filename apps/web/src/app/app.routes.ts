@@ -8,6 +8,7 @@ import { NewRoutine } from './routines/new-routine';
 import { Routines } from './routines/routines';
 import { Settings } from './settings/settings';
 import { Shell } from './shell/shell';
+import { SignInPage } from './sync/sign-in-page';
 import { Today } from './today/today';
 
 export const routes: Routes = [
@@ -16,6 +17,12 @@ export const routes: Routes = [
     component: Onboarding,
     canActivate: [onlyNewUsers],
     title: 'Welcome · AndThen',
+  },
+  {
+    // The link in the sign-in email lands here.
+    path: 'sign-in',
+    component: SignInPage,
+    title: 'Sign in · AndThen',
   },
   {
     path: '',
