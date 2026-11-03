@@ -4,10 +4,13 @@ import {
   type BackupFile,
   type CheckIn,
   type CheckInKind,
+  type DayKey,
   type Habit,
+  type Reflection,
   type Routine,
   type RoutineTemplate,
   buildDay,
+  cleanNote,
   createBackup,
   chainHabits,
   moveItem,
@@ -51,6 +54,7 @@ export class HabitStore {
   readonly routines = signal<Routine[]>([]);
   readonly habits = signal<Habit[]>([]);
   readonly checkIns = signal<CheckIn[]>([]);
+  readonly reflections = signal<Reflection[]>([]);
   readonly today = signal(toDayKey(new Date()));
 
   readonly hasRoutines = computed(() => this.routines().some((r) => !r.archivedOn));
@@ -64,6 +68,7 @@ export class HabitStore {
       this.routines.set(snap.routines);
       this.habits.set(snap.habits);
       this.checkIns.set(snap.checkIns);
+      this.reflections.set(snap.reflections);
     });
     return this.loading;
   }
@@ -204,6 +209,41 @@ export class HabitStore {
     this.habits.update((list) => list.map((h) => byId.get(h.id) ?? h));
   }
 
+  /**
+   * Moves a habit to the end of another routine's chain (a new anchor).
+   * Its check-ins go with it, so its history and chain carry on.
+   */
+  async moveHabitToRoutine(id: string, routineId: string): Promise<void> {
+    const current = this.habits().find((h) => h.id === id);
+    if (!current || current.routineId === routineId || !this.routine(routineId)) return;
+    const next: Habit = {
+      ...current,
+      routineId,
+      order: nextOrder(this.habits().filter((h) => h.routineId === routineId)),
+    };
+    await this.repo.putHabit(next);
+    this.habits.update((list) => list.map((h) => (h.id === id ? next : h)));
+  }
+
+  /** Puts habits back exactly as they were (used to undo a quick change). */
+  async restoreHabits(habits: readonly Habit[]): Promise<void> {
+    if (!habits.length) return;
+    await this.repo.putHabits(habits);
+    const byId = new Map(habits.map((h) => [h.id, h]));
+    this.habits.update((list) => list.map((h) => byId.get(h.id) ?? h));
+  }
+
+  /** Saves the reflection for a week, replacing any earlier one for that week. */
+  async saveReflection(week: DayKey, notes: { wentWell?: string; tweak?: string }): Promise<void> {
+    const reflection: Reflection = { week, savedOn: this.today() };
+    const wentWell = cleanNote(notes.wentWell);
+    const tweak = cleanNote(notes.tweak);
+    if (wentWell) reflection.wentWell = wentWell;
+    if (tweak) reflection.tweak = tweak;
+    await this.repo.putReflection(reflection);
+    this.reflections.update((list) => [...list.filter((r) => r.week !== week), reflection]);
+  }
+
   async checkIn(habitId: string, kind: CheckInKind): Promise<void> {
     const date = this.today();
     await this.repo.putCheckIn({ habitId, date, kind });
@@ -219,7 +259,12 @@ export class HabitStore {
   /** Everything on this device, wrapped as a backup file. */
   backup(now = new Date()): BackupFile {
     return createBackup(
-      { routines: this.routines(), habits: this.habits(), checkIns: this.checkIns() },
+      {
+        routines: this.routines(),
+        habits: this.habits(),
+        checkIns: this.checkIns(),
+        reflections: this.reflections(),
+      },
       now,
     );
   }
@@ -231,15 +276,17 @@ export class HabitStore {
     this.routines.set(snapshot.routines);
     this.habits.set(snapshot.habits);
     this.checkIns.set(snapshot.checkIns);
+    this.reflections.set(snapshot.reflections);
     this.loading = Promise.resolve();
   }
 
-  /** Deletes every routine, habit and check-in on this device, all or nothing. */
+  /** Deletes every routine, habit, check-in and reflection on this device, all or nothing. */
   async resetAll(): Promise<void> {
-    await this.repo.replaceAll({ routines: [], habits: [], checkIns: [] });
+    await this.repo.replaceAll({ routines: [], habits: [], checkIns: [], reflections: [] });
     this.routines.set([]);
     this.habits.set([]);
     this.checkIns.set([]);
+    this.reflections.set([]);
     this.loading = Promise.resolve();
   }
 }

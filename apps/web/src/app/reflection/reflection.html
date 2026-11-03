@@ -1,0 +1,97 @@
+<main class="page">
+  <a class="back-link" routerLink="/today">‹ Today</a>
+
+  <header>
+    <div class="range">{{ rangeLabel() }}</div>
+    <h1>Weekly reflection</h1>
+    <p class="intro">Two minutes. What went well, and what to make easier next week.</p>
+  </header>
+
+  <section class="card recap" aria-labelledby="week-title">
+    <h2 id="week-title" class="eyebrow">Your week</h2>
+    <p class="recap-big">
+      Showed up {{ summary().daysShowedUp }} of {{ summary().daysSoFar }}
+      {{ summary().daysSoFar === 1 ? 'day' : 'days' }}
+    </p>
+    @if (lastTweak(); as tweak) {
+      <p class="last-tweak">Last week you planned: “{{ tweak }}”. How did it go?</p>
+    }
+  </section>
+
+  <section class="card" aria-labelledby="habits-title">
+    <h2 id="habits-title" class="eyebrow">How each habit went</h2>
+    @for (row of rows(); track row.habit.id) {
+      <div class="habit">
+        <div class="habit-top">
+          <div class="habit-text">
+            <h3 class="habit-name">{{ row.habit.name }}</h3>
+            <p class="habit-sub">{{ row.summary }}</p>
+          </div>
+          <div class="dots" role="img" [attr.aria-label]="row.summary">
+            @for (dot of row.dots; track dot.date) {
+              <i [class]="'dot dot-' + dot.status"></i>
+            }
+          </div>
+        </div>
+
+        @if (changed().get(row.habit.id); as change) {
+          <p class="changed" role="status">
+            {{ change.note }}
+            <button type="button" class="undo" (click)="undo(row.habit.id)">
+              Undo<span class="visually-hidden"> change to {{ row.habit.name }}</span>
+            </button>
+          </p>
+        } @else if (row.tweaks.length) {
+          <div class="tweaks">
+            <p class="tweak-hint">A hard week. Want to make it easier?</p>
+            @for (tweak of row.tweaks; track tweak.label) {
+              <button type="button" class="tweak-btn" (click)="tweak.apply()">
+                {{ tweak.label }}
+              </button>
+            }
+          </div>
+        }
+      </div>
+    } @empty {
+      <p class="empty">No habits were in a chain this week.</p>
+    }
+  </section>
+
+  <form class="card notes" (submit)="$event.preventDefault(); save()">
+    <label class="field-label" for="went-well">What went well? (optional)</label>
+    @if (bestRow(); as best) {
+      <p class="field-hint">
+        “{{ best.habit.name }}” showed up {{ best.done }} of {{ best.days }} days.
+      </p>
+    }
+    <textarea
+      id="went-well"
+      class="text-area"
+      rows="2"
+      [attr.maxlength]="maxLength"
+      [value]="wentWell()"
+      (input)="wentWell.set($any($event.target).value)"
+    ></textarea>
+
+    <label class="field-label" for="tweak">What will you tweak next week? (optional)</label>
+    <p class="field-hint">
+      @if (hasStruggles()) {
+        Shrinking a habit or giving it a better anchor usually works better than trying harder.
+      } @else {
+        One small change is plenty, or none at all.
+      }
+    </p>
+    <textarea
+      id="tweak"
+      class="text-area"
+      rows="2"
+      [attr.maxlength]="maxLength"
+      [value]="tweak()"
+      (input)="tweak.set($any($event.target).value)"
+    ></textarea>
+
+    <button type="submit" class="btn-primary">
+      {{ alreadySaved() ? 'Update reflection' : 'Save reflection' }}
+    </button>
+  </form>
+</main>

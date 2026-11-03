@@ -45,3 +45,13 @@ export interface CheckIn {
 }
 
 export type LinkStatus = CheckInKind | 'pending';
+
+/** A short weekly check-in: what went well, and what to tweak. One per week. */
+export interface Reflection {
+  /** The first day of the week this reflection is about. */
+  week: DayKey;
+  wentWell?: string;
+  tweak?: string;
+  /** The day it was last saved. */
+  savedOn: DayKey;
+}

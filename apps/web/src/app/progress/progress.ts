@@ -90,6 +90,13 @@ export class Progress {
     ),
   );
 
+  /** Saved weekly reflections that have a note, newest first. */
+  protected readonly reflections = computed(() =>
+    [...this.store.reflections()]
+      .filter((r) => r.wentWell || r.tweak)
+      .sort((a, b) => b.week.localeCompare(a.week)),
+  );
+
   protected readonly sections = computed(() => {
     const today = this.store.today();
     return this.store.activeRoutines().map((routine): RoutineSection => {

@@ -284,3 +284,36 @@ details summary {
 .retired-habits .habit + .habit {
   margin-top: 18px;
 }
+
+/* Weekly reflection */
+
+.reflect-link {
+  align-self: flex-start;
+  margin-top: 4px;
+  color: var(--accent-ink);
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.reflection {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-top: 12px;
+  padding: 14px 16px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-control);
+  background: var(--surface);
+  font-size: 14px;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+.reflection-week {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 800;
+}
+.reflection-label {
+  font-weight: 700;
+  color: var(--muted);
+}

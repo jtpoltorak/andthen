@@ -368,3 +368,46 @@ h1 {
   font-weight: 700;
   text-decoration: none;
 }
+
+.reflect-card {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 18px 20px;
+  border-radius: var(--radius-card);
+  background: var(--accent-soft);
+}
+.reflect-card h2 {
+  font-size: 17px;
+  font-weight: 800;
+  color: var(--accent-ink);
+}
+.reflect-card p {
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--ink-soft);
+}
+.reflect-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 8px;
+}
+.reflect-go {
+  padding: 11px 18px;
+  border-radius: 12px;
+  background: var(--accent);
+  color: var(--on-accent);
+  font-size: 15px;
+  font-weight: 700;
+  text-decoration: none;
+}
+.reflect-later {
+  min-height: 44px;
+  padding: 0 10px;
+  border: none;
+  background: none;
+  color: var(--muted);
+  font-size: 14px;
+  font-weight: 600;
+}
