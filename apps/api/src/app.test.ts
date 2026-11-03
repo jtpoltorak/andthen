@@ -5,6 +5,7 @@ import { buildApp } from './app';
 import { readConfig } from './config';
 import type { Db } from './db/client';
 import { accounts, records, sessions } from './db/schema';
+import { NoMailer } from './mail';
 import { testDb } from './test-db';
 
 let db: Db;
@@ -13,7 +14,11 @@ let app: FastifyInstance;
 
 beforeAll(async () => {
   ({ db, close } = await testDb());
-  app = await buildApp({ db, allowedOrigins: ['https://andthenhabits.com'] });
+  app = await buildApp({
+    db,
+    allowedOrigins: ['https://andthenhabits.com'],
+    mailer: new NoMailer(),
+  });
 });
 
 afterAll(async () => {
@@ -34,7 +39,7 @@ describe('GET /health', () => {
         throw new Error('connection refused');
       },
     } as unknown as Db;
-    const down = await buildApp({ db: broken, allowedOrigins: [] });
+    const down = await buildApp({ db: broken, allowedOrigins: [], mailer: new NoMailer() });
     const res = await down.inject({ method: 'GET', url: '/health' });
     expect(res.statusCode).toBe(503);
     await down.close();
@@ -100,6 +105,9 @@ describe('readConfig', () => {
       port: 3000,
       databaseUrl: 'postgres://x',
       allowedOrigins: ['https://a.com', 'http://localhost:4200'],
+      resendApiKey: undefined,
+      mailFrom: 'AndThen <hello@andthenhabits.com>',
+      production: false,
     });
   });
 });

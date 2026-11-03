@@ -4,6 +4,12 @@ export interface Config {
   databaseUrl: string;
   /** Web origins allowed to call the API (CORS). */
   allowedOrigins: string[];
+  /** Resend API key for sign-in emails. Without it, sign-in answers "not set up yet". */
+  resendApiKey?: string;
+  /** The sender of sign-in emails. */
+  mailFrom: string;
+  /** Outside production, a missing key prints codes to the log instead. */
+  production: boolean;
 }
 
 export function readConfig(env: NodeJS.ProcessEnv = process.env): Config {
@@ -16,5 +22,8 @@ export function readConfig(env: NodeJS.ProcessEnv = process.env): Config {
       .split(',')
       .map((o) => o.trim())
       .filter(Boolean),
+    resendApiKey: env['RESEND_API_KEY'] || undefined,
+    mailFrom: env['MAIL_FROM'] ?? 'AndThen <hello@andthenhabits.com>',
+    production: env['NODE_ENV'] === 'production',
   };
 }

@@ -1,20 +1,30 @@
 import cors from '@fastify/cors';
 import { sql } from 'drizzle-orm';
 import Fastify, { type FastifyInstance } from 'fastify';
+import { authRoutes } from './auth/routes';
 import type { Db } from './db/client';
+import type { Mailer } from './mail';
 
 export interface AppOptions {
   db: Db;
   allowedOrigins: string[];
+  mailer: Mailer;
   logger?: boolean;
+  /** For tests: a fixed clock. */
+  now?: () => Date;
 }
 
 /** Builds the API without starting it, so tests can call it directly. */
 export async function buildApp({
   db,
   allowedOrigins,
+  mailer,
   logger = false,
+  now,
 }: AppOptions): Promise<FastifyInstance> {
+  // Behind Railway's proxy (and Cloudflare), the client address arrives in
+  // X-Forwarded-For. It can be spoofed by a direct caller, so the per-IP sign-in
+  // limit is a soft one; the per-email limit is what really protects inboxes.
   const app = Fastify({ logger, trustProxy: true });
 
   await app.register(cors, {
@@ -33,6 +43,13 @@ export async function buildApp({
       app.log.error(err, 'Health check could not reach the database');
       return reply.code(503).send({ ok: false });
     }
+  });
+
+  await app.register(authRoutes, {
+    db,
+    mailer,
+    appOrigin: allowedOrigins[0] ?? 'https://andthenhabits.com',
+    now,
   });
 
   return app;
