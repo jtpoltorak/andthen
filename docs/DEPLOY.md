@@ -63,7 +63,7 @@ Sync is optional: the web app above works on its own. The sync server is a secon
 2. **Add the api service.** **Create → GitHub Repo → jtpoltorak/andthen**. Rename the new service to `api`.
 3. In the `api` service's **Settings**:
    - **Source → Root Directory:** leave empty (the Dockerfile builds from the repo root).
-   - **Build → Dockerfile Path:** `/apps/api/Dockerfile`. This is what makes the service build the API instead of the web app.
+   - **Build → Dockerfile Path:** `/apps/api/Dockerfile` (press Enter or ✓ so it saves). This is what makes the service build the API instead of the web app. Also add the variable `RAILWAY_DOCKERFILE_PATH` = `apps/api/Dockerfile` (step 4), which Railway honours even if the field doesn't stick. The build log should say `load build definition from apps/api/Dockerfile`; if it mentions `caddy`, it's building the web app.
    - **Build → Watch Paths:** `/apps/api/**`, `/packages/core/**` and `/package-lock.json`, so the API only redeploys when it changes.
    - **Deploy → Pre-deploy step:** `node dist/migrate.js`. It brings the database up to date before each deploy, and a failed migration stops the deploy before new code takes traffic.
    - **Deploy → Healthcheck Path:** `/health`.
@@ -72,6 +72,7 @@ Sync is optional: the web app above works on its own. The sync server is a secon
 4. In the `api` service's **Variables**, add:
    - `DATABASE_URL` = `${{Postgres.DATABASE_URL}}` (a reference: pick it from the dropdown). It uses Railway's private network, so the database is never exposed to the internet.
    - `APP_ORIGIN` = `https://andthenhabits.com`
+   - `RAILWAY_DOCKERFILE_PATH` = `apps/api/Dockerfile`
    - `RESEND_API_KEY` = your Resend API key (see "Sign-in emails" below). Until it's set, the API runs but sign-in answers "not set up yet".
 5. **Deploy.** The deploy log should show `Database is up to date.` from the pre-deploy step, then the server listening.
 6. **Domain.** **Settings → Networking → Custom Domain** → `api.andthenhabits.com`. If Railway asks for a port, use the one in the deploy log's `Server listening at http://0.0.0.0:…` line (usually `8080`). Railway sets `PORT` for the service and the API listens on it, so don't add a `PORT` variable yourself. In Cloudflare **DNS → Records**, add a `CNAME` named `api` pointing at the target Railway shows (plus its `TXT` record, if any), proxied, the same as the root domain.
