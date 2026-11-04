@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { Copyright } from '../legal/copyright';
 import { AppUpdates } from './app-updates';
 import { APP_VERSION, BUILD_COMMIT, BUILD_DATE } from './version.generated';
 import { releaseDay } from './release-day';
@@ -13,7 +14,7 @@ const RESULT_TEXT = {
 /** Settings card: which version this is, what changed, and where to ask questions. */
 @Component({
   selector: 'app-about-card',
-  imports: [RouterLink],
+  imports: [RouterLink, Copyright],
   template: `
     <p>
       <strong>AndThen {{ version }}</strong>
@@ -37,11 +38,14 @@ const RESULT_TEXT = {
     <nav class="links" aria-label="About AndThen">
       <a routerLink="/whats-new">What's new</a>
       <a routerLink="/privacy">Privacy</a>
+      <a routerLink="/terms">Terms of Use</a>
+      <a href="/3rdpartylicenses.txt">Open-source licenses</a>
     </nav>
     <p class="hint">
       Questions or ideas? Email
       <a href="mailto:hello@andthenhabits.com">hello&#64;andthenhabits.com</a>.
     </p>
+    <app-copyright />
   `,
   styles: `
     :host {

@@ -25,6 +25,11 @@ export const routes: Routes = [
     title: 'Privacy · AndThen',
   },
   {
+    path: 'terms',
+    loadComponent: () => import('./legal/terms').then((m) => m.Terms),
+    title: 'Terms of Use · AndThen',
+  },
+  {
     path: 'whats-new',
     loadComponent: () => import('./about/whats-new').then((m) => m.WhatsNew),
     title: "What's new · AndThen",

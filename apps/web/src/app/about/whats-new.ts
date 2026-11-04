@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { Copyright } from '../legal/copyright';
 import { BackButton } from '../shared/back-button';
 import { AppUpdates } from './app-updates';
 import { releaseDay } from './release-day';
@@ -8,7 +9,7 @@ import { APP_VERSION } from './version.generated';
 /** `/whats-new`: every release, newest first. */
 @Component({
   selector: 'app-whats-new',
-  imports: [BackButton],
+  imports: [BackButton, Copyright],
   template: `
     <main class="reading">
       <app-back-button />
@@ -29,6 +30,7 @@ import { APP_VERSION } from './version.generated';
           </ul>
         </section>
       }
+      <app-copyright />
     </main>
   `,
   styles: `

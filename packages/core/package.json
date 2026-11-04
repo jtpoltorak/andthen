@@ -2,6 +2,7 @@
   "name": "@andthen/core",
   "version": "0.1.0",
   "private": true,
+  "license": "UNLICENSED",
   "description": "Framework-free habit and routine-chain logic shared by every AndThen client.",
   "type": "module",
   "main": "./src/index.ts",

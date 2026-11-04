@@ -13,6 +13,7 @@
     "test": "ng test"
   },
   "private": true,
+  "license": "UNLICENSED",
   "dependencies": {
     "@andthen/core": "*",
     "@angular/common": "^22.2.0",

@@ -2,6 +2,7 @@
   "name": "@andthen/api",
   "version": "0.1.0",
   "private": true,
+  "license": "UNLICENSED",
   "description": "The optional sync server for AndThen. The app works fully without it.",
   "type": "module",
   "scripts": {
