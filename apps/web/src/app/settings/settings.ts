@@ -1,14 +1,15 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { AboutCard } from '../about/about-card';
 import { DataBackup } from './data-backup';
 import { PreferenceSettings } from './preference-settings';
 import { ReminderSettings } from './reminder-settings';
 import { ResetData } from './reset-data';
 import { SyncSettings } from '../sync/sync-settings';
 
-/** Settings tab: preferences, reminders, backup, and starting over. */
+/** Settings tab: preferences, reminders, backup, starting over, and about the app. */
 @Component({
   selector: 'app-settings',
-  imports: [PreferenceSettings, ReminderSettings, DataBackup, ResetData, SyncSettings],
+  imports: [PreferenceSettings, ReminderSettings, DataBackup, ResetData, SyncSettings, AboutCard],
   template: `
     <main class="page">
       <h1>Settings</h1>
@@ -36,6 +37,11 @@ import { SyncSettings } from '../sync/sync-settings';
       <section aria-labelledby="reset-heading">
         <h2 id="reset-heading">Start over</h2>
         <app-reset-data />
+      </section>
+
+      <section aria-labelledby="about-heading">
+        <h2 id="about-heading">About</h2>
+        <app-about-card />
       </section>
     </main>
   `,

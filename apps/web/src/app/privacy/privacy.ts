@@ -1,13 +1,13 @@
-import { Location } from '@angular/common';
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
-import { Router } from '@angular/router';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { BackButton } from '../shared/back-button';
 
 /** `/privacy`: what AndThen keeps, where, and for how long. Plain words, no legalese. */
 @Component({
   selector: 'app-privacy',
+  imports: [BackButton],
   template: `
-    <main class="page">
-      <button type="button" class="back" (click)="back()">‹ Back</button>
+    <main class="reading">
+      <app-back-button />
       <h1 tabindex="-1">Privacy</h1>
       <p class="lede">
         AndThen is built to keep your habits yours. Here's exactly what it stores, and where.
@@ -73,67 +73,9 @@ import { Router } from '@angular/router';
 
       <h2>Questions</h2>
       <p>Email <a href="mailto:hello@andthenhabits.com">hello&#64;andthenhabits.com</a>.</p>
-      <p class="updated">Last updated November 3, 2026.</p>
+      <p class="muted">Last updated November 3, 2026.</p>
     </main>
-  `,
-  styles: `
-    .page {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-      padding: 16px 20px 40px;
-      font-size: 15px;
-      line-height: 1.6;
-    }
-    .back {
-      align-self: flex-start;
-      min-height: 44px;
-      padding: 0;
-      border: none;
-      background: none;
-      color: var(--accent-ink);
-      font-size: 15px;
-      font-weight: 700;
-    }
-    h1 {
-      font-size: 32px;
-      font-weight: 800;
-      letter-spacing: -0.02em;
-    }
-    h2 {
-      margin: 12px 0 0;
-      font-size: 18px;
-      font-weight: 800;
-    }
-    .lede {
-      font-size: 17px;
-    }
-    ul {
-      margin: 0;
-      padding-left: 20px;
-    }
-    li + li {
-      margin-top: 4px;
-    }
-    a {
-      color: var(--accent-ink);
-      font-weight: 700;
-    }
-    .updated {
-      color: var(--muted);
-      font-size: 14px;
-    }
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class Privacy {
-  private readonly location = inject(Location);
-  private readonly router = inject(Router);
-
-  /** Back to where the person came from, or into the app if they opened this page directly. */
-  protected back(): void {
-    // Angular numbers in-app navigations; 1 is the page the app was opened on.
-    if ((history.state?.navigationId ?? 1) > 1) this.location.back();
-    else void this.router.navigateByUrl('/');
-  }
-}
+export class Privacy {}

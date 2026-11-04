@@ -7,7 +7,6 @@ import { Reflection } from './reflection/reflection';
 import { NewRoutine } from './routines/new-routine';
 import { Routines } from './routines/routines';
 import { Settings } from './settings/settings';
-import { Privacy } from './privacy/privacy';
 import { Shell } from './shell/shell';
 import { SignInPage } from './sync/sign-in-page';
 import { Today } from './today/today';
@@ -19,7 +18,17 @@ export const routes: Routes = [
     canActivate: [onlyNewUsers],
     title: 'Welcome · AndThen',
   },
-  { path: 'privacy', component: Privacy, title: 'Privacy · AndThen' },
+  // Reading pages load on demand, so they don't slow down opening the app.
+  {
+    path: 'privacy',
+    loadComponent: () => import('./privacy/privacy').then((m) => m.Privacy),
+    title: 'Privacy · AndThen',
+  },
+  {
+    path: 'whats-new',
+    loadComponent: () => import('./about/whats-new').then((m) => m.WhatsNew),
+    title: "What's new · AndThen",
+  },
   {
     // The link in the sign-in email lands here.
     path: 'sign-in',

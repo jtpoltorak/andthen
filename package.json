@@ -1,5 +1,6 @@
 {
   "name": "andthen",
+  "version": "1.0.0",
   "private": true,
   "description": "Small habits, linked to what you already do.",
   "workspaces": [
@@ -14,7 +15,9 @@
     "typecheck": "npm run typecheck -w @andthen/core && npm run typecheck -w @andthen/api",
     "test:api": "npm test -w @andthen/api",
     "build:api": "npm run build -w @andthen/api",
-    "start:api": "npm run dev -w @andthen/api"
+    "start:api": "npm run dev -w @andthen/api",
+    "changelog": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/changelog.mjs",
+    "changelog:check": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/changelog.mjs --check"
   },
   "engines": {
     "node": ">=22.22.3"
