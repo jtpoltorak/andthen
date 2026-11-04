@@ -6,6 +6,7 @@ import { authRoutes } from './auth/routes';
 import type { Db } from './db/client';
 import type { Mailer } from './mail';
 import { syncRoutes } from './sync/routes';
+import { APP_VERSION } from './version';
 
 export interface AppOptions {
   db: Db;
@@ -39,14 +40,15 @@ export async function buildApp({
     maxAge: 86400,
   });
 
-  // Railway's health check. It also proves the database answers.
+  // Railway's health check. It also proves the database answers, and says which
+  // version is running so a deploy can be matched against the web app.
   app.get('/health', async (_req, reply) => {
     try {
       await db.execute(sql`select 1`);
-      return { ok: true };
+      return { ok: true, version: APP_VERSION };
     } catch (err) {
       app.log.error(err, 'Health check could not reach the database');
-      return reply.code(503).send({ ok: false });
+      return reply.code(503).send({ ok: false, version: APP_VERSION });
     }
   });
 

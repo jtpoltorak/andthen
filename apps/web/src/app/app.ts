@@ -2,6 +2,8 @@ import { ChangeDetectionStrategy, Component, Injector, inject } from '@angular/c
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { NavigationEnd, Router, RouterOutlet } from '@angular/router';
 import { filter, skip } from 'rxjs';
+import { AppUpdates } from './about/app-updates';
+import { UpdateBanner } from './about/update-banner';
 import { HabitStore } from './data/habit-store';
 import { PreferencesStore } from './data/preferences';
 import { Reminders } from './reminders/reminders';
@@ -17,8 +19,8 @@ function pageHeading(): HTMLElement | null {
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet],
-  template: `<div class="app"><router-outlet /></div>`,
+  imports: [RouterOutlet, UpdateBanner],
+  template: `<div class="app"><app-update-banner /><router-outlet /></div>`,
   styles: `
     .app {
       max-width: 480px;
@@ -28,7 +30,8 @@ function pageHeading(): HTMLElement | null {
     }
   `,
   host: {
-    // Roll "today" over after midnight, and notice permission changes made elsewhere.
+    // Roll "today" over after midnight, notice permission changes made elsewhere,
+    // and look for a new version when the app comes back to the foreground.
     '(document:visibilitychange)': 'onVisibilityChange()',
   },
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -38,6 +41,7 @@ export class App {
   protected readonly reminders = inject(Reminders);
   // Created at boot so the chosen theme applies on every screen, the welcome flow included.
   private readonly preferences = inject(PreferencesStore);
+  private readonly updates = inject(AppUpdates);
 
   constructor() {
     this.reminders.start();
@@ -59,5 +63,6 @@ export class App {
   protected onVisibilityChange(): void {
     this.store.refreshDay();
     this.reminders.refreshPermission();
+    if (document.visibilityState === 'visible') void this.updates.check();
   }
 }

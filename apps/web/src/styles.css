@@ -178,3 +178,49 @@ p {
     transition: none !important;
   }
 }
+
+/* Reading pages (Privacy, What's new, and later Help and Terms): one column of plain text. */
+
+.reading {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 16px 20px 40px;
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+.reading h1 {
+  font-size: 32px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+.reading h2 {
+  margin: 12px 0 0;
+  font-size: 18px;
+  font-weight: 800;
+}
+
+.reading .lede {
+  font-size: 17px;
+}
+
+.reading ul {
+  margin: 0;
+  padding-left: 20px;
+}
+
+.reading li + li {
+  margin-top: 4px;
+}
+
+.reading a {
+  color: var(--accent-ink);
+  font-weight: 700;
+}
+
+.reading .muted {
+  color: var(--muted);
+  font-size: 14px;
+}

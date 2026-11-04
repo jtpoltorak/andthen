@@ -7,3 +7,6 @@ coverage/
 .vscode/*
 !.vscode/extensions.json
 .env
+
+# Written before each web build/serve/test by scripts/stamp-version.mjs
+apps/web/src/app/about/version.generated.ts

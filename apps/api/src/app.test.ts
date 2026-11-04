@@ -30,7 +30,7 @@ describe('GET /health', () => {
   it('answers ok when the database does', async () => {
     const res = await app.inject({ method: 'GET', url: '/health' });
     expect(res.statusCode).toBe(200);
-    expect(res.json()).toEqual({ ok: true });
+    expect(res.json()).toEqual({ ok: true, version: 'dev' });
   });
 
   it('answers 503 when the database is unreachable', async () => {

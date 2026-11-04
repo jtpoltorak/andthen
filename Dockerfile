@@ -9,6 +9,8 @@ COPY apps/web/package.json apps/web/
 COPY apps/api/package.json apps/api/
 RUN npm ci --no-audit --no-fund
 COPY . .
+# Railway passes the commit being deployed; the About card shows its short form.
+ARG RAILWAY_GIT_COMMIT_SHA
 RUN npm run build
 
 FROM caddy:2-alpine
