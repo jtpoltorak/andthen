@@ -21,6 +21,9 @@ describe('About card', () => {
     expect(root.textContent).toContain(`AndThen ${APP_VERSION}`);
     expect(root.querySelector('a[href="/whats-new"]')).toBeTruthy();
     expect(root.querySelector('a[href="/privacy"]')).toBeTruthy();
+    expect(root.querySelector('a[href="/terms"]')).toBeTruthy();
+    expect(root.querySelector('a[href="/3rdpartylicenses.txt"]')).toBeTruthy();
+    expect(root.textContent).toContain('Jonathan T. Poltorak');
   });
 });
 

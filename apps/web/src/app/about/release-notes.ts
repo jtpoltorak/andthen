@@ -21,6 +21,17 @@ export interface Release {
 
 export const RELEASES: readonly Release[] = [
   {
+    version: '1.1.0',
+    date: '2026-11-04',
+    title: 'Terms of Use, and a clearer privacy policy.',
+    notes: [
+      'New Terms of Use, in plain words, including a note that AndThen isn’t medical advice.',
+      'The privacy policy now spells out your rights, how children’s data is handled, where synced data is stored, and how changes are announced.',
+      'Links to Privacy and Terms on the welcome screen and in Settings → About, plus the open-source licenses AndThen relies on.',
+      'Turning on sync now mentions that you’re agreeing to the Terms and Privacy policy.',
+    ],
+  },
+  {
     version: '1.0.0',
     date: '2026-11-04',
     title: 'The first numbered release of AndThen.',

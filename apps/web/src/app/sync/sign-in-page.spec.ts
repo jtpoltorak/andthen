@@ -58,6 +58,14 @@ describe('SignInPage', () => {
     expect(root.querySelector<HTMLInputElement>('#sync-email')!.value).toBe('sam@example.com');
   });
 
+  it('says that signing in means agreeing to the Terms and Privacy policy', async () => {
+    const { harness } = await setup(async () => {});
+    await harness.navigateByUrl('/sign-in');
+    const root = harness.routeNativeElement as HTMLElement;
+    expect(root.textContent).toContain('By continuing, you agree to the');
+    expect(root.querySelector('a[href="/terms"]')).toBeTruthy();
+  });
+
   it('without a link, asks for an email and sends a code', async () => {
     const { harness, sync } = await setup(async () => {});
     await harness.navigateByUrl('/sign-in');

@@ -8,6 +8,7 @@ import {
   type OnInit,
   signal,
 } from '@angular/core';
+import { RouterLink } from '@angular/router';
 import { Autofocus, byId, focusAfterRender } from '../shared/focus';
 import { signInErrorMessage } from './sync-api';
 import { SyncService } from './sync.service';
@@ -15,7 +16,7 @@ import { SyncService } from './sync.service';
 /** Email, then the 6-digit code from the email. Signing in turns sync on. */
 @Component({
   selector: 'app-sign-in-form',
-  imports: [Autofocus],
+  imports: [Autofocus, RouterLink],
   template: `
     @if (step() === 'email') {
       <form class="form" (submit)="$event.preventDefault(); send()">
@@ -34,6 +35,10 @@ import { SyncService } from './sync.service';
           (input)="email.set($any($event.target).value)"
         />
         <p class="hint">We'll email you a code. No password needed.</p>
+        <p class="hint">
+          By continuing, you agree to the <a routerLink="/terms">Terms of Use</a> and
+          <a routerLink="/privacy">Privacy policy</a>.
+        </p>
         <button type="submit" class="btn-primary" [disabled]="!email().trim() || busy()">
           {{ busy() ? 'Sending…' : 'Email me a code' }}
         </button>
@@ -89,6 +94,10 @@ import { SyncService } from './sync.service';
     }
     .hint {
       color: var(--muted);
+    }
+    .hint a {
+      color: var(--accent-ink);
+      font-weight: 700;
     }
     .code {
       letter-spacing: 0.3em;

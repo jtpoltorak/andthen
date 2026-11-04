@@ -17,6 +17,7 @@ import { HabitStore } from '../data/habit-store';
 import { TemplateList } from '../routines/template-list';
 import { DataBackup } from '../settings/data-backup';
 import { focusAfterRender } from '../shared/focus';
+import { Copyright } from '../legal/copyright';
 
 type Step = 'welcome' | 'template' | 'habit' | 'anchor' | 'mini';
 
@@ -28,7 +29,7 @@ const lowerFirst = (text: string) => (text ? text.charAt(0).toLowerCase() + text
  */
 @Component({
   selector: 'app-onboarding',
-  imports: [DataBackup, TemplateList, RouterLink],
+  imports: [DataBackup, TemplateList, RouterLink, Copyright],
   templateUrl: './onboarding.html',
   styleUrl: './onboarding.css',
   changeDetection: ChangeDetectionStrategy.OnPush,

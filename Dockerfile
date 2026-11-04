@@ -16,3 +16,5 @@ RUN npm run build
 FROM caddy:2-alpine
 COPY Caddyfile /etc/caddy/Caddyfile
 COPY --from=build /app/apps/web/dist/web/browser /srv
+# Open-source notices for the bundled libraries, linked from Settings → About and the Terms.
+COPY --from=build /app/apps/web/dist/web/3rdpartylicenses.txt /srv/
