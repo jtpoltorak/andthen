@@ -224,3 +224,12 @@ p {
   color: var(--muted);
   font-size: 14px;
 }
+
+/* A page title with something at its right edge (like a help "?"). */
+.title-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-right: -10px;
+}

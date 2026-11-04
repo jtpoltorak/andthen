@@ -30,6 +30,10 @@ export const routes: Routes = [
     title: 'Terms of Use · AndThen',
   },
   {
+    path: 'help',
+    loadChildren: () => import('./help/help.routes').then((m) => m.HELP_ROUTES),
+  },
+  {
     path: 'whats-new',
     loadComponent: () => import('./about/whats-new').then((m) => m.WhatsNew),
     title: "What's new · AndThen",

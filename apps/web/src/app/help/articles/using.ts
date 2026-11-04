@@ -1,0 +1,533 @@
+import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { RouterLink } from '@angular/router';
+import { HelpArticle } from '../help-article';
+
+// Part 2: Using AndThen. One article per feature. Keep these in step with the screens:
+// when a feature changes, update its article in the same PR.
+
+@Component({
+  imports: [HelpArticle, RouterLink],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  selector: 'app-help-getting-started',
+  template: `
+    <app-help-article slug="getting-started">
+      <p class="lede">Your first routine takes about a minute, and there's no account to make.</p>
+      <ol>
+        <li>
+          <strong>Pick one habit.</strong> Something small you'd like to do every day. Choose a
+          suggestion or type your own.
+        </li>
+        <li>
+          <strong>Pick its anchor.</strong> Something you already do daily, like "After I pour my
+          coffee". The habit will follow it.
+        </li>
+        <li>
+          <strong>Set its 2-minute version.</strong> The smallest step that still counts, for busy
+          days.
+        </li>
+        <li><strong>Start.</strong> You'll land on Today, ready for your first check-in.</li>
+      </ol>
+      <p>
+        Prefer a head start? Choose <strong>Or pick a ready-made routine</strong> on the welcome
+        screen. See <a routerLink="/help/templates">Ready-made routines</a>.
+      </p>
+      <h2>Already use AndThen somewhere else?</h2>
+      <p>
+        On the welcome screen, <strong>Restore from a backup</strong> loads a backup file, and
+        <strong>Sign in to sync</strong> brings in everything from your sync account.
+      </p>
+      <h2>What next</h2>
+      <p>
+        Live with one routine for a week or so. When it feels easy, add another habit to the chain
+        with <strong>+ and then…</strong>, or start a second routine in
+        <a routerLink="/routines">Routines</a>.
+      </p>
+    </app-help-article>
+  `,
+})
+export class GettingStarted {}
+
+@Component({
+  imports: [HelpArticle, RouterLink],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  selector: 'app-help-today',
+  template: `
+    <app-help-article slug="today">
+      <p class="lede">
+        Today shows your chains for the day and asks about one habit at a time, in order.
+      </p>
+      <p>
+        The routine most likely to be next opens on its own: the first unfinished one whose usual
+        time has passed, or else the first unfinished one. Tap any other routine to open it.
+      </p>
+      <h2>Three answers</h2>
+      <ul>
+        <li><strong>Done</strong> (teal check): you did the full habit.</li>
+        <li>
+          <strong>Did 2 min</strong> (amber "2m"): you did the 2-minute version. It counts toward
+          your chain just like Done.
+        </li>
+        <li>
+          <strong>Skip</strong> (open ring): you chose not to today. A skip isn't counted as done,
+          but it's never counted as a miss, and it never brings a nudge.
+        </li>
+      </ul>
+      <p>
+        Anything you don't answer by the end of the day counts as missed. One miss is fine; see
+        <a routerLink="/help/never-miss-twice">Never miss twice</a>.
+      </p>
+      <h2>Changing an answer</h2>
+      <p>Tap <strong>Undo</strong> next to any answered habit to clear it, then answer again.</p>
+      <h2>Other things you'll see</h2>
+      <ul>
+        <li><strong>"2 of 3 this week"</strong> on habits scheduled a few times a week.</li>
+        <li><strong>"Make it easy: …"</strong> under the next habit, if you've added a note.</li>
+        <li>
+          <strong>A badge</strong> like "Missed yesterday · don't miss twice". See
+          <a routerLink="/help/nudges">the nudge article</a>.
+        </li>
+        <li><strong>Resting today</strong>: routines with nothing scheduled today.</li>
+        <li>
+          <strong>Weekly reflection</strong>: a card at the end of the week. See
+          <a routerLink="/help/reflection">Weekly reflection</a>.
+        </li>
+      </ul>
+    </app-help-article>
+  `,
+})
+export class TodayHelp {}
+
+@Component({
+  imports: [HelpArticle, RouterLink],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  selector: 'app-help-routines',
+  template: `
+    <app-help-article slug="routines">
+      <p class="lede">
+        A routine is an anchor plus a short chain of habits. Edit one by tapping it in
+        <a routerLink="/routines">Routines</a>, or <strong>Edit</strong> on Today.
+      </p>
+      <h2>The anchor</h2>
+      <p>
+        Tap <strong>Edit</strong> next to the anchor at the top to change what the chain starts
+        after. You can also give it a <strong>usual time</strong> (optional). The usual time helps
+        Today open the right routine and is when
+        <a routerLink="/help/reminders">reminders</a> arrive.
+      </p>
+      <h2>Habits</h2>
+      <ul>
+        <li>
+          <strong>Add</strong> one at the end with <strong>+ and then…</strong>. Give it a name and
+          a 2-minute version.
+        </li>
+        <li>
+          <strong>Edit</strong> a habit to change its name, 2-minute version,
+          <a routerLink="/help/schedules">how often</a>, and
+          <a routerLink="/help/easier-notes">make-it-easier notes</a>.
+        </li>
+        <li><strong>Reorder</strong> with the up and down arrows.</li>
+        <li>
+          <strong>Remove</strong> one from inside its edit form. It leaves the chain from today on,
+          and its past check-ins stay in Progress. A chain needs at least one habit.
+        </li>
+      </ul>
+      <h2>New and removed routines</h2>
+      <p>
+        <strong>New routine</strong> in Routines starts one from scratch or from a
+        <a routerLink="/help/templates">template</a>. To retire a whole routine, open it and use
+        <strong>Remove routine</strong> at the bottom. It disappears from Today, and its history
+        stays in Progress.
+      </p>
+      <p class="muted">
+        Tip: keep a chain to 3 or 4 small habits. Short chains are easier to finish.
+      </p>
+    </app-help-article>
+  `,
+})
+export class RoutinesHelp {}
+
+@Component({
+  imports: [HelpArticle],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  selector: 'app-help-templates',
+  template: `
+    <app-help-article slug="templates">
+      <p class="lede">
+        Ready-made routines give you a sensible anchor and a few tiny habits to start from.
+      </p>
+      <ul>
+        <li><strong>Morning reset</strong>: after waking up, before the phone.</li>
+        <li><strong>Desk breaks</strong>: a midday break for your eyes and back.</li>
+        <li><strong>Home reset</strong>: switching out of work mode when you get home.</li>
+        <li><strong>Wind-down</strong>: an easier bedtime and a better tomorrow.</li>
+      </ul>
+      <p>
+        Pick one from the welcome screen or <strong>New routine</strong> in Routines. It becomes an
+        ordinary routine, so rename the anchor, swap habits, or delete the ones that don't fit. A
+        template is a starting point, not a prescription.
+      </p>
+    </app-help-article>
+  `,
+})
+export class TemplatesHelp {}
+
+@Component({
+  imports: [HelpArticle, RouterLink],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  selector: 'app-help-easier-notes',
+  template: `
+    <app-help-article slug="easier-notes">
+      <p class="lede">
+        Two optional notes per habit, so you plan for the hard moments ahead of time.
+      </p>
+      <p>In the chain editor, open a habit and expand <strong>Make it easier</strong>:</p>
+      <ul>
+        <li>
+          <strong>One thing that makes it easier to start</strong>, like "Lay out my shoes the night
+          before". It shows on Today under that habit when it's next.
+        </li>
+        <li>
+          <strong>What usually gets in the way?</strong>, like "I'm too tired after work". Naming it
+          is the first step to designing around it.
+        </li>
+      </ul>
+      <p>
+        Not sure what to write? Read
+        <a routerLink="/help/make-it-easy">Make the good choice the easy one</a>.
+      </p>
+    </app-help-article>
+  `,
+})
+export class EasierNotes {}
+
+@Component({
+  imports: [HelpArticle],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  selector: 'app-help-schedules',
+  template: `
+    <app-help-article slug="schedules">
+      <p class="lede">
+        Not every habit needs to happen every day. Each habit has its own schedule.
+      </p>
+      <p>Open a habit in the chain editor and choose <strong>How often</strong>:</p>
+      <ul>
+        <li><strong>Every day</strong>: the default.</li>
+        <li>
+          <strong>Some days</strong>: pick the weekdays, like Mon, Wed and Fri. On the other days
+          the habit rests: it isn't listed on Today and never counts as missed.
+        </li>
+        <li>
+          <strong>Times a week</strong>: from 1 to 6, on whichever days suit you. The habit shows
+          every day with a count like "2 of 3 this week", and stops asking once you reach it.
+        </li>
+      </ul>
+      <h2>How they count</h2>
+      <ul>
+        <li>Rest days are never held against you, on Today or in Progress.</li>
+        <li>
+          "Times a week" habits never get a daily nudge. Their chain on Progress counts whole weeks
+          instead of days: a week that reaches its count is a link.
+        </li>
+        <li>If every habit in a routine rests today, Today lists it under "Resting today".</li>
+      </ul>
+    </app-help-article>
+  `,
+})
+export class SchedulesHelp {}
+
+@Component({
+  imports: [HelpArticle, RouterLink],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  selector: 'app-help-reminders',
+  template: `
+    <app-help-article slug="reminders">
+      <p class="lede">
+        A quiet notification around a routine's usual time, only if there's something left to do.
+      </p>
+      <h2>Turning them on</h2>
+      <ol>
+        <li>Give your routines a usual time in the chain editor.</li>
+        <li>
+          In <a routerLink="/settings">Settings → Reminders</a>, turn on
+          <strong>Remind me</strong> and allow notifications when your browser asks.
+        </li>
+        <li>
+          Choose when: at the usual time, or 5 or 15 minutes before. Untick any routine you don't
+          want reminders for.
+        </li>
+      </ol>
+      <h2>What to know</h2>
+      <ul>
+        <li>
+          <strong>AndThen needs to be open</strong>, in a tab or as an installed app, even in the
+          background. Web apps can't wake themselves up, so a closed app can't remind you.
+        </li>
+        <li>
+          <strong>Late reminders are dropped.</strong> If the app wasn't open within an hour of the
+          time, you won't get a stale nudge hours later.
+        </li>
+        <li>
+          <strong>On iPhone and iPad</strong>, notifications only work once AndThen is
+          <a routerLink="/help/install">added to your Home Screen</a> and opened from there.
+        </li>
+        <li>Reminders are set per device, and aren't synced or included in backups.</li>
+      </ul>
+      <p>
+        Not getting them? See <a routerLink="/help/no-reminders">My reminders didn’t arrive</a>.
+      </p>
+    </app-help-article>
+  `,
+})
+export class RemindersHelp {}
+
+@Component({
+  imports: [HelpArticle, RouterLink],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  selector: 'app-help-progress',
+  template: `
+    <app-help-article slug="progress">
+      <p class="lede">Progress shows how you're showing up, kindly.</p>
+      <h2>This week</h2>
+      <p>
+        "Showed up 4 of 5 days" counts days with at least one habit done, in full or as the 2-minute
+        version. Below it: how many check-ins were done, done as 2 minutes, and skipped. Choose
+        whether weeks start on Monday or Sunday in
+        <a routerLink="/settings">Settings</a>.
+      </p>
+      <h2>The dot grid</h2>
+      <p>
+        Each habit gets 8 weeks of dots, one per day. The legend above the grid shows each kind:
+        <strong>Done</strong> (teal), <strong>2 min</strong> (amber), <strong>Skipped</strong>,
+        <strong>No check-in</strong>, and <strong>Rest day</strong> for habits with a schedule. Days
+        before a habit existed are left blank.
+      </p>
+      <h2>The forgiving chain</h2>
+      <p>
+        Each habit's chain counts how many days it has kept going. Unlike a strict streak, it
+        survives skips, rest days and a single missed day. Only two misses in a row end it. You'll
+        also see your longest chain, so a break never erases what you built.
+      </p>
+      <p>For "times a week" habits, the chain counts weeks that reached their target.</p>
+      <h2>Removed habits and routines</h2>
+      <p>Their history stays at the bottom of Progress. Nothing you've done is ever thrown away.</p>
+    </app-help-article>
+  `,
+})
+export class ProgressHelp {}
+
+@Component({
+  imports: [HelpArticle, RouterLink],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  selector: 'app-help-reflection',
+  template: `
+    <app-help-article slug="reflection">
+      <p class="lede">Two minutes, once a week: what went well, and what to make easier.</p>
+      <p>
+        On the last day of the week, Today shows a <strong>Weekly reflection</strong> card. It stays
+        for one more day in case you miss it, and <strong>Not this week</strong> hides it. You can
+        also open it any time from <a routerLink="/progress">Progress</a>.
+      </p>
+      <h2>What it shows</h2>
+      <ul>
+        <li>Your week at a glance, and last week's planned tweak, so you can see how it went.</li>
+        <li>How each habit went, day by day.</li>
+        <li>
+          For a habit done on fewer than half its days, a few one-tap tweaks: shrink it to its
+          2-minute version, move it to another routine, or do it first in its chain.
+        </li>
+        <li>
+          Two optional notes: <strong>What went well?</strong> and
+          <strong>What will you tweak next week?</strong>
+        </li>
+      </ul>
+      <p>
+        Saved reflections appear on Progress. Why this helps:
+        <a routerLink="/help/reflect-adjust">Reflect and adjust</a>.
+      </p>
+    </app-help-article>
+  `,
+})
+export class ReflectionHelp {}
+
+@Component({
+  imports: [HelpArticle, RouterLink],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  selector: 'app-help-nudges',
+  template: `
+    <app-help-article slug="nudges">
+      <p class="lede">Small badges on Today that help you get back on track, without guilt.</p>
+      <ul>
+        <li>
+          <strong>"Missed yesterday · don't miss twice"</strong> (or the day it was last planned):
+          the habit's chain is one miss from breaking. The 2-minute version moves to the front, so
+          keeping it alive takes almost nothing.
+        </li>
+        <li>
+          <strong>"Welcome back · 2 minutes counts"</strong>: it's been two or more misses. No
+          broken-streak drama, just an easy restart.
+        </li>
+        <li>
+          On a closed routine, <strong>"1 habit to keep alive today"</strong> tells you a nudge is
+          waiting inside.
+        </li>
+      </ul>
+      <p>
+        Skips and rest days never cause a nudge, and "times a week" habits don't get them. Why it
+        matters: <a routerLink="/help/never-miss-twice">Never miss twice</a>.
+      </p>
+    </app-help-article>
+  `,
+})
+export class NudgesHelp {}
+
+@Component({
+  imports: [HelpArticle, RouterLink],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  selector: 'app-help-install',
+  template: `
+    <app-help-article slug="install">
+      <p class="lede">
+        AndThen runs in your browser, and you can install it like an app. It then opens in its own
+        window, works offline, and can send reminders.
+      </p>
+      <h2>iPhone and iPad (Safari)</h2>
+      <ol>
+        <li>Open andthenhabits.com in Safari.</li>
+        <li>Tap the <strong>Share</strong> button, then <strong>Add to Home Screen</strong>.</li>
+        <li>Open AndThen from its new icon.</li>
+      </ol>
+      <h2>Android (Chrome)</h2>
+      <ol>
+        <li>Open andthenhabits.com in Chrome.</li>
+        <li>
+          Tap the <strong>⋮</strong> menu, then <strong>Install app</strong> or
+          <strong>Add to Home screen</strong>.
+        </li>
+      </ol>
+      <h2>Computer (Chrome or Edge)</h2>
+      <p>
+        Click the install icon at the right end of the address bar, or open the browser menu and
+        choose <strong>Install AndThen</strong>.
+      </p>
+      <h2>Good to know</h2>
+      <ul>
+        <li>
+          An installed app and the browser tab share the same data on that device, except on iPhone
+          and iPad, where the Home Screen app keeps its own. Use
+          <a routerLink="/help/backup">a backup</a> or <a routerLink="/help/sync">sync</a> to move
+          things across.
+        </li>
+        <li>Updates arrive on their own. See <a routerLink="/help/updates">updates</a>.</li>
+      </ul>
+    </app-help-article>
+  `,
+})
+export class InstallHelp {}
+
+@Component({
+  imports: [HelpArticle, RouterLink],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  selector: 'app-help-backup',
+  template: `
+    <app-help-article slug="backup">
+      <p class="lede">
+        Without sync, your habits live only in this browser. A backup file is your safety net.
+      </p>
+      <h2>Back up</h2>
+      <p>
+        In <a routerLink="/settings">Settings → Your data</a>, tap <strong>Back up my data</strong>.
+        A small file with all your routines, habits, check-ins and reflections goes to your
+        downloads. Keep it somewhere safe, like your cloud drive, and make a fresh one now and then.
+      </p>
+      <h2>Restore</h2>
+      <p>
+        Tap <strong>Restore from a backup</strong> and choose the file. AndThen shows what's inside
+        before doing anything. Restoring <strong>replaces</strong> everything on this device, so
+        back up first if you might want what's there now.
+      </p>
+      <p>You can also restore from the welcome screen on a new device or browser.</p>
+      <h2>What's not included</h2>
+      <p>Your name, theme and reminder settings belong to each device and aren't in the file.</p>
+      <p>
+        Using sync? You can also download your account's data from
+        <a routerLink="/settings">Settings → Sync across devices</a>. It's the same kind of file.
+      </p>
+    </app-help-article>
+  `,
+})
+export class BackupHelp {}
+
+@Component({
+  imports: [HelpArticle, RouterLink],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  selector: 'app-help-sync',
+  template: `
+    <app-help-article slug="sync">
+      <p class="lede">
+        Optional. Sync keeps your habits the same on your phone, tablet and computer.
+      </p>
+      <h2>Turning it on</h2>
+      <ol>
+        <li>
+          In <a routerLink="/settings">Settings → Sync across devices</a>, tap
+          <strong>Set up sync…</strong>.
+        </li>
+        <li>Enter your email. We send a 6-digit code; there's no password.</li>
+        <li>Enter the code, or tap the link in the email. Syncing starts right away.</li>
+        <li>Do the same on your other devices, with the same email.</li>
+      </ol>
+      <p>
+        The first time, the routines on this device are added to your account. If the account
+        already has a copy of something, the account's copy is kept.
+      </p>
+      <h2>Day to day</h2>
+      <ul>
+        <li>Changes sync in the background. <strong>Sync now</strong> does it right away.</li>
+        <li>Offline? Keep going. Changes sync when you're back online.</li>
+        <li>If the same thing changes on two devices, the most recent change wins.</li>
+        <li>Name, theme and reminder settings stay per device.</li>
+      </ul>
+      <h2>Turning it off, or leaving</h2>
+      <ul>
+        <li>
+          <strong>Turn off sync</strong> signs this device out. Everything stays on the device, and
+          your other devices keep syncing.
+        </li>
+        <li><strong>Download account data</strong> saves everything as a backup file.</li>
+        <li>
+          <strong>Delete account</strong> removes your email and the server's copy straight away,
+          and signs out all your devices. What's on each device stays there.
+        </li>
+        <li>Accounts unused for two years are deleted, after an email warning.</li>
+      </ul>
+      <p>Exactly what's stored, and where: <a routerLink="/privacy">Privacy</a>.</p>
+    </app-help-article>
+  `,
+})
+export class SyncHelp {}
+
+@Component({
+  imports: [HelpArticle, RouterLink],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  selector: 'app-help-start-over',
+  template: `
+    <app-help-article slug="start-over">
+      <p class="lede">Clear this device and begin again from the welcome screen.</p>
+      <p>
+        In <a routerLink="/settings">Settings → Start over</a>, tap
+        <strong>Reset everything…</strong>. It deletes all routines, check-ins, reflections and
+        settings on this device, and can't be undone. You'll be offered a backup first.
+      </p>
+      <p>
+        If sync is on, resetting also turns it off for this device. Your account and your other
+        devices keep their copy. To remove the account's copy too, use
+        <strong>Delete account</strong>. See <a routerLink="/help/sync">Sync across devices</a>.
+      </p>
+      <p class="muted">
+        Just want a fresh start with a habit? You don't need to reset. Remove it, or shrink it, in
+        <a routerLink="/routines">Routines</a>.
+      </p>
+    </app-help-article>
+  `,
+})
+export class StartOverHelp {}

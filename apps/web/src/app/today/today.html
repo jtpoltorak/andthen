@@ -1,7 +1,10 @@
 <main class="today">
   <header>
     <div class="date">{{ dateLabel() }}</div>
-    <h1>Today</h1>
+    <div class="title-row">
+      <h1>Today</h1>
+      <app-help-link slug="today" />
+    </div>
     @if (greeting(); as hello) {
       <p class="greeting">{{ hello }}.</p>
     }

@@ -133,7 +133,7 @@ describe('Today', () => {
   it('points to a new routine when nothing is on today', async () => {
     const { root } = await setup({ empty: true });
     expect(root.textContent).toContain("Nothing on today's list");
-    expect(root.querySelector('a')?.textContent?.trim()).toBe('Start a routine');
+    expect(root.querySelector('a.empty-action')?.textContent?.trim()).toBe('Start a routine');
   });
 
   describe('with schedules', () => {

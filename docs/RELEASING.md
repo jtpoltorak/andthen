@@ -24,3 +24,9 @@ Tests fail if the version has no release note, and CI fails if `CHANGELOG.md` is
 
 People with the app open see "A new version of AndThen is ready. Reload" once their device has
 downloaded it, and "Updated to AndThen 1.1.0 · What's new" after reloading.
+
+## Keep Help in step
+
+When a feature changes, update its article in `apps/web/src/app/help/articles/` in the same PR.
+New articles go in `help-articles.ts` (title, summary, keywords) and `help.routes.ts`; the tests
+check that every article has a route, a body, and only links to articles that exist.
