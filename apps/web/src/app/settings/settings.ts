@@ -1,18 +1,32 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { RouterLink } from '@angular/router';
 import { AboutCard } from '../about/about-card';
 import { DataBackup } from './data-backup';
 import { PreferenceSettings } from './preference-settings';
 import { ReminderSettings } from './reminder-settings';
 import { ResetData } from './reset-data';
 import { SyncSettings } from '../sync/sync-settings';
+import { HelpLink } from '../help/help-link';
 
 /** Settings tab: preferences, reminders, backup, starting over, and about the app. */
 @Component({
   selector: 'app-settings',
-  imports: [PreferenceSettings, ReminderSettings, DataBackup, ResetData, SyncSettings, AboutCard],
+  imports: [
+    PreferenceSettings,
+    ReminderSettings,
+    DataBackup,
+    ResetData,
+    SyncSettings,
+    AboutCard,
+    HelpLink,
+    RouterLink,
+  ],
   template: `
     <main class="page">
-      <h1>Settings</h1>
+      <div class="title-row">
+        <h1>Settings</h1>
+        <a class="help-all" routerLink="/help">Help</a>
+      </div>
 
       <section aria-labelledby="prefs-heading">
         <h2 id="prefs-heading">You</h2>
@@ -20,22 +34,34 @@ import { SyncSettings } from '../sync/sync-settings';
       </section>
 
       <section aria-labelledby="reminders-heading">
-        <h2 id="reminders-heading">Reminders</h2>
+        <div class="section-head">
+          <h2 id="reminders-heading">Reminders</h2>
+          <app-help-link slug="reminders" />
+        </div>
         <app-reminder-settings />
       </section>
 
       <section aria-labelledby="sync-heading">
-        <h2 id="sync-heading">Sync across devices</h2>
+        <div class="section-head">
+          <h2 id="sync-heading">Sync across devices</h2>
+          <app-help-link slug="sync" />
+        </div>
         <app-sync-settings />
       </section>
 
       <section aria-labelledby="data-heading">
-        <h2 id="data-heading">Your data</h2>
+        <div class="section-head">
+          <h2 id="data-heading">Your data</h2>
+          <app-help-link slug="backup" />
+        </div>
         <app-data-backup />
       </section>
 
       <section aria-labelledby="reset-heading">
-        <h2 id="reset-heading">Start over</h2>
+        <div class="section-head">
+          <h2 id="reset-heading">Start over</h2>
+          <app-help-link slug="start-over" />
+        </div>
         <app-reset-data />
       </section>
 
@@ -69,6 +95,19 @@ import { SyncSettings } from '../sync/sync-settings';
     h2 {
       font-size: 18px;
       font-weight: 800;
+    }
+    .section-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin: -10px -12px -10px 0;
+    }
+    .help-all {
+      display: inline-flex;
+      align-items: center;
+      min-height: 44px;
+      color: var(--accent-ink);
+      font-weight: 700;
     }
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,

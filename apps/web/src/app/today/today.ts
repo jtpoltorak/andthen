@@ -21,13 +21,14 @@ import { HabitStore } from '../data/habit-store';
 import { PreferencesStore } from '../data/preferences';
 import { ReflectionPrompt } from '../reflection/reflection-prompt';
 import { Autofocus, byId, focusAfterRender } from '../shared/focus';
+import { HelpLink } from '../help/help-link';
 
 const lowerFirst = (text: string) => (text ? text.charAt(0).toLowerCase() + text.slice(1) : '');
 
 /** Today: each routine is a card; the active one is open and asks "what's next?" */
 @Component({
   selector: 'app-today',
-  imports: [RouterLink, NgTemplateOutlet, Autofocus],
+  imports: [RouterLink, NgTemplateOutlet, Autofocus, HelpLink],
   templateUrl: './today.html',
   styleUrl: './today.css',
   changeDetection: ChangeDetectionStrategy.OnPush,

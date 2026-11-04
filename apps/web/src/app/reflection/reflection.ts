@@ -18,6 +18,7 @@ import {
 import { HabitStore } from '../data/habit-store';
 import { PreferencesStore } from '../data/preferences';
 import { ReflectionPrompt } from './reflection-prompt';
+import { HelpLink } from '../help/help-link';
 
 /** A one-tap change offered for a habit that had a hard week. */
 interface Tweak {
@@ -44,7 +45,7 @@ const sameText = (a: string, b: string) => a.trim().toLowerCase() === b.trim().t
  */
 @Component({
   selector: 'app-reflection',
-  imports: [RouterLink],
+  imports: [RouterLink, HelpLink],
   templateUrl: './reflection.html',
   styleUrl: './reflection.css',
   changeDetection: ChangeDetectionStrategy.OnPush,

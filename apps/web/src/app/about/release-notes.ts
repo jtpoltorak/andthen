@@ -21,6 +21,17 @@ export interface Release {
 
 export const RELEASES: readonly Release[] = [
   {
+    version: '1.2.0',
+    date: '2026-11-04',
+    title: 'A help guide, built in.',
+    notes: [
+      'New Help guide: short reads on how habits stick, and how to use every part of AndThen.',
+      'Tap the “?” next to a screen or setting to open its help article.',
+      'Find a topic fast with the filter box on the Help page.',
+      'Help is also linked from the welcome screen and Settings → About, and works offline.',
+    ],
+  },
+  {
     version: '1.1.0',
     date: '2026-11-04',
     title: 'Terms of Use, and a clearer privacy policy.',

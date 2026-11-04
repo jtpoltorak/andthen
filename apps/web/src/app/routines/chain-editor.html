@@ -2,7 +2,10 @@
   <a class="back-link" routerLink="/routines">‹ Routines</a>
 
   @if (routine(); as r) {
-    <h1>Edit routine</h1>
+    <div class="title-row">
+      <h1>Edit routine</h1>
+      <app-help-link slug="routines" />
+    </div>
 
     <ol class="chain" aria-label="Chain">
       <!-- The anchor: the thing the person already does. -->

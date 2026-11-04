@@ -31,6 +31,7 @@ const DAY_TOGGLES = [
 ];
 import { HabitStore } from '../data/habit-store';
 import { Autofocus, byId, focusAfterRender } from '../shared/focus';
+import { HelpLink } from '../help/help-link';
 
 /** What is open for editing: the anchor, one habit, or nothing. */
 type Editing = { kind: 'anchor' } | { kind: 'habit'; id: string } | undefined;
@@ -41,7 +42,7 @@ type Editing = { kind: 'anchor' } | { kind: 'habit'; id: string } | undefined;
  */
 @Component({
   selector: 'app-chain-editor',
-  imports: [RouterLink, Autofocus],
+  imports: [RouterLink, Autofocus, HelpLink],
   templateUrl: './chain-editor.html',
   styleUrl: './routines.css',
   changeDetection: ChangeDetectionStrategy.OnPush,

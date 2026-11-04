@@ -1,14 +1,18 @@
 import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { HabitStore } from '../data/habit-store';
+import { HelpLink } from '../help/help-link';
 
 /** Routines tab: every chain at a glance. Tap one to edit it. */
 @Component({
   selector: 'app-routines',
-  imports: [RouterLink],
+  imports: [RouterLink, HelpLink],
   template: `
     <main class="page">
-      <h1>Routines</h1>
+      <div class="title-row">
+        <h1>Routines</h1>
+        <app-help-link slug="routines" />
+      </div>
       <p class="hint">
         Each routine starts with something you already do, and then a few tiny habits.
       </p>

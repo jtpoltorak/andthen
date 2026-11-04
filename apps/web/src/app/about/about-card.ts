@@ -36,6 +36,7 @@ const RESULT_TEXT = {
       </div>
     }
     <nav class="links" aria-label="About AndThen">
+      <a routerLink="/help">Help</a>
       <a routerLink="/whats-new">What's new</a>
       <a routerLink="/privacy">Privacy</a>
       <a routerLink="/terms">Terms of Use</a>
