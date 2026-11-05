@@ -73,6 +73,13 @@ export class GettingStarted {}
         </li>
       </ul>
       <p>
+        Done and Did 2 min give the habit's ring a quick pop, and answering the last habit in a
+        routine brings a small "Chain complete" moment. It's a tiny reward on purpose: feeling
+        finished is part of what makes a habit stick (see
+        <a routerLink="/help/feel-finished">Make it feel finished</a>). If your device is set to
+        reduce motion, the animations are turned off.
+      </p>
+      <p>
         Anything you don't answer by the end of the day counts as missed. One miss is fine; see
         <a routerLink="/help/never-miss-twice">Never miss twice</a>.
       </p>

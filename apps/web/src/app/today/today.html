@@ -42,6 +42,7 @@
                   [class.ring-skip]="link.status === 'skip'"
                   [class.ring-next]="link.isNext"
                   [class.ring-nudge]="link.nudge === 'dont-miss-twice'"
+                  [class.ring-pop]="link.habit.id === poppedHabit()"
                 >
                   @if (link.status === 'full') {
                     <svg
@@ -130,7 +131,19 @@
         </ol>
 
         @if (chain.complete) {
-          <div class="complete" role="status" tabindex="-1">
+          <div
+            class="complete"
+            role="status"
+            tabindex="-1"
+            [class.complete-celebrate]="chain.routine.id === finishedRoutine()"
+          >
+            @if (chain.routine.id === finishedRoutine()) {
+              <span class="sparks" aria-hidden="true">
+                @for (spark of sparks; track $index) {
+                  <span class="spark" [style.--angle]="spark + 'deg'"></span>
+                }
+              </span>
+            }
             <div class="complete-title">Chain complete</div>
             <div class="complete-note">Small still counts. See you tomorrow.</div>
           </div>
