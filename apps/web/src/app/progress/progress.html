@@ -45,10 +45,13 @@
   @for (section of sections(); track section.routine.id) {
     <ng-container *ngTemplateOutlet="routineCard; context: { $implicit: section }"></ng-container>
   } @empty {
-    <p class="empty">
-      Nothing to track right now. <a routerLink="/routines/new">Start a routine</a>, and your
-      progress will show up here.
-    </p>
+    <app-empty-state art="dots" heading="Your dots will show up here">
+      <p>
+        Each check-in becomes a dot: teal for Done, amber for 2 minutes. Start a routine and watch
+        them fill in.
+      </p>
+      <a class="empty-action" routerLink="/routines/new">Start a routine</a>
+    </app-empty-state>
   }
 
   @if (retiredSections().length) {

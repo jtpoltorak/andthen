@@ -21,6 +21,7 @@ import { HabitStore } from '../data/habit-store';
 import { PreferencesStore } from '../data/preferences';
 import { ReflectionPrompt } from '../reflection/reflection-prompt';
 import { Autofocus, byId, focusAfterRender } from '../shared/focus';
+import { EmptyState } from '../shared/empty-state';
 import { HelpLink } from '../help/help-link';
 
 /** Long enough for the longest celebration animation in today.css to finish. */
@@ -31,7 +32,7 @@ const lowerFirst = (text: string) => (text ? text.charAt(0).toLowerCase() + text
 /** Today: each routine is a card; the active one is open and asks "what's next?" */
 @Component({
   selector: 'app-today',
-  imports: [RouterLink, NgTemplateOutlet, Autofocus, HelpLink],
+  imports: [RouterLink, NgTemplateOutlet, Autofocus, HelpLink, EmptyState],
   templateUrl: './today.html',
   styleUrl: './today.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
