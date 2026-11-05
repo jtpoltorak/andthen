@@ -143,9 +143,9 @@ export const HELP_ARTICLES = [
   {
     slug: 'today',
     part: 'using',
-    title: 'Today: Done, Did 2 min, and Skip',
-    summary: 'What each answer means, and how to undo one.',
-    keywords: 'check in done mini skip undo today screen',
+    title: 'Today: Done, Did 2 min, Skip, and Run',
+    summary: 'What each answer means, how to undo one, and running a routine step by step.',
+    keywords: 'check in done mini skip undo today screen run focus one at a time step by step',
     minutes: 2,
     related: ['nudges', 'progress'],
   },

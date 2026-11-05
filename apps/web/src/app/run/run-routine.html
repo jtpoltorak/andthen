@@ -1,0 +1,121 @@
+<main class="run">
+  <a class="back-link" routerLink="/today">‹ Today</a>
+
+  @if (chain(); as chain) {
+    <ol class="steps" aria-label="Chain">
+      @for (link of chain.links; track link.habit.id) {
+        <li
+          class="step-dot"
+          [class.dot-full]="link.status === 'full'"
+          [class.dot-mini]="link.status === 'mini'"
+          [class.dot-skip]="link.status === 'skip'"
+          [class.dot-now]="link.isNext"
+          [title]="link.habit.name"
+        >
+          <span class="visually-hidden">{{ link.habit.name }}: {{ answerLabel(link) }}</span>
+        </li>
+      }
+    </ol>
+
+    @if (chain.paused) {
+      <section class="finish">
+        <h1 id="run-focus" tabindex="-1">This routine is paused</h1>
+        <p class="muted">Resume it on Today when you're ready.</p>
+        <a class="primary" routerLink="/today">Back to Today</a>
+      </section>
+    } @else if (step(); as link) {
+      @for (current of [link]; track current.habit.id) {
+        <section class="focus" aria-live="polite">
+          <p class="cue">
+            @if (stepNumber() === 1) {
+              {{ chain.routine.anchor }}, and then…
+            } @else {
+              And then…
+            }
+          </p>
+          <h1 id="run-focus" class="habit" tabindex="-1">{{ current.habit.name }}</h1>
+          <p class="tiny">Tiny version: {{ current.habit.twoMinuteVersion }}</p>
+
+          @if (current.nudge === 'dont-miss-twice') {
+            <p class="badge">Missed last time · don't miss twice. 2 minutes counts.</p>
+          } @else if (current.nudge === 'welcome-back') {
+            <p class="badge badge-soft">Welcome back · 2 minutes counts</p>
+          }
+          @if (current.habit.why) {
+            <p class="note"><span class="note-label">Why:</span> {{ current.habit.why }}</p>
+          }
+          @if (current.habit.makeItEasier) {
+            <p class="note">
+              <span class="note-label">Make it easy:</span> {{ current.habit.makeItEasier }}
+            </p>
+          }
+
+          <div class="actions" [class.nudge]="current.nudge">
+            @if (current.nudge) {
+              <button type="button" class="act act-mini" (click)="answer(current, 'mini')">
+                Did 2 min
+              </button>
+              <button type="button" class="act act-done" (click)="answer(current, 'full')">
+                Done
+              </button>
+            } @else {
+              <button type="button" class="act act-done" (click)="answer(current, 'full')">
+                Done
+              </button>
+              <button type="button" class="act act-mini" (click)="answer(current, 'mini')">
+                Did 2 min
+              </button>
+            }
+            <button type="button" class="act act-skip" (click)="answer(current, 'skip')">
+              Skip today
+            </button>
+          </div>
+          <p class="count">{{ stepNumber() }} of {{ chain.total }}</p>
+        </section>
+      }
+    } @else if (chain.total) {
+      <section class="finish" [class.celebrate]="justFinished()">
+        <div class="big-ring" aria-hidden="true">
+          @if (justFinished()) {
+            @for (spark of sparks; track $index) {
+              <span class="spark" [style.--angle]="spark + 'deg'"></span>
+            }
+          }
+          <svg
+            width="40"
+            height="40"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="3"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path d="M5 12.5l4.5 4.5L19 7.5" />
+          </svg>
+        </div>
+        <h1 id="run-focus" tabindex="-1">Chain complete</h1>
+        <p class="muted">
+          {{ chain.doneCount }} of {{ chain.total }} done. Small still counts. See you tomorrow.
+        </p>
+        <a class="primary" routerLink="/today">Back to Today</a>
+      </section>
+    } @else {
+      <section class="finish">
+        <h1 id="run-focus" tabindex="-1">Nothing planned today</h1>
+        <p class="muted">Every habit in this routine has a rest day today.</p>
+        <a class="primary" routerLink="/today">Back to Today</a>
+      </section>
+    }
+
+    @if (last(); as done) {
+      <button type="button" class="undo" (click)="undo()">Undo “{{ done.habit.name }}”</button>
+    }
+  } @else {
+    <section class="finish">
+      <h1 id="run-focus" tabindex="-1">Routine not found</h1>
+      <p class="muted">It may have been removed. Your history is still on Progress.</p>
+      <a class="primary" routerLink="/today">Back to Today</a>
+    </section>
+  }
+</main>

@@ -21,6 +21,16 @@ export interface Release {
 
 export const RELEASES: readonly Release[] = [
   {
+    version: '1.8.0',
+    date: '2026-11-05',
+    title: 'Run a routine, one habit at a time.',
+    notes: [
+      'Tap Run on a routine’s card for a calm, full-screen view: your anchor, “and then…”, and one habit at a time with big buttons.',
+      'Your “why” and make-it-easy notes show along the way, and a bar at the top fills in as you go.',
+      'Undo the last answer right there, and finish with a little celebration.',
+    ],
+  },
+  {
     version: '1.7.0',
     date: '2026-11-05',
     title: 'Pick an accent color.',

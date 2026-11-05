@@ -45,6 +45,13 @@ export const routes: Routes = [
     title: 'Sign in · AndThen',
   },
   {
+    // Run a routine: a full-screen, one-habit-at-a-time view. Loads on demand.
+    path: 'run/:id',
+    canActivate: [requireRoutines],
+    loadComponent: () => import('./run/run-routine').then((m) => m.RunRoutine),
+    title: 'Run routine · AndThen',
+  },
+  {
     path: '',
     component: Shell,
     canActivate: [requireRoutines],
