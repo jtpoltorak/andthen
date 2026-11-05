@@ -117,7 +117,9 @@ describe('parseBackup', () => {
       delete h.why;
     }
     const result = parseBackup(JSON.stringify(backup));
-    expect(result.ok && result.data.habits.every((h) => !('obstacle' in h) && !('why' in h))).toBe(true);
+    expect(result.ok && result.data.habits.every((h) => !('obstacle' in h) && !('why' in h))).toBe(
+      true,
+    );
   });
 
   it('keeps habit schedules, and reads older habits without one as every day', () => {
