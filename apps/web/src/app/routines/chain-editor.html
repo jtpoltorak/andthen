@@ -64,7 +64,12 @@
       </li>
 
       @for (habit of habits(); track habit.id; let i = $index, first = $first, last = $last) {
-        <li class="chain-row">
+        <li
+          class="chain-row habit-row"
+          [class.dragging]="drag()?.id === habit.id"
+          [class.drag-active]="!!drag()"
+          [style.transform]="rowShift(i)"
+        >
           <div class="rail" aria-hidden="true">
             <span class="ring"></span>
             @if (!last) {
@@ -226,6 +231,27 @@
                   }
                 </div>
                 <div class="row-tools">
+                  @if (habits().length > 1) {
+                    <!-- Drag handle for touch and mouse. Keyboards use the up and down buttons. -->
+                    <span
+                      class="grip"
+                      aria-hidden="true"
+                      [title]="'Drag to move ' + habit.name"
+                      (pointerdown)="startDrag($event, habit, i)"
+                      (pointermove)="moveDrag($event)"
+                      (pointerup)="endDrag($event)"
+                      (pointercancel)="endDrag($event, true)"
+                    >
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                        <circle cx="9" cy="6" r="1.6" />
+                        <circle cx="15" cy="6" r="1.6" />
+                        <circle cx="9" cy="12" r="1.6" />
+                        <circle cx="15" cy="12" r="1.6" />
+                        <circle cx="9" cy="18" r="1.6" />
+                        <circle cx="15" cy="18" r="1.6" />
+                      </svg>
+                    </span>
+                  }
                   <button
                     type="button"
                     class="icon-btn"
