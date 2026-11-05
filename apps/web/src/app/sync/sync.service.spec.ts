@@ -49,12 +49,30 @@ class FakeServer {
         });
       case '/v1/me':
         if (!token || !this.tokens.has(token)) return reply(401, { error: 'signed_out' });
+        if (init.method === 'GET') {
+          return reply(200, {
+            id: 'acc',
+            email: 'sam@example.com',
+            sessions: [...this.tokens].map((t) => ({
+              id: t,
+              deviceName: null,
+              createdAt: '2026-11-01T00:00:00.000Z',
+              lastSeenAt: `2026-11-0${t.slice(-1)}T00:00:00.000Z`,
+              current: t === token,
+            })),
+          });
+        }
         this.tokens.clear();
         this.records.clear();
         return reply(204);
       case '/v1/sync':
         if (!token || !this.tokens.has(token)) return reply(401, { error: 'signed_out' });
         return reply(200, this.sync(body));
+    }
+    if (path.startsWith('/v1/me/sessions/') && init.method === 'DELETE') {
+      if (!token || !this.tokens.has(token)) return reply(401, { error: 'signed_out' });
+      const id = decodeURIComponent(path.split('/').pop()!);
+      return reply(this.tokens.delete(id) ? 204 : 404);
     }
     return reply(404, { error: 'not_found' });
   }) as unknown as typeof fetch;
@@ -348,5 +366,40 @@ describe('SyncService', () => {
     server.online = false;
     await expect(phone.sync.deleteAccount()).rejects.toThrow();
     expect(phone.sync.enabled()).toBe(true);
+  });
+
+  it('lists the signed-in devices, this one first, and signs another one out', async () => {
+    const phone = make();
+    const laptop = make();
+    const tablet = make();
+    await phone.sync.signIn('sam@example.com', CODE); // token-1
+    await laptop.sync.signIn('sam@example.com', CODE); // token-2
+    await tablet.sync.signIn('sam@example.com', CODE); // token-3
+
+    const list = await laptop.sync.devices();
+    expect(list.map((d) => [d.id, d.current])).toEqual([
+      ['token-2', true],
+      ['token-3', false],
+      ['token-1', false],
+    ]);
+
+    await laptop.sync.signOutDevice('token-1');
+    // Already gone counts as done.
+    await laptop.sync.signOutDevice('token-1');
+    expect((await laptop.sync.devices()).map((d) => d.id)).toEqual(['token-2', 'token-3']);
+
+    await phone.sync.syncNow();
+    expect(phone.sync.enabled()).toBe(false);
+    expect(phone.sync.signedOutNotice()).toBe(true);
+  });
+
+  it('turns sync off when listing devices finds this one signed out', async () => {
+    const phone = make();
+    await phone.sync.signIn('sam@example.com', CODE);
+    server.tokens.clear();
+
+    await expect(phone.sync.devices()).rejects.toMatchObject({ status: 401 });
+    expect(phone.sync.enabled()).toBe(false);
+    expect(phone.sync.signedOutNotice()).toBe(true);
   });
 });

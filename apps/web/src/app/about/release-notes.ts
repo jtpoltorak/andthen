@@ -21,6 +21,15 @@ export interface Release {
 
 export const RELEASES: readonly Release[] = [
   {
+    version: '1.10.0',
+    date: '2026-11-05',
+    title: 'See where you’re signed in.',
+    notes: [
+      'Settings → Sync now lists every device signed in to your account, with when each was last active.',
+      'Sign out an old phone or a borrowed computer right from the list. Its data stays on it, but it stops syncing.',
+    ],
+  },
+  {
     version: '1.9.0',
     date: '2026-11-05',
     title: 'Your week, as a card.',

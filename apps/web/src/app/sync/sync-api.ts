@@ -26,6 +26,25 @@ export interface SignedIn {
   account: { id: string; email: string };
 }
 
+/** A device signed in to the account, as the server lists it. */
+export interface SignedInDevice {
+  id: string;
+  /** Set from the browser and system when the device signed in, such as "Safari on iPhone". */
+  deviceName: string | null;
+  /** When it signed in (ISO time). */
+  createdAt: string;
+  /** When it last used sync (ISO time). The server updates this about once a day. */
+  lastSeenAt: string;
+  /** True for the device asking. */
+  current: boolean;
+}
+
+export interface Account {
+  id: string;
+  email: string;
+  sessions: SignedInDevice[];
+}
+
 /** A thin fetch wrapper for the sync API. Nothing here touches the device's data. */
 @Injectable({ providedIn: 'root' })
 export class SyncApi {
@@ -58,6 +77,16 @@ export class SyncApi {
   /** Deletes the account, its synced data and every signed-in device. */
   async deleteAccount(token: string): Promise<void> {
     await this.call('DELETE', '/v1/me', undefined, token);
+  }
+
+  /** The account and its signed-in devices. */
+  async me(token: string): Promise<Account> {
+    return (await this.call('GET', '/v1/me', undefined, token)) as Account;
+  }
+
+  /** Signs out one of the account's devices. */
+  async revokeSession(token: string, id: string): Promise<void> {
+    await this.call('DELETE', `/v1/me/sessions/${encodeURIComponent(id)}`, undefined, token);
   }
 
   async sync(token: string, body: SyncRequest): Promise<SyncResponse> {

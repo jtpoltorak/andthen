@@ -19,6 +19,8 @@ describe('SyncSettings', () => {
       signedOutNotice: signal(false),
       accountDeleted: signal(false),
       syncNow: vi.fn(async () => {}),
+      devices: vi.fn(async () => []),
+      signOutDevice: vi.fn(async () => {}),
       turnOff: vi.fn(async () => phase.set('off')),
       exportAccount: vi.fn(async () => ({ app: 'andthen', version: 1, data: {} })),
       deleteAccount: vi.fn(async () => {
