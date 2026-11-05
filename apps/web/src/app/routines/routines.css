@@ -300,6 +300,46 @@ form {
   text-decoration: none;
 }
 
+.pause-zone {
+  margin-top: 16px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border);
+}
+.pause-title {
+  margin: 0 0 4px;
+  font-size: 15px;
+  font-weight: 800;
+}
+.pause-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 10px 0 4px;
+}
+.pause-option {
+  min-height: 40px;
+  padding: 0 14px;
+  border: 1.5px solid var(--input-border);
+  border-radius: 12px;
+  background: var(--surface);
+  color: var(--ink);
+  font-size: 14px;
+  font-weight: 700;
+}
+.pause-option:hover {
+  border-color: var(--accent);
+}
+
+.paused-tag {
+  margin-left: 4px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: var(--amber-soft);
+  color: var(--amber-soft-ink);
+  font-size: 12px;
+  font-weight: 700;
+}
+
 .danger-zone {
   margin-top: 12px;
   padding-top: 12px;

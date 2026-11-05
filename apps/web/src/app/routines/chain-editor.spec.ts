@@ -101,6 +101,22 @@ describe('ChainEditor', () => {
     expect('why' in store.habitsOf(routine.id)[0]).toBe(false);
   });
 
+  it('pauses the routine until resumed, then resumes it', async () => {
+    const { fixture, root, store, routine } = await setup();
+    button(root, 'Pause this routine…').click();
+    await fixture.whenStable();
+    button(root, 'Until I resume').click();
+    await fixture.whenStable();
+    expect(store.routine(routine.id)?.pauses).toEqual([{ from: store.today() }]);
+    expect(root.textContent).toContain('Paused until you resume');
+
+    button(root, 'Resume now').click();
+    await fixture.whenStable();
+    // A pause that started today leaves no trace.
+    expect('pauses' in store.routine(routine.id)!).toBe(false);
+    expect(button(root, 'Pause this routine…')).toBeTruthy();
+  });
+
   it('leaves the order alone when a drag is cancelled', async () => {
     const { fixture, root, names } = await setup();
     root.querySelectorAll<HTMLElement>('.habit-row').forEach((row, i) => {

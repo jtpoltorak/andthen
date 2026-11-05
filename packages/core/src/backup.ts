@@ -1,4 +1,5 @@
-import type { CheckIn, CheckInKind, DayKey, Habit, Reflection, Routine } from './model';
+import type { CheckIn, CheckInKind, DayKey, Habit, Pause, Reflection, Routine } from './model';
+import { normalizePauses } from './pause';
 import { cleanNote } from './reflection';
 import { parseSchedule } from './schedule';
 
@@ -138,6 +139,22 @@ function readRoutine(raw: unknown, i: number): Routine {
   }
   const archivedOn = day(raw, 'archivedOn', where, false);
   if (archivedOn) routine.archivedOn = archivedOn;
+  // Optional: older backups were made before pauses.
+  const rawPauses = raw['pauses'];
+  if (rawPauses !== undefined) {
+    if (!Array.isArray(rawPauses)) fail(`${where} has pauses AndThen can't read.`);
+    const pauses = normalizePauses(
+      rawPauses.map((p, n) => {
+        const at = `${where}, pause ${n + 1}`;
+        if (!isObject(p)) fail(`${at} isn't valid.`);
+        const pause: Pause = { from: day(p, 'from', at)! };
+        const until = day(p, 'until', at, false);
+        if (until) pause.until = until;
+        return pause;
+      }),
+    );
+    if (pauses.length) routine.pauses = pauses;
+  }
   return routine;
 }
 

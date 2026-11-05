@@ -373,6 +373,36 @@
       Tip: keep a chain to 3 or 4 small habits. Short chains are easier to finish.
     </p>
 
+    <section class="pause-zone" aria-labelledby="pause-title">
+      <h2 id="pause-title" class="pause-title">Take a break</h2>
+      @if (currentPause(); as pause) {
+        <p class="row-sub" role="status">
+          Paused {{ pause.until ? pauseEnd(pause.until) : 'until you resume' }}. Paused days never
+          count as missed.
+        </p>
+        <button type="button" class="btn-small" id="resume-routine" (click)="resume()">
+          Resume now
+        </button>
+      } @else if (choosingPause()) {
+        <p class="row-sub">
+          Travel, illness, a busy stretch? Pause this routine. Paused days never count as missed,
+          and your history stays.
+        </p>
+        <div class="pause-options" role="group" aria-label="Pause for">
+          @for (length of pauseLengths; track $index) {
+            <button type="button" class="pause-option" (click)="pause(length)">
+              {{ pauseLabel(length) }}
+            </button>
+          }
+        </div>
+        <button type="button" class="btn-text" (click)="cancelPause()">Cancel</button>
+      } @else {
+        <button type="button" class="btn-text" id="pause-routine" (click)="choosingPause.set(true)">
+          Pause this routine…
+        </button>
+      }
+    </section>
+
     <div class="danger-zone">
       @if (confirmingRemoveRoutine()) {
         <p class="row-sub">Remove this routine from Today? Your past check-ins are kept.</p>

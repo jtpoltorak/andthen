@@ -16,6 +16,17 @@ export interface Routine {
   order: number;
   createdOn: DayKey;
   archivedOn?: DayKey;
+  /**
+   * Optional: times the routine was set aside (travel, illness, a busy stretch).
+   * Paused days are rest days for every habit in it: never a miss, never a nudge.
+   */
+  pauses?: Pause[];
+}
+
+/** A stretch of days a routine is paused: from `from` (inclusive) to `until` (exclusive). No `until` means until resumed. */
+export interface Pause {
+  from: DayKey;
+  until?: DayKey;
 }
 
 /**

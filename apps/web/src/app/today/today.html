@@ -218,7 +218,12 @@
       </button>
     }
   } @empty {
-    @if (resting().length) {
+    @if (paused().length) {
+      <section class="empty-card">
+        <h2>Taking a break</h2>
+        <p>Paused routines don't count as missed. Pick them up whenever you're ready.</p>
+      </section>
+    } @else if (resting().length) {
       <section class="empty-card">
         <h2>A rest day</h2>
         <p>Nothing is planned for today. Enjoy it. Your chains carry on tomorrow.</p>
@@ -242,6 +247,24 @@
     </p>
   }
 
+  @if (paused().length) {
+    <section class="paused" aria-label="Paused routines">
+      @for (chain of paused(); track chain.routine.id) {
+        <div class="paused-row">
+          <span class="paused-text">
+            <span class="paused-anchor">{{ chain.routine.anchor }}</span>
+            <span class="paused-note">
+              Paused{{ chain.paused?.until ? ' ' + pausedUntil(chain.paused?.until) : '' }}
+            </span>
+          </span>
+          <button type="button" class="resume-btn" (click)="resume(chain.routine.id)">
+            Resume<span class="visually-hidden"> {{ chain.routine.anchor }}</span>
+          </button>
+        </div>
+      }
+    </section>
+  }
+
   @if (reflection.show()) {
     <section class="reflect-card" aria-labelledby="reflect-title">
       <h2 id="reflect-title">Weekly reflection</h2>
@@ -255,7 +278,7 @@
     </section>
   }
 
-  @if (chains().length || resting().length) {
+  @if (chains().length || resting().length || paused().length) {
     <p class="footnote">Missed a day? No streak to lose. Just don't miss twice.</p>
   }
 </main>

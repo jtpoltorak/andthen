@@ -1,6 +1,7 @@
 import { addDays, fromDayKey } from './dates';
 import type { CheckIn, DayKey, Habit, Routine } from './model';
 import type { WeekStart } from './preferences';
+import { isPausedOn } from './pause';
 import { isPlannedDay, weeklyTarget } from './schedule';
 
 /**
@@ -9,7 +10,7 @@ import { isPlannedDay, weeklyTarget } from './schedule';
  * - `missed`: the habit was in its chain but got no answer.
  * - `open`: today, not answered yet. Never counted against anyone.
  * - `rest`: the habit's schedule didn't ask for it that day (an off day, or a weekly
- *   habit on a day it wasn't done). Never counted for or against anyone.
+ *   habit on a day it wasn't done), or its routine was paused. Never counted for or against anyone.
  * - `off`: the habit wasn't in a chain that day (not started yet, retired, or in the future).
  */
 export type DayStatus = 'full' | 'mini' | 'skip' | 'missed' | 'open' | 'rest' | 'off';
@@ -75,7 +76,7 @@ export function dayStatus(
   if (kind && day <= today) return kind;
   const { from, until } = habitSpan(habit, routine);
   if (day > today || day < from || (until && day >= until)) return 'off';
-  if (!isPlannedDay(habit.schedule, day)) return 'rest';
+  if (!isPlannedDay(habit.schedule, day) || isPausedOn(routine, day)) return 'rest';
   const target = weeklyTarget(habit.schedule);
   if (target !== undefined) {
     // "N times a week": a day without a check-in is never a miss. Today stays open
@@ -191,9 +192,9 @@ export function habitStats(
       let available = 0;
       for (let d = week; d <= end; d = addDays(d, 1)) {
         if (isDone(checkIns.get(`${habit.id}|${d}`)?.kind ?? 'off')) done++;
-        if (d >= from && (!until || d < until)) available++;
+        if (d >= from && (!until || d < until) && !isPausedOn(routine, d)) available++;
       }
-      // A habit that starts (or ends) midweek only asks for what fits.
+      // A habit that starts (or ends, or is paused) midweek only asks for what fits.
       const need = Math.min(target, available);
       if (need === 0 && done === 0) continue;
       if (done >= need) marks.push('done');

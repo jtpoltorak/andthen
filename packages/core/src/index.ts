@@ -5,6 +5,7 @@ export * from './starters';
 export * from './editing';
 export * from './history';
 export * from './schedule';
+export * from './pause';
 export * from './backup';
 export * from './reminders';
 export * from './preferences';

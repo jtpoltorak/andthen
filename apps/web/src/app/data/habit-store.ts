@@ -9,7 +9,9 @@ import {
   type Reflection,
   type Routine,
   type RoutineTemplate,
+  addPause,
   buildDay,
+  endPause,
   cleanNote,
   createBackup,
   chainHabits,
@@ -183,6 +185,27 @@ export class HabitStore {
     if (!next.usualTime) delete next.usualTime;
     await this.repo.putRoutine(next);
     this.routines.update((list) => list.map((r) => (r.id === id ? next : r)));
+  }
+
+  /** Pauses a routine from today, for a number of days or (no `days`) until resumed. */
+  async pauseRoutine(id: string, days?: number): Promise<void> {
+    const current = this.routine(id);
+    if (!current) return;
+    await this.putPauses(current, addPause(current, this.today(), days));
+  }
+
+  /** Brings a paused routine back from today on. */
+  async resumeRoutine(id: string): Promise<void> {
+    const current = this.routine(id);
+    if (!current) return;
+    await this.putPauses(current, endPause(current, this.today()));
+  }
+
+  private async putPauses(current: Routine, pauses: Routine['pauses']): Promise<void> {
+    const next: Routine = { ...current, pauses };
+    if (!pauses?.length) delete next.pauses;
+    await this.repo.putRoutine(next);
+    this.routines.update((list) => list.map((r) => (r.id === current.id ? next : r)));
   }
 
   /** Removes a routine from today on. Its habits and past check-ins are kept for history. */
