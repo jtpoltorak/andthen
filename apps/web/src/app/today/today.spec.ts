@@ -97,6 +97,23 @@ describe('Today', () => {
     expect(root).toBeTruthy();
   });
 
+  it('lists a paused routine apart, and brings it back on Resume', async () => {
+    const { fixture, root } = await setup();
+    const store = TestBed.inject(HabitStore);
+    const id = store.activeRoutines()[0].id;
+    await store.pauseRoutine(id, 7);
+    await fixture.whenStable();
+    expect(buttonsByText(root, 'Done')).toHaveLength(0);
+    expect(root.querySelector('.paused')?.textContent).toContain('After I pour my coffee');
+    expect(root.querySelector('.paused-note')?.textContent).toContain('Paused through');
+    expect(root.textContent).toContain('Taking a break');
+
+    buttonsByText(root, 'Resume')[0].click();
+    await fixture.whenStable();
+    expect(root.querySelector('.paused')).toBeNull();
+    expect(buttonsByText(root, 'Done')).toHaveLength(1);
+  });
+
   it('moves focus to the next habit after a check-in, then to "Chain complete"', async () => {
     const { fixture, root } = await setup();
 

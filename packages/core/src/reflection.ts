@@ -1,5 +1,6 @@
 import { addDays } from './dates';
 import { dayStatus, habitSpan, weekStart } from './history';
+import { isPausedOn } from './pause';
 import { weeklyTarget } from './schedule';
 import type { CheckIn, DayKey, Habit, Reflection, Routine } from './model';
 import type { WeekStart } from './preferences';
@@ -96,12 +97,18 @@ export function habitWeeks(
       if (target !== undefined) {
         const { from } = habitSpan(habit, routine);
         if (from > last) continue; // Not in a chain this week (starts later).
-        entry.target = target;
-        entry.days = target;
+        // Paused days come off the week's count.
+        let available = 0;
+        for (let d = week.from; d <= week.to; d = addDays(d, 1)) {
+          if (d >= from && !isPausedOn(routine, d)) available++;
+        }
+        if (available === 0) continue; // Paused all week.
+        entry.target = Math.min(target, available);
+        entry.days = entry.target;
         // Hard only once there's too little week left to reach half the count.
         let daysLeft = 0;
         for (let d = today; d <= week.to; d = addDays(d, 1)) daysLeft++;
-        entry.struggling = entry.done * 2 < target && entry.done + daysLeft < target;
+        entry.struggling = entry.done * 2 < entry.target && entry.done + daysLeft < entry.target;
         result.push(entry);
         continue;
       }

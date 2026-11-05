@@ -536,3 +536,46 @@ h1 {
   color: var(--accent-ink);
   font-weight: 700;
 }
+
+/* Paused routines: one quiet row each, with a way back. */
+.paused {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 4px 0 16px;
+}
+.paused-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 16px;
+  border: 1.5px dashed var(--dashed-soft);
+  border-radius: var(--radius-control);
+}
+.paused-text {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+.paused-anchor {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--ink-soft);
+  overflow-wrap: anywhere;
+}
+.paused-note {
+  font-size: 13px;
+  color: var(--muted);
+}
+.resume-btn {
+  flex-shrink: 0;
+  min-height: 40px;
+  padding: 0 14px;
+  border: 1.5px solid var(--accent);
+  border-radius: 12px;
+  background: var(--surface);
+  color: var(--accent-ink);
+  font-size: 14px;
+  font-weight: 700;
+}

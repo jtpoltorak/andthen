@@ -21,6 +21,17 @@ export interface Release {
 
 export const RELEASES: readonly Release[] = [
   {
+    version: '1.6.0',
+    date: '2026-11-05',
+    title: 'Pause a routine when life gets busy.',
+    notes: [
+      'Pause any routine for 3 days, 1 week, 2 weeks, or until you resume it. Find it under “Take a break” in the routine.',
+      'Paused days are rest days: they never count as missed, never bring a nudge, and never break your chain.',
+      'Paused routines wait in a quiet row on Today with a Resume button.',
+      'New help article: Pausing a routine.',
+    ],
+  },
+  {
     version: '1.5.0',
     date: '2026-11-05',
     title: 'Remember why each habit matters.',

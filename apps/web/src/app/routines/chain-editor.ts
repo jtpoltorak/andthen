@@ -17,6 +17,10 @@ import {
   describeSchedule,
   type RowBox,
   dropIndex,
+  PAUSE_LENGTHS,
+  addDays,
+  fromDayKey,
+  pauseOn,
   suggestTwoMinuteVersion,
 } from '@andthen/core';
 
@@ -81,6 +85,42 @@ export class ChainEditor {
 
   protected readonly editing = signal<Editing>(undefined);
   protected readonly confirmingRemoveRoutine = signal(false);
+  protected readonly choosingPause = signal(false);
+  protected readonly pauseLengths = PAUSE_LENGTHS;
+
+  /** The pause covering today, if the routine is paused. */
+  protected readonly currentPause = computed(() => {
+    const r = this.routine();
+    return r ? pauseOn(r, this.store.today()) : undefined;
+  });
+
+  protected pauseLabel(days: number | undefined): string {
+    if (days === undefined) return 'Until I resume';
+    if (days % 7 === 0) return days === 7 ? '1 week' : `${days / 7} weeks`;
+    return `${days} days`;
+  }
+
+  /** "through Thu, Nov 12": the last paused day. */
+  protected pauseEnd(until: string): string {
+    const last = fromDayKey(addDays(until, -1));
+    return `through ${last.toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric' })}`;
+  }
+
+  protected async pause(days: number | undefined): Promise<void> {
+    await this.store.pauseRoutine(this.id(), days);
+    this.choosingPause.set(false);
+    focusAfterRender(this.injector, byId('resume-routine'));
+  }
+
+  protected cancelPause(): void {
+    this.choosingPause.set(false);
+    focusAfterRender(this.injector, byId('pause-routine'));
+  }
+
+  protected async resume(): Promise<void> {
+    await this.store.resumeRoutine(this.id());
+    focusAfterRender(this.injector, byId('pause-routine'));
+  }
 
   // Drafts for whichever form is open.
   protected readonly draftAnchor = signal('');

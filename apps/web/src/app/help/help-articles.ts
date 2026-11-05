@@ -186,6 +186,15 @@ export const HELP_ARTICLES = [
     related: ['routines', 'progress'],
   },
   {
+    slug: 'pause',
+    part: 'using',
+    title: 'Pausing a routine',
+    summary: 'Take a break for travel, illness or a busy stretch, without losing your chain.',
+    keywords: 'pause break vacation holiday travel sick ill resume skip days',
+    minutes: 1,
+    related: ['never-miss-twice', 'routines'],
+  },
+  {
     slug: 'reminders',
     part: 'using',
     title: 'Reminders',

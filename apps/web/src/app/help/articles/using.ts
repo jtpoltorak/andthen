@@ -146,7 +146,7 @@ export class TodayHelp {}
         <strong>New routine</strong> in Routines starts one from scratch or from a
         <a routerLink="/help/templates">template</a>. To retire a whole routine, open it and use
         <strong>Remove routine</strong> at the bottom. It disappears from Today, and its history
-        stays in Progress.
+        stays in Progress. Just need a break? <a routerLink="/help/pause">Pause it</a> instead.
       </p>
       <p class="muted">
         Tip: keep a chain to 3 or 4 small habits. Short chains are easier to finish.
@@ -253,6 +253,42 @@ export class EasierNotes {}
   `,
 })
 export class SchedulesHelp {}
+
+@Component({
+  imports: [HelpArticle, RouterLink],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  selector: 'app-help-pause',
+  template: `
+    <app-help-article slug="pause">
+      <p class="lede">
+        Life happens. Pause a routine for a few days and it simply rests: nothing counts as missed.
+      </p>
+      <h2>Pause</h2>
+      <p>
+        Open the routine, scroll to <strong>Take a break</strong>, and tap
+        <strong>Pause this routine…</strong>. Choose 3 days, 1 week, 2 weeks, or
+        <strong>Until I resume</strong>. The pause starts today.
+      </p>
+      <h2>While it's paused</h2>
+      <ul>
+        <li>It moves to a quiet "Paused" row at the bottom of Today, with a Resume button.</li>
+        <li>No reminders, and no "don't miss twice" nudges.</li>
+        <li>
+          On Progress, paused days are rest days. Your chain doesn't grow, and it doesn't break.
+        </li>
+        <li>"Times a week" habits ask for fewer that week, to fit the days left.</li>
+      </ul>
+      <h2>Coming back</h2>
+      <p>
+        A pause with an end date finishes on its own. To come back early, tap
+        <strong>Resume</strong> on Today or <strong>Resume now</strong> in the routine. Starting
+        again with the 2-minute version is a great way back in; see
+        <a routerLink="/help/never-miss-twice">Never miss twice</a>.
+      </p>
+    </app-help-article>
+  `,
+})
+export class PauseHelp {}
 
 @Component({
   imports: [HelpArticle, RouterLink],

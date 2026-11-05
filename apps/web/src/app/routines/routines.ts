@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { isPausedOn } from '@andthen/core';
 import { HabitStore } from '../data/habit-store';
 import { HelpLink } from '../help/help-link';
 
@@ -28,6 +29,9 @@ import { HelpLink } from '../help/help-link';
           }
           <span class="routine-anchor">
             <span class="anchor-dot" aria-hidden="true"></span>{{ item.routine.anchor }}
+            @if (item.paused) {
+              <span class="paused-tag">Paused</span>
+            }
           </span>
           <span class="routine-habits">
             @for (h of item.habits; track h.id; let last = $last) {
@@ -55,6 +59,7 @@ export class Routines {
     this.store.activeRoutines().map((routine) => ({
       routine,
       habits: this.store.habitsOf(routine.id),
+      paused: isPausedOn(routine, this.store.today()),
     })),
   );
 }

@@ -1,6 +1,7 @@
 import { addDays, minutesOf } from './dates';
 import { dayStatus, doneThisWeek } from './history';
-import type { CheckIn, CheckInKind, DayKey, Habit, LinkStatus, Routine } from './model';
+import type { CheckIn, CheckInKind, DayKey, Habit, LinkStatus, Pause, Routine } from './model';
+import { pauseOn } from './pause';
 import type { WeekStart } from './preferences';
 import { weeklyTarget } from './schedule';
 
@@ -44,6 +45,8 @@ export interface Chain {
   atRisk: number;
   /** Habits in this routine that have a rest day today (by their schedule), so aren't listed. */
   resting: number;
+  /** Set when the routine is paused today. Nothing is listed, and nothing counts as missed. */
+  paused?: Pause;
 }
 
 const isActiveOn = (item: { createdOn: DayKey; archivedOn?: DayKey }, day: DayKey) =>
@@ -147,7 +150,7 @@ export function buildChain(
     return link;
   });
 
-  return {
+  const chain: Chain = {
     routine,
     links,
     doneCount: links.filter((l) => l.status === 'full' || l.status === 'mini').length,
@@ -156,6 +159,9 @@ export function buildChain(
     atRisk: links.filter((l) => l.nudge === 'dont-miss-twice').length,
     resting: active.length - own.length,
   };
+  const paused = pauseOn(routine, day);
+  if (paused) chain.paused = paused;
+  return chain;
 }
 
 /** Builds every active routine's chain for a day, in routine order. */

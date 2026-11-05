@@ -54,13 +54,30 @@ export class Today {
   protected readonly sparks = [0, 45, 90, 135, 180, 225, 270, 315];
   private celebrateTimer?: ReturnType<typeof setTimeout>;
 
-  /** Routines with something planned today. A routine whose habits all rest today is listed apart. */
+  /**
+   * Routines with something planned today. A routine whose habits all rest today is
+   * listed apart, and so is a paused one.
+   */
   protected readonly chains = computed(() =>
-    this.store.chains().filter((c) => c.total > 0 || c.resting === 0),
+    this.store.chains().filter((c) => !c.paused && (c.total > 0 || c.resting === 0)),
   );
   protected readonly resting = computed(() =>
-    this.store.chains().filter((c) => c.total === 0 && c.resting > 0),
+    this.store.chains().filter((c) => !c.paused && c.total === 0 && c.resting > 0),
   );
+  protected readonly paused = computed(() => this.store.chains().filter((c) => !!c.paused));
+
+  /** "until Thu, Nov 12" for a pause with an end, or nothing for one that lasts until resumed. */
+  protected pausedUntil(until: string | undefined): string {
+    if (!until) return '';
+    const last = fromDayKey(addDays(until, -1));
+    return `through ${last.toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric' })}`;
+  }
+
+  protected async resume(routineId: string): Promise<void> {
+    await this.store.resumeRoutine(routineId);
+    this.openedByHand.set(routineId);
+    this.focusCard(routineId);
+  }
   protected readonly reflection = inject(ReflectionPrompt);
   private readonly preferences = inject(PreferencesStore);
 
