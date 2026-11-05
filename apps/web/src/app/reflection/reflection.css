@@ -210,3 +210,10 @@ h1 {
   margin: 3px;
   background: var(--line);
 }
+
+.card-link {
+  align-self: flex-start;
+  color: var(--accent-ink);
+  font-size: 14px;
+  font-weight: 700;
+}

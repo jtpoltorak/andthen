@@ -389,6 +389,13 @@ export class RemindersHelp {}
         whether weeks start on Monday or Sunday in
         <a routerLink="/settings">Settings</a>.
       </p>
+      <h2>Share your week</h2>
+      <p>
+        <strong>Share your week</strong> turns the week into a picture: days you showed up, each
+        habit's seven dots, and "what went well" if you reflected. Tap <strong>Share</strong> to
+        send it from your phone, or <strong>Save image</strong> to keep it. It's drawn on your
+        device in your theme and accent color, and nothing is uploaded.
+      </p>
       <h2>The dot grid</h2>
       <p>
         Each habit gets 8 weeks of dots, one per day. The legend above the grid shows each kind:

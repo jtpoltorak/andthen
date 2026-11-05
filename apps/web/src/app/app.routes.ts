@@ -63,6 +63,11 @@ export const routes: Routes = [
       { path: 'routines/:id', component: ChainEditor, title: 'Edit routine · AndThen' },
       { path: 'progress', component: Progress, title: 'Progress · AndThen' },
       { path: 'reflect', component: Reflection, title: 'Weekly reflection · AndThen' },
+      {
+        path: 'recap',
+        loadComponent: () => import('./recap/weekly-recap').then((m) => m.WeeklyRecap),
+        title: 'Your week · AndThen',
+      },
       { path: 'settings', component: Settings, title: 'Settings · AndThen' },
     ],
   },

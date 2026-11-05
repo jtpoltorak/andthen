@@ -302,6 +302,12 @@ details summary {
 
 /* Weekly reflection */
 
+.recap-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 20px;
+}
+
 .reflect-link {
   align-self: flex-start;
   margin-top: 4px;

@@ -21,6 +21,16 @@ export interface Release {
 
 export const RELEASES: readonly Release[] = [
   {
+    version: '1.9.0',
+    date: '2026-11-05',
+    title: 'Your week, as a card.',
+    notes: [
+      'New “Share your week” on Progress and in the weekly reflection: a picture of your week with each habit’s dots.',
+      'Share it from your phone, or save it as an image. It includes “what went well” if you reflected.',
+      'It’s drawn on your device in your theme and accent color. Nothing is uploaded.',
+    ],
+  },
+  {
     version: '1.8.0',
     date: '2026-11-05',
     title: 'Run a routine, one habit at a time.',
