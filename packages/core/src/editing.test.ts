@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { chainHabits, moveItem } from './editing';
+import { chainHabits, dropIndex, moveItem } from './editing';
 import type { Habit } from './model';
 
 const habit = (id: string, order: number, over: Partial<Habit> = {}): Habit => ({
@@ -53,5 +53,35 @@ describe('moveItem', () => {
   it('does not mutate the input', () => {
     moveItem(list, 0, 2);
     expect(list.map((h) => h.order)).toEqual([0, 1, 2]);
+  });
+});
+
+describe('dropIndex', () => {
+  // Four rows 40px tall, stacked from the top.
+  const rows = [0, 40, 80, 120].map((top) => ({ top, bottom: top + 40 }));
+
+  it("stays put until it crosses a neighbour's middle", () => {
+    expect(dropIndex(rows, 1, 0)).toBe(1);
+    expect(dropIndex(rows, 1, 15)).toBe(1);
+    expect(dropIndex(rows, 1, -15)).toBe(1);
+  });
+
+  it('moves down once its bottom edge passes the middles below', () => {
+    expect(dropIndex(rows, 0, 25)).toBe(1);
+    expect(dropIndex(rows, 0, 65)).toBe(2);
+    expect(dropIndex(rows, 0, 500)).toBe(3);
+  });
+
+  it('moves up once its top edge passes the middles above', () => {
+    expect(dropIndex(rows, 3, -25)).toBe(2);
+    expect(dropIndex(rows, 3, -105)).toBe(0);
+  });
+
+  it('lets a tall row move past a short one without dragging its whole height', () => {
+    const mixed = [
+      { top: 0, bottom: 200 },
+      { top: 200, bottom: 240 },
+    ];
+    expect(dropIndex(mixed, 0, 25)).toBe(1);
   });
 });

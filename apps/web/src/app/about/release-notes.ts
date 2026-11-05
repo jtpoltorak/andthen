@@ -21,6 +21,16 @@ export interface Release {
 
 export const RELEASES: readonly Release[] = [
   {
+    version: '1.4.0',
+    date: '2026-11-05',
+    title: 'Drag to reorder your chain.',
+    notes: [
+      'In the routine editor, drag a habit by its handle (the six dots) to move it up or down the chain.',
+      'The other habits slide out of the way as you drag, so you can see where it will land.',
+      'The up and down arrows are still there, and still work from a keyboard.',
+    ],
+  },
+  {
     version: '1.3.0',
     date: '2026-11-05',
     title: 'A little celebration for every check-in.',

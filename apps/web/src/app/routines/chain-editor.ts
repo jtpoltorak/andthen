@@ -1,6 +1,7 @@
 import {
   ChangeDetectionStrategy,
   Component,
+  ElementRef,
   Injector,
   computed,
   inject,
@@ -14,10 +15,26 @@ import {
   MAX_TIMES_A_WEEK,
   WEEKDAYS,
   describeSchedule,
+  type RowBox,
+  dropIndex,
   suggestTwoMinuteVersion,
 } from '@andthen/core';
 
 type ScheduleKind = 'daily' | 'days' | 'weekly';
+
+/** A habit being dragged by its handle. Positions are in viewport pixels. */
+interface Drag {
+  id: string;
+  pointerId: number;
+  from: number;
+  to: number;
+  startY: number;
+  dy: number;
+  /** Height of the dragged row, which is how far the rows it passes slide over. */
+  height: number;
+  /** Where each habit row sat when the drag started. */
+  rows: RowBox[];
+}
 
 /** Day toggles, Monday first. Values are `Date.getDay()` numbers. */
 const DAY_TOGGLES = [
@@ -38,7 +55,7 @@ type Editing = { kind: 'anchor' } | { kind: 'habit'; id: string } | undefined;
 
 /**
  * Edits one routine chain: its anchor, and the habits that follow it.
- * Add, rename, reorder (up/down), and remove links. Changes save right away.
+ * Add, rename, reorder (drag, or up/down), and remove links. Changes save right away.
  */
 @Component({
   selector: 'app-chain-editor',
@@ -51,6 +68,7 @@ export class ChainEditor {
   private readonly store = inject(HabitStore);
   private readonly router = inject(Router);
   private readonly injector = inject(Injector);
+  private readonly host = inject<ElementRef<HTMLElement>>(ElementRef);
 
   /** Route param `:id`, bound by the router. */
   readonly id = input.required<string>();
@@ -171,6 +189,64 @@ export class ChainEditor {
     await this.store.archiveHabit(habit.id);
     this.editing.set(undefined);
     focusAfterRender(this.injector, byId('add-habit'));
+  }
+
+  protected readonly drag = signal<Drag | undefined>(undefined);
+
+  /** Starts dragging a habit by its handle. The up and down buttons stay for keyboards. */
+  protected startDrag(event: PointerEvent, habit: Habit, index: number): void {
+    if (this.drag() || (event.pointerType === 'mouse' && event.button !== 0)) return;
+    const rows = [...this.host.nativeElement.querySelectorAll<HTMLElement>('.habit-row')];
+    const row = rows[index];
+    if (!row) return;
+    event.preventDefault();
+    (event.currentTarget as HTMLElement).setPointerCapture?.(event.pointerId);
+    const boxes = rows.map((r) => {
+      const rect = r.getBoundingClientRect();
+      return { top: rect.top, bottom: rect.top + rect.height };
+    });
+    this.editing.set(undefined);
+    this.drag.set({
+      id: habit.id,
+      pointerId: event.pointerId,
+      from: index,
+      to: index,
+      startY: event.clientY,
+      dy: 0,
+      height: row.getBoundingClientRect().height,
+      rows: boxes,
+    });
+  }
+
+  protected moveDrag(event: PointerEvent): void {
+    const drag = this.drag();
+    if (!drag || event.pointerId !== drag.pointerId) return;
+    const dy = event.clientY - drag.startY;
+    const to = dropIndex(drag.rows, drag.from, dy);
+    this.drag.set({ ...drag, dy, to });
+  }
+
+  protected async endDrag(event: PointerEvent, cancelled = false): Promise<void> {
+    const drag = this.drag();
+    if (!drag || event.pointerId !== drag.pointerId) return;
+    this.drag.set(undefined);
+    if (!cancelled && drag.to !== drag.from) {
+      await this.store.moveHabit(drag.id, drag.to - drag.from);
+    }
+  }
+
+  /** How far a row slides while another one is dragged past it. */
+  protected rowShift(index: number): string | null {
+    const drag = this.drag();
+    if (!drag) return null;
+    if (index === drag.from) return `translateY(${drag.dy}px)`;
+    if (drag.from < drag.to && index > drag.from && index <= drag.to) {
+      return `translateY(${-drag.height}px)`;
+    }
+    if (drag.to < drag.from && index >= drag.to && index < drag.from) {
+      return `translateY(${drag.height}px)`;
+    }
+    return 'translateY(0)';
   }
 
   /** Moves a habit, keeping focus on its arrow (or the other one, at the top or bottom). */

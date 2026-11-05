@@ -132,7 +132,10 @@ export class TodayHelp {}
           <a routerLink="/help/schedules">how often</a>, and
           <a routerLink="/help/easier-notes">make-it-easier notes</a>.
         </li>
-        <li><strong>Reorder</strong> with the up and down arrows.</li>
+        <li>
+          <strong>Reorder</strong> by dragging a habit by its handle (the six dots), or with the up
+          and down arrows. The arrows also work from a keyboard.
+        </li>
         <li>
           <strong>Remove</strong> one from inside its edit form. It leaves the chain from today on,
           and its past check-ins stay in Progress. A chain needs at least one habit.

@@ -181,6 +181,42 @@ h1 {
   background: none;
   color: var(--ink);
 }
+.grip {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 40px;
+  color: var(--dashed);
+  cursor: grab;
+  touch-action: none;
+  user-select: none;
+}
+.grip:hover {
+  color: var(--ink-soft);
+}
+
+/* While dragging: the picked-up row follows the pointer, and the rows it passes slide aside. */
+.habit-row {
+  position: relative;
+}
+.drag-active {
+  transition: transform 160ms ease;
+  user-select: none;
+}
+.dragging {
+  z-index: 2;
+  transition: none;
+  border-radius: var(--radius-control);
+  background: var(--surface);
+  box-shadow: 0 8px 24px rgb(0 0 0 / 0.14);
+  cursor: grabbing;
+}
+.dragging .grip {
+  cursor: grabbing;
+  color: var(--accent);
+}
+
 .icon-btn:disabled {
   color: var(--disabled);
 }

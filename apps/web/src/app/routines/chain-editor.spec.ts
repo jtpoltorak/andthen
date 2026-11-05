@@ -54,6 +54,52 @@ describe('ChainEditor', () => {
     expect(names()).toEqual(['Stretch', 'Drink water']);
   });
 
+  it('reorders by dragging a habit by its handle', async () => {
+    const { fixture, root, store, routine, names } = await setup();
+    await store.addLink(routine.id, 'Journal', 'Write one line');
+    await fixture.whenStable();
+    expect(names()).toEqual(['Drink water', 'Stretch', 'Journal']);
+
+    // Rows are 60px tall, stacked from the top.
+    root.querySelectorAll<HTMLElement>('.habit-row').forEach((row, i) => {
+      row.getBoundingClientRect = () => ({ top: i * 60, height: 60 }) as DOMRect;
+    });
+    const pointer = (type: string, clientY: number) => {
+      const event = new MouseEvent(type, { bubbles: true, cancelable: true, clientY });
+      Object.defineProperty(event, 'pointerId', { value: 1 });
+      Object.defineProperty(event, 'pointerType', { value: 'touch' });
+      return event;
+    };
+    const grip = root.querySelectorAll<HTMLElement>('.grip')[0];
+    grip.dispatchEvent(pointer('pointerdown', 30));
+    grip.dispatchEvent(pointer('pointermove', 160));
+    await fixture.whenStable();
+    expect(root.querySelector('.dragging')).not.toBeNull();
+
+    grip.dispatchEvent(pointer('pointerup', 160));
+    await fixture.whenStable();
+    expect(names()).toEqual(['Stretch', 'Journal', 'Drink water']);
+    expect(root.querySelector('.dragging')).toBeNull();
+  });
+
+  it('leaves the order alone when a drag is cancelled', async () => {
+    const { fixture, root, names } = await setup();
+    root.querySelectorAll<HTMLElement>('.habit-row').forEach((row, i) => {
+      row.getBoundingClientRect = () => ({ top: i * 60, height: 60 }) as DOMRect;
+    });
+    const pointer = (type: string, clientY: number) => {
+      const event = new MouseEvent(type, { bubbles: true, cancelable: true, clientY });
+      Object.defineProperty(event, 'pointerId', { value: 1 });
+      return event;
+    };
+    const grip = root.querySelectorAll<HTMLElement>('.grip')[0];
+    grip.dispatchEvent(pointer('pointerdown', 30));
+    grip.dispatchEvent(pointer('pointermove', 100));
+    grip.dispatchEvent(pointer('pointercancel', 100));
+    await fixture.whenStable();
+    expect(names()).toEqual(['Drink water', 'Stretch']);
+  });
+
   it('adds a habit and fills in a 2-minute version when left blank', async () => {
     const { fixture, root, store, routine, names } = await setup();
     button(root, '+ and then...').click();
