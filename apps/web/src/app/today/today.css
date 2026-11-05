@@ -66,6 +66,21 @@ h1 {
   flex-shrink: 0;
 }
 
+.run-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  min-height: 32px;
+  margin-left: 4px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: var(--accent-soft);
+  color: var(--accent-ink);
+  font-size: 13px;
+  font-weight: 700;
+  text-decoration: none;
+}
+
 .edit-link {
   /* Small text, but a tap target of at least 24px. */
   display: inline-flex;
