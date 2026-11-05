@@ -6,6 +6,7 @@ describe('PreferenceSettings', () => {
   beforeEach(() => {
     localStorage.clear();
     delete document.documentElement.dataset['theme'];
+    delete document.documentElement.dataset['accent'];
   });
 
   async function setup() {
@@ -42,6 +43,20 @@ describe('PreferenceSettings', () => {
 
     expect(document.documentElement.dataset['theme']).toBe('dark');
     expect(JSON.parse(localStorage.getItem('andthen.prefs')!).theme).toBe('dark');
+  });
+
+  it('switches the accent color, and teal clears it again', async () => {
+    const { fixture, root } = await setup();
+    expect(document.documentElement.dataset['accent']).toBeUndefined();
+
+    root.querySelector<HTMLInputElement>('input[name="accent"][value="plum"]')!.click();
+    await fixture.whenStable();
+    expect(document.documentElement.dataset['accent']).toBe('plum');
+    expect(JSON.parse(localStorage.getItem('andthen.prefs')!).accent).toBe('plum');
+
+    root.querySelector<HTMLInputElement>('input[name="accent"][value="teal"]')!.click();
+    await fixture.whenStable();
+    expect(document.documentElement.dataset['accent']).toBeUndefined();
   });
 
   it('changes the first day of the week', async () => {

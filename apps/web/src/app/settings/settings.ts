@@ -29,7 +29,10 @@ import { HelpLink } from '../help/help-link';
       </div>
 
       <section aria-labelledby="prefs-heading">
-        <h2 id="prefs-heading">You</h2>
+        <div class="section-head">
+          <h2 id="prefs-heading">You</h2>
+          <app-help-link slug="make-it-yours" />
+        </div>
         <app-preference-settings />
       </section>
 

@@ -21,6 +21,16 @@ export interface Release {
 
 export const RELEASES: readonly Release[] = [
   {
+    version: '1.7.0',
+    date: '2026-11-05',
+    title: 'Pick an accent color.',
+    notes: [
+      'Choose Teal, Blue, Plum, Clay or Slate in Settings → You. Buttons, checkmarks and highlights follow along, in light and dark.',
+      'The amber for “Did 2 min” stays put, so it always stands out.',
+      'New help article: Make it yours.',
+    ],
+  },
+  {
     version: '1.6.0',
     date: '2026-11-05',
     title: 'Pause a routine when life gets busy.',

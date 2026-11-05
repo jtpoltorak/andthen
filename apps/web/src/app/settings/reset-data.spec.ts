@@ -110,7 +110,7 @@ describe('ResetData', () => {
       checkIns: [],
       reflections: [],
     });
-    expect(prefs.prefs()).toEqual({ name: '', theme: 'system', weekStartsOn: 1 });
+    expect(prefs.prefs()).toEqual({ name: '', theme: 'system', accent: 'teal', weekStartsOn: 1 });
     expect(reminders.prefs().enabled).toBe(false);
     expect(localStorage.getItem('andthen.prefs')).toBeNull();
     expect(localStorage.getItem('andthen.reminders')).toBeNull();
