@@ -21,6 +21,16 @@ export interface Release {
 
 export const RELEASES: readonly Release[] = [
   {
+    version: '1.3.0',
+    date: '2026-11-05',
+    title: 'A little celebration for every check-in.',
+    notes: [
+      'Tapping Done or Did 2 min now gives the habit’s ring a quick pop.',
+      'Finishing the last habit in a routine brings a small “Chain complete” moment.',
+      'If your device is set to reduce motion, AndThen keeps things still.',
+    ],
+  },
+  {
     version: '1.2.0',
     date: '2026-11-04',
     title: 'A help guide, built in.',

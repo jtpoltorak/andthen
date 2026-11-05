@@ -146,6 +146,42 @@ h1 {
   background: transparent;
 }
 
+/* A quick pop and ripple on Done (teal) and Did 2 min (amber). */
+.ring-pop {
+  position: relative;
+  animation: ring-pop 420ms cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.ring-pop::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 2px solid var(--accent);
+  animation: ring-ripple 700ms ease-out forwards;
+  pointer-events: none;
+}
+.ring-mini.ring-pop::after {
+  border-color: var(--amber);
+}
+@keyframes ring-pop {
+  0% {
+    transform: scale(0.6);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+@keyframes ring-ripple {
+  0% {
+    transform: scale(1);
+    opacity: 0.8;
+  }
+  100% {
+    transform: scale(2.2);
+    opacity: 0;
+  }
+}
+
 .line {
   flex: 1;
   width: 2px;
@@ -256,6 +292,53 @@ h1 {
   border-radius: var(--radius-control);
   background: var(--accent-soft);
 }
+.complete-celebrate {
+  position: relative;
+  animation: complete-in 480ms cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+@keyframes complete-in {
+  0% {
+    transform: scale(0.92);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* Eight little sparks that fly out from the left edge of "Chain complete" and fade. */
+.sparks {
+  position: absolute;
+  left: 28px;
+  top: 50%;
+  pointer-events: none;
+}
+.spark {
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  margin: -3px;
+  border-radius: 50%;
+  background: var(--accent);
+  opacity: 0;
+  transform: rotate(var(--angle)) translateX(0);
+  animation: spark 900ms ease-out 120ms forwards;
+}
+.spark:nth-child(even) {
+  background: var(--amber);
+}
+@keyframes spark {
+  0% {
+    opacity: 1;
+    transform: rotate(var(--angle)) translateX(0) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: rotate(var(--angle)) translateX(34px) scale(0.4);
+  }
+}
+
 .complete-title {
   font-size: 15px;
   font-weight: 800;

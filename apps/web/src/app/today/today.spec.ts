@@ -68,6 +68,35 @@ describe('Today', () => {
     expect(root.textContent).toContain('1 of 2');
   });
 
+  it('pops the ring on a check-in and celebrates a finished chain, but not on a skip', async () => {
+    const { fixture, root } = await setup();
+
+    buttonsByText(root, 'Done')[0].click();
+    await fixture.whenStable();
+    expect(root.querySelectorAll('.ring-pop')).toHaveLength(1);
+    expect(root.querySelector('.complete-celebrate')).toBeNull();
+
+    buttonsByText(root, 'Skip')[0].click();
+    await fixture.whenStable();
+    expect(root.querySelectorAll('.ring-pop')).toHaveLength(0);
+    expect(root.querySelector('.complete-celebrate')).not.toBeNull();
+    expect(root.querySelectorAll('.spark')).toHaveLength(8);
+  });
+
+  it('does not celebrate a chain that was already complete when the page opened', async () => {
+    const { root } = await setup();
+    const store = TestBed.inject(HabitStore);
+    for (const habit of store.habitsOf(store.activeRoutines()[0].id)) {
+      await store.checkIn(habit.id, 'full');
+    }
+    const fixture = TestBed.createComponent(Today);
+    await fixture.whenStable();
+    const fresh = fixture.nativeElement as HTMLElement;
+    expect(fresh.textContent).toContain('Chain complete');
+    expect(fresh.querySelector('.complete-celebrate')).toBeNull();
+    expect(root).toBeTruthy();
+  });
+
   it('moves focus to the next habit after a check-in, then to "Chain complete"', async () => {
     const { fixture, root } = await setup();
 

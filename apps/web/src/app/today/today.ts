@@ -23,6 +23,9 @@ import { ReflectionPrompt } from '../reflection/reflection-prompt';
 import { Autofocus, byId, focusAfterRender } from '../shared/focus';
 import { HelpLink } from '../help/help-link';
 
+/** Long enough for the longest celebration animation in today.css to finish. */
+const CELEBRATE_MS = 1600;
+
 const lowerFirst = (text: string) => (text ? text.charAt(0).toLowerCase() + text.slice(1) : '');
 
 /** Today: each routine is a card; the active one is open and asks "what's next?" */
@@ -42,6 +45,14 @@ export class Today {
   /** Routine whose "+ and then..." form is open. */
   protected readonly addingTo = signal<string | undefined>(undefined);
   protected readonly draft = signal('');
+
+  /** The habit just checked off, so its ring can pop. Cleared once the animation is over. */
+  protected readonly poppedHabit = signal<string | undefined>(undefined);
+  /** The routine whose chain was just finished, for a short celebration. */
+  protected readonly finishedRoutine = signal<string | undefined>(undefined);
+  /** Directions, in degrees, for the little sparks around "Chain complete". */
+  protected readonly sparks = [0, 45, 90, 135, 180, 225, 270, 315];
+  private celebrateTimer?: ReturnType<typeof setTimeout>;
 
   /** Routines with something planned today. A routine whose habits all rest today is listed apart. */
   protected readonly chains = computed(() =>
@@ -86,10 +97,29 @@ export class Today {
 
   protected async answer(routineId: string, link: ChainLink, kind: CheckInKind): Promise<void> {
     await this.store.checkIn(link.habit.id, kind);
+    this.celebrate(routineId, link, kind);
     this.focusCard(routineId);
   }
 
+  /**
+   * A small, quick "well done": the ring pops for Done and Did 2 min, and the card
+   * celebrates when the last habit in the chain gets its answer. Reduced motion turns
+   * the animation off (styles.css); the words still change as before.
+   */
+  private celebrate(routineId: string, link: ChainLink, kind: CheckInKind): void {
+    clearTimeout(this.celebrateTimer);
+    this.poppedHabit.set(kind === 'skip' ? undefined : link.habit.id);
+    const chain = this.store.chains().find((c) => c.routine.id === routineId);
+    this.finishedRoutine.set(chain?.complete ? routineId : undefined);
+    this.celebrateTimer = setTimeout(() => {
+      this.poppedHabit.set(undefined);
+      this.finishedRoutine.set(undefined);
+    }, CELEBRATE_MS);
+  }
+
   protected async undo(routineId: string, link: ChainLink): Promise<void> {
+    this.poppedHabit.set(undefined);
+    this.finishedRoutine.set(undefined);
     await this.store.undoCheckIn(link.habit.id);
     this.focusCard(routineId);
   }
