@@ -12,4 +12,5 @@ export * from './preferences';
 export * from './templates';
 export * from './reflection';
 export * from './journal';
+export * from './share';
 export * from './sync';

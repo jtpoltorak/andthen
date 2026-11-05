@@ -22,6 +22,8 @@ import {
   fromDayKey,
   pauseOn,
   suggestTwoMinuteVersion,
+  encodeSharedRoutine,
+  toSharedRoutine,
 } from '@andthen/core';
 
 type ScheduleKind = 'daily' | 'days' | 'weekly';
@@ -87,6 +89,7 @@ export class ChainEditor {
   protected readonly confirmingRemoveRoutine = signal(false);
   protected readonly choosingPause = signal(false);
   protected readonly pauseLengths = PAUSE_LENGTHS;
+  protected readonly shareStatus = signal('');
 
   /** The pause covering today, if the routine is paused. */
   protected readonly currentPause = computed(() => {
@@ -110,6 +113,31 @@ export class ChainEditor {
     await this.store.pauseRoutine(this.id(), days);
     this.choosingPause.set(false);
     focusAfterRender(this.injector, byId('resume-routine'));
+  }
+
+  /** A link that sets up this chain for someone else: the share sheet, or else the clipboard. */
+  protected async share(): Promise<void> {
+    const routine = this.routine();
+    if (!routine) return;
+    const code = encodeSharedRoutine(toSharedRoutine(routine, this.habits()));
+    const url = `${location.origin}/add#${code}`;
+    const text = `Here's a routine I use in AndThen: ${routine.anchor}, and then…`;
+    this.shareStatus.set('');
+    if (navigator.share) {
+      try {
+        await navigator.share({ title: 'A routine for you', text, url });
+        return;
+      } catch (error) {
+        // Closing the share sheet isn't an error worth showing.
+        if ((error as Error)?.name === 'AbortError') return;
+      }
+    }
+    try {
+      await navigator.clipboard.writeText(url);
+      this.shareStatus.set('Link copied. Paste it into a message to send it.');
+    } catch {
+      this.shareStatus.set(`Copy this link to send it: ${url}`);
+    }
   }
 
   protected cancelPause(): void {

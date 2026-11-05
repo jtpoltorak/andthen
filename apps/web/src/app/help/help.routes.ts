@@ -25,6 +25,7 @@ export const HELP_COMPONENTS: Record<HelpSlug, Type<unknown>> = {
   'easier-notes': using.EasierNotes,
   schedules: using.SchedulesHelp,
   pause: using.PauseHelp,
+  share: using.ShareHelp,
   'make-it-yours': using.MakeItYoursHelp,
   reminders: using.RemindersHelp,
   progress: using.ProgressHelp,

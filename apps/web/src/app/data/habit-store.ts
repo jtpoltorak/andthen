@@ -23,6 +23,7 @@ import {
   upsertCheckIn,
   withJournal,
   type Mood,
+  type SharedRoutine,
 } from '@andthen/core';
 import { HABIT_REPOSITORY } from './habit-repository';
 import { PreferencesStore } from './preferences';
@@ -139,25 +140,30 @@ export class HabitStore {
    * Starts a routine from a template: its anchor, name, and every habit in the chain.
    * The result is an ordinary routine, so the person can edit it like any other.
    */
-  async createFromTemplate(template: RoutineTemplate): Promise<Routine> {
+  /** Sets up a whole routine at once: from a ready-made template, or a link someone shared. */
+  async createFromTemplate(template: RoutineTemplate | SharedRoutine): Promise<Routine> {
     const today = this.today();
     const routine: Routine = {
       id: newId(),
-      name: template.name,
       anchor: template.anchor,
-      usualTime: template.usualTime,
       order: nextOrder(this.routines()),
       createdOn: today,
     };
-    const habits: Habit[] = template.habits.map((h, order) => ({
-      id: newId(),
-      routineId: routine.id,
-      name: h.name,
-      twoMinuteVersion: h.twoMinuteVersion,
-      ...(h.makeItEasier ? { makeItEasier: h.makeItEasier } : {}),
-      order,
-      createdOn: today,
-    }));
+    if (template.name) routine.name = template.name;
+    if (template.usualTime) routine.usualTime = template.usualTime;
+    const habits: Habit[] = template.habits.map((h, order) => {
+      const schedule = 'schedule' in h ? normalizeSchedule(h.schedule) : undefined;
+      return {
+        id: newId(),
+        routineId: routine.id,
+        name: h.name,
+        twoMinuteVersion: h.twoMinuteVersion,
+        ...(h.makeItEasier ? { makeItEasier: h.makeItEasier } : {}),
+        ...(schedule ? { schedule } : {}),
+        order,
+        createdOn: today,
+      };
+    });
     await this.repo.putRoutine(routine);
     await this.repo.putHabits(habits);
     this.routines.update((list) => [...list, routine]);

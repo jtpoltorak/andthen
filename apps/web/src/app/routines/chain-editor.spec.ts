@@ -1,5 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
+import { decodeSharedRoutine } from '@andthen/core';
 import { HABIT_REPOSITORY, InMemoryHabitRepository } from '../data/habit-repository';
 import { HabitStore } from '../data/habit-store';
 import { ChainEditor } from './chain-editor';
@@ -38,6 +39,27 @@ describe('ChainEditor', () => {
     const names = () => [...root.querySelectorAll('.habit-name')].map((n) => n.textContent?.trim());
     return { fixture, root, store, routine, names };
   }
+
+  it('copies a share link that sets up the same chain', async () => {
+    const { fixture, root } = await setup();
+    const writeText = vi.fn(async (_text: string) => {});
+    const nav = navigator as Navigator & { share?: unknown };
+    const share = nav.share;
+    Object.defineProperty(navigator, 'share', { value: undefined, configurable: true });
+    Object.defineProperty(navigator, 'clipboard', { value: { writeText }, configurable: true });
+
+    button(root, 'Share a link…').click();
+    await fixture.whenStable();
+
+    const url = writeText.mock.calls[0][0];
+    expect(url).toMatch(/\/add#[A-Za-z0-9_-]+$/);
+    expect(decodeSharedRoutine(url.split('#')[1])).toMatchObject({
+      anchor: 'After I pour my coffee',
+      habits: [{ name: 'Drink water' }, { name: 'Stretch' }],
+    });
+    expect(root.textContent).toContain('Link copied');
+    Object.defineProperty(navigator, 'share', { value: share, configurable: true });
+  });
 
   it('shows the anchor and the chain in order', async () => {
     const { root, names } = await setup();
