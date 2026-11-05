@@ -35,10 +35,10 @@ h1 {
 
 .card-head {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: space-between;
   gap: 12px;
-  margin-bottom: 18px;
+  padding-bottom: 18px;
 }
 
 .anchor {
@@ -46,17 +46,10 @@ h1 {
   align-items: center;
   gap: 10px;
   min-width: 0;
+  min-height: 28px;
   font-size: 15px;
   font-weight: 600;
   color: var(--muted);
-}
-
-.anchor-dot {
-  flex-shrink: 0;
-  width: 12px;
-  height: 12px;
-  border-radius: 6px;
-  background: var(--muted);
 }
 
 .head-meta {
@@ -198,11 +191,54 @@ h1 {
 }
 
 .line {
+  position: relative;
   flex: 1;
   width: 2px;
   min-height: 20px;
   margin: 6px 0;
+  border-radius: 1px;
   background: var(--line);
+  overflow: hidden;
+}
+
+/* The connector fills from the top once the step below it is answered: teal for
+   Done, amber for 2 minutes, a dashed gap for a skip. */
+.fill {
+  position: absolute;
+  inset: 0;
+  transform: scaleY(0);
+  transform-origin: top;
+  transition: transform 450ms ease-out;
+}
+.line[data-fill='full'] .fill,
+.line[data-fill='mini'] .fill,
+.line[data-fill='skip'] .fill {
+  transform: scaleY(1);
+}
+.line[data-fill='full'] .fill {
+  background: var(--accent);
+}
+.line[data-fill='mini'] .fill {
+  background: var(--amber);
+}
+.line[data-fill='skip'] .fill {
+  background: repeating-linear-gradient(to bottom, var(--dashed) 0 4px, var(--surface) 4px 8px);
+}
+
+/* The anchor: the thing you already do, where the chain starts. */
+.anchor-row .rail {
+  padding-top: 8px;
+}
+.anchor-node {
+  flex-shrink: 0;
+  width: 12px;
+  height: 12px;
+  border-radius: 6px;
+  background: var(--muted);
+}
+.anchor-row .card-head {
+  flex: 1;
+  min-width: 0;
 }
 
 .link-body {

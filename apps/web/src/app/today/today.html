@@ -18,37 +18,45 @@
         [id]="'card-' + chain.routine.id"
         [attr.aria-label]="chain.routine.anchor"
       >
-        <div class="card-head">
-          <div class="anchor">
-            <span class="anchor-dot" aria-hidden="true"></span>
-            <span>{{ chain.routine.anchor }}</span>
+        <!-- The anchor is the first step of the chain; each connector fills in as you reach the next. -->
+        <div class="link anchor-row">
+          <div class="rail" aria-hidden="true">
+            <span class="anchor-node"></span>
+            <span class="line" [attr.data-fill]="chain.links[0]?.status"
+              ><span class="fill"></span
+            ></span>
           </div>
-          <span class="head-meta">
-            <span class="count">{{ chain.doneCount }} of {{ chain.total }}</span>
-            @if (!chain.complete) {
-              <a class="run-link" [routerLink]="['/run', chain.routine.id]">
-                <svg
-                  width="12"
-                  height="12"
-                  viewBox="0 0 24 24"
-                  fill="currentColor"
-                  aria-hidden="true"
-                >
-                  <path d="M7 4.5v15l13-7.5z" />
-                </svg>
-                Run<span class="visually-hidden">
-                  {{ chain.routine.anchor }}, one habit at a time</span
-                >
+          <div class="card-head">
+            <div class="anchor">
+              <span>{{ chain.routine.anchor }}</span>
+            </div>
+            <span class="head-meta">
+              <span class="count">{{ chain.doneCount }} of {{ chain.total }}</span>
+              @if (!chain.complete) {
+                <a class="run-link" [routerLink]="['/run', chain.routine.id]">
+                  <svg
+                    width="12"
+                    height="12"
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                    aria-hidden="true"
+                  >
+                    <path d="M7 4.5v15l13-7.5z" />
+                  </svg>
+                  Run<span class="visually-hidden">
+                    {{ chain.routine.anchor }}, one habit at a time</span
+                  >
+                </a>
+              }
+              <a class="edit-link" [routerLink]="['/routines', chain.routine.id]">
+                Edit<span class="visually-hidden"> {{ chain.routine.anchor }}</span>
               </a>
-            }
-            <a class="edit-link" [routerLink]="['/routines', chain.routine.id]">
-              Edit<span class="visually-hidden"> {{ chain.routine.anchor }}</span>
-            </a>
-          </span>
+            </span>
+          </div>
         </div>
 
         <ol class="links">
-          @for (link of chain.links; track link.habit.id; let last = $last) {
+          @for (link of chain.links; track link.habit.id; let last = $last, i = $index) {
             <li class="link">
               <div class="rail" aria-hidden="true">
                 <span
@@ -78,7 +86,9 @@
                   }
                 </span>
                 @if (!last) {
-                  <span class="line"></span>
+                  <span class="line" [attr.data-fill]="chain.links[i + 1]?.status">
+                    <span class="fill"></span>
+                  </span>
                 }
               </div>
 

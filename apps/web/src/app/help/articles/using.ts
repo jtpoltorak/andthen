@@ -73,6 +73,11 @@ export class GettingStarted {}
         </li>
       </ul>
       <p>
+        Each routine is drawn as a chain: your anchor at the top, then each habit, joined by a line.
+        As you answer, the link leading to that habit fills in: teal for Done, amber for 2 minutes,
+        dashed for a skip. You can see how far along the chain you are at a glance.
+      </p>
+      <p>
         Done and Did 2 min give the habit's ring a quick pop, and answering the last habit in a
         routine brings a small "Chain complete" moment. It's a tiny reward on purpose: feeling
         finished is part of what makes a habit stick (see
