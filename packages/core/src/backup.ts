@@ -1,3 +1,4 @@
+import { cleanCheckInNote, isMood } from './journal';
 import type { CheckIn, CheckInKind, DayKey, Habit, Pause, Reflection, Routine } from './model';
 import { normalizePauses } from './pause';
 import { cleanNote } from './reflection';
@@ -189,11 +190,17 @@ function readCheckIn(raw: unknown, i: number): CheckIn {
   if (!isObject(raw)) fail(`${where} isn't valid.`);
   const kind = raw['kind'];
   if (!KINDS.includes(kind as CheckInKind)) fail(`${where} has an unknown kind.`);
-  return {
+  const checkIn: CheckIn = {
     habitId: text(raw, 'habitId', where)!,
     date: day(raw, 'date', where)!,
     kind: kind as CheckInKind,
   };
+  // The tiny journal is optional, and older files don't have it. A mood this
+  // version doesn't know is dropped rather than refusing the whole file.
+  if (isMood(raw['mood'])) checkIn.mood = raw['mood'];
+  const note = cleanCheckInNote(text(raw, 'note', where, false));
+  if (note) checkIn.note = note;
+  return checkIn;
 }
 
 function readReflection(raw: unknown, i: number): Reflection {

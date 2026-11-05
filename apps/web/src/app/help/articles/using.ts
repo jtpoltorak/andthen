@@ -72,6 +72,18 @@ export class GettingStarted {}
           but it's never counted as a miss, and it never brings a nudge.
         </li>
       </ul>
+      <h2>How did it feel?</h2>
+      <p>
+        After Done or Did 2 min, AndThen asks how it felt: <strong>Felt good</strong>,
+        <strong>Okay</strong> or <strong>Hard</strong>, and a few words if you like. Both are
+        optional; just carry on if you'd rather not. Tap <strong>Edit</strong> to change it later
+        that day.
+      </p>
+      <p>
+        On <a routerLink="/progress">Progress</a>, a day with a note has a small hole in its dot,
+        and each habit lists its latest notes. Over time they show what helps and what gets in the
+        way.
+      </p>
       <p>
         Each routine is drawn as a chain: your anchor at the top, then each habit, joined by a line.
         As you answer, the link leading to that habit fills in: teal for Done, amber for 2 minutes,

@@ -39,6 +39,9 @@
       @if (hasSchedules()) {
         <span><i class="dot dot-rest"></i>Rest day</span>
       }
+      @if (hasJournal()) {
+        <span><i class="dot dot-full dot-noted"></i>With a note</span>
+      }
     </div>
   }
 
@@ -143,7 +146,11 @@
           @for (week of row.weeks; track $index) {
             <div class="week">
               @for (dot of week; track dot.date) {
-                <i [class]="'dot dot-' + dot.status" [title]="dot.title"></i>
+                <i
+                  [class]="'dot dot-' + dot.status"
+                  [class.dot-noted]="dot.noted"
+                  [title]="dot.title"
+                ></i>
               }
             </div>
           }
@@ -184,5 +191,15 @@
         </div>
       </dl>
     </div>
+    @if (row.journal.length) {
+      <ul class="journal" aria-label="Recent notes">
+        @for (entry of row.journal; track entry.date) {
+          <li>
+            <span class="journal-day">{{ entry.label }}</span>
+            <span class="journal-words">{{ entry.words }}</span>
+          </li>
+        }
+      </ul>
+    }
   </div>
 </ng-template>

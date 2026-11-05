@@ -54,6 +54,35 @@ describe('Today', () => {
     expect(root.textContent).toContain('Make it easy: Keep the mat out');
   });
 
+  it('asks how it felt after Done, and keeps the mood and a few words', async () => {
+    const { fixture, root } = await setup();
+    const store = TestBed.inject(HabitStore);
+    const [water] = store.habitsOf(store.activeRoutines()[0].id);
+
+    buttonsByText(root, 'Done')[0].click();
+    await fixture.whenStable();
+    expect(root.textContent).toContain('How did it feel?');
+
+    buttonsByText(root, 'Felt good')[0].click();
+    await fixture.whenStable();
+    const input = root.querySelector<HTMLInputElement>('.note-input')!;
+    input.value = '  Before   work ';
+    input.dispatchEvent(new Event('input'));
+    buttonsByText(root, 'Save')[0].click();
+    await fixture.whenStable();
+
+    expect(store.todaysCheckIn(water.id)).toMatchObject({ mood: 'good', note: 'Before work' });
+    expect(root.textContent).not.toContain('How did it feel?');
+    expect(root.textContent).toContain('Felt good · Before work');
+  });
+
+  it('does not ask how it felt after a skip', async () => {
+    const { fixture, root } = await setup();
+    buttonsByText(root, 'Skip')[0].click();
+    await fixture.whenStable();
+    expect(root.textContent).not.toContain('How did it feel?');
+  });
+
   it('fills in the chain link leading to each answered habit', async () => {
     const { fixture, root } = await setup();
     const fills = () => [...root.querySelectorAll('.line')].map((l) => l.getAttribute('data-fill'));
