@@ -10,6 +10,7 @@ import { RouterLink } from '@angular/router';
 import { toDayKey } from '@andthen/core';
 import { downloadJson } from '../settings/data-backup';
 import { Autofocus, byId, focusAfterRender } from '../shared/focus';
+import { DevicesList } from './devices-list';
 import { SignInForm } from './sign-in-form';
 import { SyncService } from './sync.service';
 
@@ -22,7 +23,7 @@ const time = (ms: number) =>
  */
 @Component({
   selector: 'app-sync-settings',
-  imports: [SignInForm, RouterLink, Autofocus],
+  imports: [SignInForm, DevicesList, RouterLink, Autofocus],
   template: `
     @if (sync.enabled()) {
       <p>
@@ -49,6 +50,9 @@ const time = (ms: number) =>
         Turning sync off signs this device out. Everything stays on this device, and your other
         devices keep syncing.
       </p>
+
+      <h3>Signed-in devices</h3>
+      <app-devices-list />
 
       <h3>Your account</h3>
       <a class="link" routerLink="/privacy">Privacy: what's stored, and where</a>

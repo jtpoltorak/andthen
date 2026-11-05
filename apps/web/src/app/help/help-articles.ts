@@ -263,7 +263,7 @@ export const HELP_ARTICLES = [
     part: 'using',
     title: 'Sync across devices',
     summary: 'Sign in with an email code to share your habits between devices.',
-    keywords: 'sync account email code sign in devices delete export',
+    keywords: 'sync account email code sign in devices delete export sign out lost phone',
     minutes: 3,
     related: ['backup', 'where-data'],
   },

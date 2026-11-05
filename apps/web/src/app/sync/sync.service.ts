@@ -2,7 +2,7 @@ import { Injectable, computed, inject, signal } from '@angular/core';
 import type { BackupFile } from '@andthen/core';
 import { HabitStore } from '../data/habit-store';
 import { SyncingHabitRepository } from '../data/syncing-habit-repository';
-import { ApiError, OfflineError, SyncApi } from './sync-api';
+import { ApiError, OfflineError, SyncApi, type SignedInDevice } from './sync-api';
 
 /** How many changes go up in one request. The server takes at most 1000. */
 export const PUSH_BATCH = 1000;
@@ -121,6 +121,47 @@ export class SyncService {
     const token = await this.repo?.token();
     if (!token) throw new Error('Sync is off.');
     return this.api.exportData(token);
+  }
+
+  /**
+   * The devices signed in to the account, this one first, then the most recently active.
+   * If the server says this device is signed out, sync turns off here.
+   */
+  async devices(): Promise<SignedInDevice[]> {
+    const token = await this.repo?.token();
+    if (!token) throw new Error('Sync is off.');
+    const account = await this.signedOutOn401(this.api.me(token));
+    return [...account.sessions].sort(
+      (a, b) => Number(b.current) - Number(a.current) || b.lastSeenAt.localeCompare(a.lastSeenAt),
+    );
+  }
+
+  /**
+   * Signs another device out of the account. It stops syncing the next time it
+   * tries; its data stays on it. A device that's already gone counts as done.
+   */
+  async signOutDevice(id: string): Promise<void> {
+    const token = await this.repo?.token();
+    if (!token) throw new Error('Sync is off.');
+    try {
+      await this.signedOutOn401(this.api.revokeSession(token, id));
+    } catch (error) {
+      if (error instanceof ApiError && error.status === 404) return;
+      throw error;
+    }
+  }
+
+  /** Passes the answer through, but a 401 means this device was signed out, so sync turns off. */
+  private async signedOutOn401<T>(request: Promise<T>): Promise<T> {
+    try {
+      return await request;
+    } catch (error) {
+      if (error instanceof ApiError && error.status === 401) {
+        await this.turnOff();
+        this.signedOutNotice.set(true);
+      }
+      throw error;
+    }
   }
 
   /**

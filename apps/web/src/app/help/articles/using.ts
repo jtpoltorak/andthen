@@ -592,6 +592,17 @@ export class BackupHelp {}
         <li>If the same thing changes on two devices, the most recent change wins.</li>
         <li>Name, look, accent color and reminder settings stay per device.</li>
       </ul>
+      <h2>Your devices</h2>
+      <p>
+        <strong>Signed-in devices</strong> lists every phone, tablet and computer using your
+        account, with when each was last active (to the day). The one you're holding is marked
+        <strong>This device</strong>.
+      </p>
+      <p>
+        Lost a phone, or signed in on a borrowed computer? Tap <strong>Sign out…</strong> next to
+        it. It stops syncing straight away. Whatever was already on that device stays there, so for
+        a device you don't control, also clear it if you can.
+      </p>
       <h2>Turning it off, or leaving</h2>
       <ul>
         <li>
