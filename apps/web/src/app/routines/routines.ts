@@ -2,12 +2,13 @@ import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/c
 import { RouterLink } from '@angular/router';
 import { isPausedOn } from '@andthen/core';
 import { HabitStore } from '../data/habit-store';
+import { EmptyState } from '../shared/empty-state';
 import { HelpLink } from '../help/help-link';
 
 /** Routines tab: every chain at a glance. Tap one to edit it. */
 @Component({
   selector: 'app-routines',
-  imports: [RouterLink, HelpLink],
+  imports: [RouterLink, HelpLink, EmptyState],
   template: `
     <main class="page">
       <div class="title-row">
@@ -43,7 +44,12 @@ import { HelpLink } from '../help/help-link';
           <span class="routine-edit">Edit</span>
         </a>
       } @empty {
-        <p class="empty">No routines yet. Start one below.</p>
+        <app-empty-state art="chain" heading="No routines yet">
+          <p>
+            A routine is one thing you already do, and a tiny habit or two after it. "After I pour
+            my coffee, and then I'll stretch."
+          </p>
+        </app-empty-state>
       }
 
       <a class="and-then" routerLink="/routines/new">+ New routine</a>

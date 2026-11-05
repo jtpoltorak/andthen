@@ -245,21 +245,21 @@
     }
   } @empty {
     @if (paused().length) {
-      <section class="empty-card">
-        <h2>Taking a break</h2>
+      <app-empty-state art="pause" heading="Taking a break">
         <p>Paused routines don't count as missed. Pick them up whenever you're ready.</p>
-      </section>
+      </app-empty-state>
     } @else if (resting().length) {
-      <section class="empty-card">
-        <h2>A rest day</h2>
+      <app-empty-state art="rest" heading="A rest day">
         <p>Nothing is planned for today. Enjoy it. Your chains carry on tomorrow.</p>
-      </section>
+      </app-empty-state>
     } @else {
-      <section class="empty-card">
-        <h2>Nothing on today's list</h2>
-        <p>Pick something you already do every day, and chain one tiny habit after it.</p>
+      <app-empty-state art="chain" heading="Nothing on today's list">
+        <p>
+          Pick something you already do every day, like pouring your coffee, and chain one tiny
+          habit after it.
+        </p>
         <a class="empty-action" routerLink="/routines/new">Start a routine</a>
-      </section>
+      </app-empty-state>
     }
   }
 

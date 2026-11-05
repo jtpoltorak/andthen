@@ -21,6 +21,15 @@ export interface Release {
 
 export const RELEASES: readonly Release[] = [
   {
+    version: '1.12.0',
+    date: '2026-11-05',
+    title: 'Friendlier empty screens.',
+    notes: [
+      'Rest days and breaks on Today now come with a small drawing and a kind word, not just a blank space.',
+      'Today, Routines and Progress each get a clearer “nothing here yet” screen, with a one-line example to get you started.',
+    ],
+  },
+  {
     version: '1.11.0',
     date: '2026-11-05',
     title: 'See the chain.',

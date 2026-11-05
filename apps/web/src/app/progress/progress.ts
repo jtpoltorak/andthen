@@ -22,6 +22,7 @@ import {
 } from '@andthen/core';
 import { HabitStore } from '../data/habit-store';
 import { PreferencesStore } from '../data/preferences';
+import { EmptyState } from '../shared/empty-state';
 import { HelpLink } from '../help/help-link';
 
 /** How many weeks the dot grid shows. */
@@ -71,7 +72,7 @@ const plural = (n: number, word: string) => `${n} ${word}${n === 1 ? '' : 's'}`;
 /** Progress: a weekly recap, then an 8-week dot grid and a forgiving chain count per habit. */
 @Component({
   selector: 'app-progress',
-  imports: [RouterLink, NgTemplateOutlet, HelpLink],
+  imports: [RouterLink, NgTemplateOutlet, HelpLink, EmptyState],
   templateUrl: './progress.html',
   styleUrl: './progress.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
