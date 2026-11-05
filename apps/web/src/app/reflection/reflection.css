@@ -98,6 +98,15 @@ h1 {
   min-width: 0;
 }
 
+.habit-why {
+  margin: 2px 0 0;
+  font-size: 14px;
+  font-style: italic;
+  line-height: 1.4;
+  color: var(--ink-soft);
+  overflow-wrap: anywhere;
+}
+
 .habit-name {
   margin: 0;
   font-size: 16px;

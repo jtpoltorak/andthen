@@ -319,7 +319,8 @@ form {
   font-weight: 700;
   cursor: pointer;
 }
-.easier .optional {
+.easier .optional,
+.field-label .optional {
   margin-left: 4px;
   font-weight: 500;
   color: var(--muted);

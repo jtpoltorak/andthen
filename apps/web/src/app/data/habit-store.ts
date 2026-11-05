@@ -25,7 +25,7 @@ import { PreferencesStore } from './preferences';
 
 export type RoutineEdit = Partial<Pick<Routine, 'anchor' | 'usualTime' | 'name'>>;
 export type HabitEdit = Partial<
-  Pick<Habit, 'name' | 'twoMinuteVersion' | 'makeItEasier' | 'obstacle' | 'schedule'>
+  Pick<Habit, 'name' | 'twoMinuteVersion' | 'makeItEasier' | 'obstacle' | 'why' | 'schedule'>
 >;
 
 export interface ChainInput {
@@ -202,6 +202,7 @@ export class HabitStore {
     // The optional notes are cleared by leaving them blank.
     if (!next.makeItEasier) delete next.makeItEasier;
     if (!next.obstacle) delete next.obstacle;
+    if (!next.why) delete next.why;
     // No schedule means every day.
     const schedule = normalizeSchedule(next.schedule);
     if (schedule) next.schedule = schedule;
