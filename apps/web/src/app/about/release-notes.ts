@@ -21,6 +21,15 @@ export interface Release {
 
 export const RELEASES: readonly Release[] = [
   {
+    version: '1.11.0',
+    date: '2026-11-05',
+    title: 'See the chain.',
+    notes: [
+      'Each routine on Today is now drawn as a chain: your anchor at the top, then each habit, joined by a line.',
+      'The link fills in as you go: teal for Done, amber for 2 minutes, dashed for a skip.',
+    ],
+  },
+  {
     version: '1.10.0',
     date: '2026-11-05',
     title: 'See where you’re signed in.',

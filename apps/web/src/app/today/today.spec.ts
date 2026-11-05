@@ -54,6 +54,21 @@ describe('Today', () => {
     expect(root.textContent).toContain('Make it easy: Keep the mat out');
   });
 
+  it('fills in the chain link leading to each answered habit', async () => {
+    const { fixture, root } = await setup();
+    const fills = () => [...root.querySelectorAll('.line')].map((l) => l.getAttribute('data-fill'));
+    // Anchor → water, water → stretch.
+    expect(fills()).toEqual(['pending', 'pending']);
+
+    buttonsByText(root, 'Done')[0].click();
+    await fixture.whenStable();
+    expect(fills()).toEqual(['full', 'pending']);
+
+    buttonsByText(root, 'Skip')[0].click();
+    await fixture.whenStable();
+    expect(fills()).toEqual(['full', 'skip']);
+  });
+
   it('moves to the next link after "Did 2 min", then completes after a skip', async () => {
     const { fixture, root } = await setup();
 
