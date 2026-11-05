@@ -1,0 +1,28 @@
+<main class="page">
+  <a class="back-link" routerLink="/progress">‹ Progress</a>
+  <h1>Your week, as a card</h1>
+  <p class="intro">
+    Save it, or send it to someone who's cheering you on. It's made on this device; nothing is
+    uploaded.
+  </p>
+
+  <canvas
+    #card
+    class="card-preview"
+    role="img"
+    [attr.aria-label]="summaryText()"
+    [width]="width"
+    [height]="height"
+  ></canvas>
+
+  <div class="actions">
+    @if (canShare()) {
+      <button type="button" class="btn-primary" (click)="share()">Share</button>
+      <button type="button" class="btn-secondary" (click)="save()">Save image</button>
+    } @else {
+      <button type="button" class="btn-primary" (click)="save()">Save image</button>
+    }
+  </div>
+  <p class="status" role="status" aria-live="polite">{{ status() }}</p>
+  <p class="hint">The card follows your theme and accent color. Change them in Settings → You.</p>
+</main>
