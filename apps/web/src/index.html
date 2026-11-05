@@ -11,10 +11,14 @@
     <link rel="apple-touch-icon" href="icons/icon-192x192.png" />
     <link rel="manifest" href="manifest.webmanifest" />
     <script>
-      // Apply a saved light or dark theme before the app boots, so the page doesn't flash.
+      // Apply a saved theme and accent color before the app boots, so the page doesn't flash.
       try {
-        var theme = JSON.parse(localStorage.getItem('andthen.prefs') || '{}').theme;
+        var prefs = JSON.parse(localStorage.getItem('andthen.prefs') || '{}');
+        var theme = prefs.theme;
         if (theme === 'light' || theme === 'dark') document.documentElement.dataset.theme = theme;
+        if (/^(blue|plum|clay|slate)$/.test(prefs.accent)) {
+          document.documentElement.dataset.accent = prefs.accent;
+        }
       } catch (e) {}
     </script>
     <link rel="preconnect" href="https://fonts.googleapis.com" />

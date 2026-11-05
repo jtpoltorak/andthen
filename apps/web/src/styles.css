@@ -79,6 +79,83 @@
   }
 }
 
+/* Accent colors, chosen in Settings. Teal (above) is the default and needs no attribute.
+   Each has light and dark values; the dark ones are more specific, so they win in dark mode. */
+:root[data-accent='blue'] {
+  --accent: #2f5f9e;
+  --accent-ink: #24497a;
+  --accent-soft: #e3ebf6;
+  --focus: #2f5f9e;
+}
+:root[data-accent='plum'] {
+  --accent: #7a4a86;
+  --accent-ink: #643a6f;
+  --accent-soft: #f0e6f2;
+  --focus: #7a4a86;
+}
+:root[data-accent='clay'] {
+  --accent: #a14b2b;
+  --accent-ink: #873d22;
+  --accent-soft: #f6e7e0;
+  --focus: #a14b2b;
+}
+:root[data-accent='slate'] {
+  --accent: #4a5560;
+  --accent-ink: #39424b;
+  --accent-soft: #e7e9ec;
+  --focus: #4a5560;
+}
+:root[data-accent='blue'][data-theme='dark'] {
+  --accent: #33669f;
+  --accent-ink: #9cc0ee;
+  --accent-soft: #1c2b40;
+  --focus: #9cc0ee;
+}
+:root[data-accent='plum'][data-theme='dark'] {
+  --accent: #7d4f8a;
+  --accent-ink: #d3a9de;
+  --accent-soft: #33253a;
+  --focus: #d3a9de;
+}
+:root[data-accent='clay'][data-theme='dark'] {
+  --accent: #a5532f;
+  --accent-ink: #f0b195;
+  --accent-soft: #3d2720;
+  --focus: #f0b195;
+}
+:root[data-accent='slate'][data-theme='dark'] {
+  --accent: #56616c;
+  --accent-ink: #c3cbd4;
+  --accent-soft: #262c32;
+  --focus: #c3cbd4;
+}
+@media (prefers-color-scheme: dark) {
+  :root[data-accent='blue']:not([data-theme='light']) {
+    --accent: #33669f;
+    --accent-ink: #9cc0ee;
+    --accent-soft: #1c2b40;
+    --focus: #9cc0ee;
+  }
+  :root[data-accent='plum']:not([data-theme='light']) {
+    --accent: #7d4f8a;
+    --accent-ink: #d3a9de;
+    --accent-soft: #33253a;
+    --focus: #d3a9de;
+  }
+  :root[data-accent='clay']:not([data-theme='light']) {
+    --accent: #a5532f;
+    --accent-ink: #f0b195;
+    --accent-soft: #3d2720;
+    --focus: #f0b195;
+  }
+  :root[data-accent='slate']:not([data-theme='light']) {
+    --accent: #56616c;
+    --accent-ink: #c3cbd4;
+    --accent-soft: #262c32;
+    --focus: #c3cbd4;
+  }
+}
+
 *,
 *::before,
 *::after {

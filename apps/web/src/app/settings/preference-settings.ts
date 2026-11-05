@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
-import { MAX_NAME_LENGTH, type Theme, type WeekStart } from '@andthen/core';
-import { PreferencesStore } from '../data/preferences';
+import { ACCENTS, MAX_NAME_LENGTH, type Theme, type WeekStart } from '@andthen/core';
+import { ACCENT_SWATCHES, PreferencesStore } from '../data/preferences';
 
 const THEME_OPTIONS: { value: Theme; label: string }[] = [
   { value: 'system', label: 'System' },
@@ -13,7 +13,7 @@ const WEEK_OPTIONS: { value: WeekStart; label: string }[] = [
   { value: 0, label: 'Sunday' },
 ];
 
-/** Name, theme and week start. Each change saves right away. */
+/** Name, theme, accent color and week start. Each change saves right away. */
 @Component({
   selector: 'app-preference-settings',
   template: `
@@ -52,6 +52,26 @@ const WEEK_OPTIONS: { value: WeekStart; label: string }[] = [
           </label>
         }
       </div>
+    </fieldset>
+
+    <fieldset>
+      <legend class="field-label">Accent color</legend>
+      <div class="swatches">
+        @for (option of accents; track option.value) {
+          <label class="swatch" [title]="option.label">
+            <input
+              type="radio"
+              name="accent"
+              [value]="option.value"
+              [checked]="prefs.prefs().accent === option.value"
+              (change)="prefs.setAccent(option.value)"
+            />
+            <span class="swatch-dot" [style.background]="option.color" aria-hidden="true"></span>
+            <span class="swatch-name">{{ option.label }}</span>
+          </label>
+        }
+      </div>
+      <p class="hint">Changes buttons, checkmarks and highlights. The 2-minute amber stays.</p>
     </fieldset>
 
     <fieldset>
@@ -145,6 +165,53 @@ const WEEK_OPTIONS: { value: WeekStart; label: string }[] = [
       outline: 3px solid var(--focus);
       outline-offset: 2px;
     }
+    .swatches {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+    .swatch {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      min-width: 56px;
+      padding: 6px 4px;
+      border-radius: 12px;
+    }
+    .swatch input {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      margin: 0;
+      opacity: 0;
+      cursor: pointer;
+    }
+    .swatch-dot {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      box-shadow: inset 0 0 0 2px rgb(255 255 255 / 0.25);
+    }
+    .swatch input:checked ~ .swatch-dot {
+      outline: 3px solid var(--ink);
+      outline-offset: 3px;
+    }
+    .swatch-name {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--muted);
+    }
+    .swatch input:checked ~ .swatch-name {
+      color: var(--ink);
+      font-weight: 800;
+    }
+    .swatch input:focus-visible ~ .swatch-dot {
+      outline: 3px solid var(--focus);
+      outline-offset: 3px;
+    }
     .status {
       font-size: 14px;
       line-height: 1.5;
@@ -159,6 +226,11 @@ export class PreferenceSettings {
   protected readonly prefs = inject(PreferencesStore);
 
   protected readonly themes = THEME_OPTIONS;
+  protected readonly accents = ACCENTS.map((value) => ({
+    value,
+    label: value.charAt(0).toUpperCase() + value.slice(1),
+    color: ACCENT_SWATCHES[value],
+  }));
   protected readonly weekStarts = WEEK_OPTIONS;
   protected readonly maxName = MAX_NAME_LENGTH;
   protected readonly status = signal('');

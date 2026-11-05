@@ -291,6 +291,38 @@ export class SchedulesHelp {}
 export class PauseHelp {}
 
 @Component({
+  imports: [HelpArticle],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  selector: 'app-help-make-it-yours',
+  template: `
+    <app-help-article slug="make-it-yours">
+      <p class="lede">A few small settings under <strong>Settings → You</strong>.</p>
+      <ul>
+        <li><strong>Your name</strong>: used for a hello on Today. Leave it blank to skip it.</li>
+        <li>
+          <strong>Look</strong>: System follows your device's light or dark setting, or pick Light
+          or Dark.
+        </li>
+        <li>
+          <strong>Accent color</strong>: Teal, Blue, Plum, Clay or Slate. It changes buttons,
+          checkmarks and highlights, in both light and dark. The amber for "Did 2 min" stays the
+          same, so it always stands out.
+        </li>
+        <li>
+          <strong>Weeks start on</strong>: Monday or Sunday. It changes "This week" and the grid on
+          Progress.
+        </li>
+      </ul>
+      <p>
+        These belong to each device, so your phone and laptop can look different. They aren't in
+        backups and aren't synced.
+      </p>
+    </app-help-article>
+  `,
+})
+export class MakeItYoursHelp {}
+
+@Component({
   imports: [HelpArticle, RouterLink],
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-help-reminders',
@@ -502,7 +534,10 @@ export class InstallHelp {}
       </p>
       <p>You can also restore from the welcome screen on a new device or browser.</p>
       <h2>What's not included</h2>
-      <p>Your name, theme and reminder settings belong to each device and aren't in the file.</p>
+      <p>
+        Your name, look, accent color and reminder settings belong to each device and aren't in the
+        file.
+      </p>
       <p>
         Using sync? You can also download your account's data from
         <a routerLink="/settings">Settings → Sync across devices</a>. It's the same kind of file.
@@ -540,7 +575,7 @@ export class BackupHelp {}
         <li>Changes sync in the background. <strong>Sync now</strong> does it right away.</li>
         <li>Offline? Keep going. Changes sync when you're back online.</li>
         <li>If the same thing changes on two devices, the most recent change wins.</li>
-        <li>Name, theme and reminder settings stay per device.</li>
+        <li>Name, look, accent color and reminder settings stay per device.</li>
       </ul>
       <h2>Turning it off, or leaving</h2>
       <ul>

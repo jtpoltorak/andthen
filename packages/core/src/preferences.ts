@@ -2,6 +2,10 @@
 export const THEMES = ['system', 'light', 'dark'] as const;
 export type Theme = (typeof THEMES)[number];
 
+/** The app's highlight color. Teal is AndThen's own; the others are for taste. */
+export const ACCENTS = ['teal', 'blue', 'plum', 'clay', 'slate'] as const;
+export type Accent = (typeof ACCENTS)[number];
+
 /** The first day of the week in Progress, as `Date.getDay()` numbers: Monday (1) or Sunday (0). */
 export const WEEK_STARTS = [1, 0] as const;
 export type WeekStart = (typeof WEEK_STARTS)[number];
@@ -14,12 +18,14 @@ export interface Preferences {
   /** What to call the person. Empty means no name, and that's fine. */
   name: string;
   theme: Theme;
+  accent: Accent;
   weekStartsOn: WeekStart;
 }
 
 export const DEFAULT_PREFERENCES: Preferences = {
   name: '',
   theme: 'system',
+  accent: 'teal',
   weekStartsOn: 1,
 };
 
@@ -33,10 +39,12 @@ export function parsePreferences(raw: unknown): Preferences {
   if (!raw || typeof raw !== 'object') return { ...DEFAULT_PREFERENCES };
   const r = raw as Record<string, unknown>;
   const theme = THEMES.find((t) => t === r['theme']);
+  const accent = ACCENTS.find((a) => a === r['accent']);
   const weekStartsOn = WEEK_STARTS.find((w) => w === r['weekStartsOn']);
   return {
     name: typeof r['name'] === 'string' ? cleanName(r['name']) : DEFAULT_PREFERENCES.name,
     theme: theme ?? DEFAULT_PREFERENCES.theme,
+    accent: accent ?? DEFAULT_PREFERENCES.accent,
     weekStartsOn: weekStartsOn ?? DEFAULT_PREFERENCES.weekStartsOn,
   };
 }

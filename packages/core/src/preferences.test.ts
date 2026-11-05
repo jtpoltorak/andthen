@@ -12,15 +12,18 @@ describe('parsePreferences', () => {
   it('falls back to the defaults for missing or odd data', () => {
     expect(parsePreferences(undefined)).toEqual(DEFAULT_PREFERENCES);
     expect(parsePreferences('nope')).toEqual(DEFAULT_PREFERENCES);
-    expect(parsePreferences({ name: 4, theme: 'purple', weekStartsOn: 3 })).toEqual(
+    expect(parsePreferences({ name: 4, theme: 'purple', accent: 'neon', weekStartsOn: 3 })).toEqual(
       DEFAULT_PREFERENCES,
     );
   });
 
   it('keeps valid values', () => {
-    expect(parsePreferences({ name: '  Sam ', theme: 'dark', weekStartsOn: 0 })).toEqual({
+    expect(
+      parsePreferences({ name: '  Sam ', theme: 'dark', accent: 'plum', weekStartsOn: 0 }),
+    ).toEqual({
       name: 'Sam',
       theme: 'dark',
+      accent: 'plum',
       weekStartsOn: 0,
     });
   });
