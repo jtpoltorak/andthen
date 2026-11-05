@@ -21,6 +21,16 @@ export interface Release {
 
 export const RELEASES: readonly Release[] = [
   {
+    version: '1.13.0',
+    date: '2026-11-05',
+    title: 'A tiny journal.',
+    notes: [
+      'After Done or Did 2 min, tap how it felt (Felt good, Okay or Hard) and add a few words if you like. It’s optional.',
+      'Progress marks those days on the dot grid and lists each habit’s latest notes, so patterns are easy to spot.',
+      'Notes are in your backups and sync between your devices.',
+    ],
+  },
+  {
     version: '1.12.0',
     date: '2026-11-05',
     title: 'Friendlier empty screens.',

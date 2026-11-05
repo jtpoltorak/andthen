@@ -21,6 +21,8 @@ import {
   removeCheckIn,
   toDayKey,
   upsertCheckIn,
+  withJournal,
+  type Mood,
 } from '@andthen/core';
 import { HABIT_REPOSITORY } from './habit-repository';
 import { PreferencesStore } from './preferences';
@@ -295,6 +297,27 @@ export class HabitStore {
     const date = this.today();
     await this.repo.putCheckIn({ habitId, date, kind });
     this.checkIns.update((list) => upsertCheckIn(list, habitId, date, kind));
+  }
+
+  /** Today's check-in for a habit, if there is one. */
+  todaysCheckIn(habitId: string): CheckIn | undefined {
+    const date = this.today();
+    return this.checkIns().find((c) => c.habitId === habitId && c.date === date);
+  }
+
+  /**
+   * Adds to (or changes) the tiny journal on today's check-in: how it felt and a
+   * few words. Leave a field out to keep it; pass null to clear it.
+   */
+  async journal(habitId: string, entry: { mood?: Mood | null; note?: string | null }) {
+    const current = this.todaysCheckIn(habitId);
+    if (!current) return;
+    const next = withJournal(current, entry);
+    await this.repo.putCheckIn(next);
+    this.checkIns.update((list) => [
+      ...list.filter((c) => !(c.habitId === habitId && c.date === next.date)),
+      next,
+    ]);
   }
 
   async undoCheckIn(habitId: string): Promise<void> {

@@ -22,7 +22,7 @@
         <div class="link anchor-row">
           <div class="rail" aria-hidden="true">
             <span class="anchor-node"></span>
-            <span class="line" [attr.data-fill]="chain.links[0]?.status"
+            <span class="line" [attr.data-fill]="chain.links.at(0)?.status"
               ><span class="fill"></span
             ></span>
           </div>
@@ -86,7 +86,7 @@
                   }
                 </span>
                 @if (!last) {
-                  <span class="line" [attr.data-fill]="chain.links[i + 1]?.status">
+                  <span class="line" [attr.data-fill]="chain.links.at(i + 1)?.status">
                     <span class="fill"></span>
                   </span>
                 }
@@ -110,6 +110,17 @@
                     </button>
                   }
                 </div>
+
+                <!-- The tiny journal: one tap for how it felt, and a few optional words. -->
+                @if (link.status === 'full' || link.status === 'mini') {
+                  <app-check-in-journal
+                    [habitId]="link.habit.id"
+                    [habitName]="link.habit.name"
+                    [open]="link.habit.id === journaling()"
+                    (opened)="journaling.set(link.habit.id)"
+                    (closed)="journaling.set(undefined)"
+                  />
+                }
 
                 @if (link.isNext && link.habit.makeItEasier) {
                   <div class="easier-note">Make it easy: {{ link.habit.makeItEasier }}</div>
@@ -280,7 +291,7 @@
           <span class="paused-text">
             <span class="paused-anchor">{{ chain.routine.anchor }}</span>
             <span class="paused-note">
-              Paused{{ chain.paused?.until ? ' ' + pausedUntil(chain.paused?.until) : '' }}
+              Paused{{ chain.paused?.until ? ' ' + pausedUntil(chain.paused.until) : '' }}
             </span>
           </span>
           <button type="button" class="resume-btn" (click)="resume(chain.routine.id)">

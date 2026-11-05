@@ -23,6 +23,7 @@ import { ReflectionPrompt } from '../reflection/reflection-prompt';
 import { Autofocus, byId, focusAfterRender } from '../shared/focus';
 import { EmptyState } from '../shared/empty-state';
 import { HelpLink } from '../help/help-link';
+import { CheckInJournal } from './check-in-journal';
 
 /** Long enough for the longest celebration animation in today.css to finish. */
 const CELEBRATE_MS = 1600;
@@ -32,7 +33,7 @@ const lowerFirst = (text: string) => (text ? text.charAt(0).toLowerCase() + text
 /** Today: each routine is a card; the active one is open and asks "what's next?" */
 @Component({
   selector: 'app-today',
-  imports: [RouterLink, NgTemplateOutlet, Autofocus, HelpLink, EmptyState],
+  imports: [RouterLink, NgTemplateOutlet, Autofocus, HelpLink, EmptyState, CheckInJournal],
   templateUrl: './today.html',
   styleUrl: './today.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -54,6 +55,9 @@ export class Today {
   /** Directions, in degrees, for the little sparks around "Chain complete". */
   protected readonly sparks = [0, 45, 90, 135, 180, 225, 270, 315];
   private celebrateTimer?: ReturnType<typeof setTimeout>;
+
+  /** The habit whose "how did it feel?" box is open: the one just checked off. */
+  protected readonly journaling = signal<string | undefined>(undefined);
 
   /**
    * Routines with something planned today. A routine whose habits all rest today is
@@ -116,6 +120,9 @@ export class Today {
   protected async answer(routineId: string, link: ChainLink, kind: CheckInKind): Promise<void> {
     await this.store.checkIn(link.habit.id, kind);
     this.celebrate(routineId, link, kind);
+    // A skip doesn't ask how it felt.
+    if (kind === 'skip') this.journaling.set(undefined);
+    else this.journaling.set(link.habit.id);
     this.focusCard(routineId);
   }
 
@@ -136,6 +143,7 @@ export class Today {
   }
 
   protected async undo(routineId: string, link: ChainLink): Promise<void> {
+    if (this.journaling() === link.habit.id) this.journaling.set(undefined);
     this.poppedHabit.set(undefined);
     this.finishedRoutine.set(undefined);
     await this.store.undoCheckIn(link.habit.id);

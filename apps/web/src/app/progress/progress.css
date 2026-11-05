@@ -108,6 +108,10 @@ h1 {
 .dot-full {
   background: var(--accent);
 }
+/* A check-in with a tiny-journal note gets a small hole in the middle of its dot. */
+.dot.dot-noted {
+  background-image: radial-gradient(circle, var(--surface) 0 2px, transparent 2.5px);
+}
 .dot-mini {
   background: var(--amber);
 }
@@ -351,4 +355,27 @@ details summary {
   color: var(--accent-ink);
   font-size: 12px;
   font-weight: 700;
+}
+
+/* The latest tiny-journal notes under a habit. */
+.journal {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin: 12px 0 0;
+  padding: 10px 12px;
+  list-style: none;
+  border-radius: 12px;
+  background: var(--accent-soft);
+  font-size: 13px;
+  line-height: 1.4;
+}
+.journal-day {
+  margin-right: 6px;
+  font-weight: 700;
+  color: var(--accent-ink);
+}
+.journal-words {
+  font-style: italic;
+  color: var(--ink);
 }

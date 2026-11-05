@@ -59,11 +59,17 @@ export interface Habit {
 /** `full` = did the habit, `mini` = did the 2-minute version, `skip` = consciously skipped. */
 export type CheckInKind = 'full' | 'mini' | 'skip';
 
+/** How a check-in felt, picked with one tap afterwards. Optional. */
+export type Mood = 'good' | 'okay' | 'hard';
+
 /** At most one check-in per habit per day. */
 export interface CheckIn {
   habitId: string;
   date: DayKey;
   kind: CheckInKind;
+  /** The tiny journal: how it felt, and a few words. Both optional. */
+  mood?: Mood;
+  note?: string;
 }
 
 export type LinkStatus = CheckInKind | 'pending';

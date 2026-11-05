@@ -10,11 +10,14 @@ import {
   addDays,
   chainHabits,
   dayStatus,
+  describeJournal,
   describeSchedule,
   fromDayKey,
   habitSpan,
   habitStats,
+  hasJournal,
   indexCheckIns,
+  journalEntries,
   summarize,
   weekGrid,
   weekStart,
@@ -27,11 +30,21 @@ import { HelpLink } from '../help/help-link';
 
 /** How many weeks the dot grid shows. */
 const WEEKS = 8;
+/** How many tiny-journal entries show under each habit. */
+const JOURNAL_SHOWN = 3;
 
 interface Dot {
   date: DayKey;
   status: DayStatus;
   title: string;
+  /** Has a tiny-journal mood or note. */
+  noted: boolean;
+}
+
+interface JournalEntry {
+  date: DayKey;
+  label: string;
+  words: string;
 }
 
 interface HabitRow {
@@ -46,6 +59,8 @@ interface HabitRow {
   isNew: boolean;
   /** "Weekdays", "3 times a week"... Empty for every day. */
   schedule: string;
+  /** The latest tiny-journal entries, newest first. */
+  journal: JournalEntry[];
 }
 
 interface RoutineSection {
@@ -66,6 +81,13 @@ const STATUS_WORDS: Record<DayStatus, string> = {
 
 const shortDate = (day: DayKey) =>
   fromDayKey(day).toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
+
+const weekdayDate = (day: DayKey) =>
+  fromDayKey(day).toLocaleDateString(undefined, {
+    weekday: 'short',
+    month: 'short',
+    day: 'numeric',
+  });
 
 const plural = (n: number, word: string) => `${n} ${word}${n === 1 ? '' : 's'}`;
 
@@ -88,6 +110,15 @@ export class Progress {
 
   private readonly index = computed(() => indexCheckIns(this.store.checkIns()));
 
+  /** Journal words by habit and day, for the dot titles. */
+  private readonly journalIndex = computed(() => {
+    const map = new Map<string, string>();
+    for (const c of this.store.checkIns()) {
+      if (hasJournal(c)) map.set(`${c.habitId}|${c.date}`, describeJournal(c));
+    }
+    return map;
+  });
+
   protected readonly week = computed(() =>
     summarize(
       this.store.checkIns(),
@@ -102,6 +133,9 @@ export class Progress {
       .filter((r) => r.wentWell || r.tweak)
       .sort((a, b) => b.week.localeCompare(a.week)),
   );
+
+  /** Shows "With a note" in the legend once any check-in has a journal entry. */
+  protected readonly hasJournal = computed(() => this.journalIndex().size > 0);
 
   /** Shows "Rest day" in the legend once any habit has a schedule. */
   protected readonly hasSchedules = computed(() => this.store.habits().some((h) => h.schedule));
@@ -167,7 +201,9 @@ export class Progress {
       (week) =>
         week.map((date): Dot => {
           const status = dayStatus(habit, routine, index, date, today, this.weekStartsOn());
-          return { date, status, title: `${shortDate(date)}: ${STATUS_WORDS[status]}` };
+          const words = this.journalIndex().get(`${habit.id}|${date}`);
+          const title = `${shortDate(date)}: ${STATUS_WORDS[status]}${words ? ` (${words})` : ''}`;
+          return { date, status, title, noted: !!words };
         }),
     );
     const counts = { full: 0, mini: 0, skip: 0 };
@@ -188,6 +224,11 @@ export class Progress {
       gridLabel,
       isNew,
       schedule: habit.schedule ? describeSchedule(habit.schedule) : '',
+      journal: journalEntries(this.store.checkIns(), habit.id, JOURNAL_SHOWN).map((c) => ({
+        date: c.date,
+        label: weekdayDate(c.date),
+        words: describeJournal(c),
+      })),
     };
   }
 }

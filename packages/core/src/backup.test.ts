@@ -35,7 +35,7 @@ const sample = (): BackupData => ({
     },
   ],
   checkIns: [
-    { habitId: 'h2', date: '2026-10-03', kind: 'mini' },
+    { habitId: 'h2', date: '2026-10-03', kind: 'mini', mood: 'good', note: 'Before work' },
     { habitId: 'h1', date: '2026-10-02', kind: 'full' },
     { habitId: 'h1', date: '2026-10-03', kind: 'skip' },
   ],
@@ -215,5 +215,27 @@ describe('parseBackup', () => {
       createBackup({ routines: [], habits: [], checkIns: [], reflections: [] }),
     );
     expect(result.ok && result.summary.firstDay).toBeUndefined();
+  });
+
+  it('keeps a check-in journal, and drops a mood it does not know', () => {
+    const backup = JSON.parse(file());
+    backup.data.checkIns.push({
+      habitId: 'h1',
+      date: '2026-10-04',
+      kind: 'full',
+      mood: 'ecstatic',
+      note: '  lots   of   space  ',
+    });
+    const result = parseBackup(JSON.stringify(backup));
+    if (!result.ok) throw new Error(result.error);
+    const find = (h: string, d: string) =>
+      result.data.checkIns.find((c) => c.habitId === h && c.date === d);
+    expect(find('h2', '2026-10-03')).toMatchObject({ mood: 'good', note: 'Before work' });
+    expect(find('h1', '2026-10-04')).toEqual({
+      habitId: 'h1',
+      date: '2026-10-04',
+      kind: 'full',
+      note: 'lots of space',
+    });
   });
 });
