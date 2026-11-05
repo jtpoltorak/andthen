@@ -45,6 +45,13 @@ export const routes: Routes = [
     title: 'Sign in · AndThen',
   },
   {
+    // Where a shared routine link lands (the routine is in the #). Open to everyone,
+    // new or not, and loads on demand.
+    path: 'add',
+    loadComponent: () => import('./share/add-shared-routine').then((m) => m.AddSharedRoutine),
+    title: 'Add a shared routine · AndThen',
+  },
+  {
     // Run a routine: a full-screen, one-habit-at-a-time view. Loads on demand.
     path: 'run/:id',
     canActivate: [requireRoutines],

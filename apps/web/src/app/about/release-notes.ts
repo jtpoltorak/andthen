@@ -21,6 +21,16 @@ export interface Release {
 
 export const RELEASES: readonly Release[] = [
   {
+    version: '1.14.0',
+    date: '2026-11-05',
+    title: 'Share a routine.',
+    notes: [
+      'Send a friend a link to any routine: open it in Routines and tap “Share a link…”.',
+      'They see the chain and add it with one tap, no account needed. It becomes their own copy.',
+      'Only the habits travel. Your check-ins, notes and reasons why stay with you.',
+    ],
+  },
+  {
     version: '1.13.0',
     date: '2026-11-05',
     title: 'A tiny journal.',

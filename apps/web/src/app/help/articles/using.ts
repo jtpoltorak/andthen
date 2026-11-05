@@ -316,6 +316,46 @@ export class SchedulesHelp {}
 export class PauseHelp {}
 
 @Component({
+  imports: [HelpArticle, RouterLink],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  selector: 'app-help-share',
+  template: `
+    <app-help-article slug="share">
+      <p class="lede">
+        Doing a routine with a friend helps you both keep it. Send them a link to set up the same
+        chain in a tap.
+      </p>
+      <h2>Send it</h2>
+      <p>
+        Open the routine in <a routerLink="/routines">Routines</a>, scroll to
+        <strong>Share this routine</strong>, and tap <strong>Share a link…</strong>. On a phone the
+        share sheet opens; elsewhere the link is copied, ready to paste into a message.
+      </p>
+      <h2>What's in the link</h2>
+      <ul>
+        <li>The anchor, the habits in order, and their 2-minute versions.</li>
+        <li>Make-it-easy notes and schedules, as starting points.</li>
+        <li>
+          Never your check-ins, journal notes, reflections or "why" lines. Those stay on your
+          devices.
+        </li>
+      </ul>
+      <p>
+        The routine is packed into the link itself, after the #, so it isn't stored on a server.
+        Anyone with the link can see the habits in it.
+      </p>
+      <h2>Getting one</h2>
+      <p>
+        Open the link and tap <strong>Add to my routines</strong>. It becomes your own copy: change
+        anything, and neither of you sees the other's check-ins. It works without an account, even
+        if you've never used AndThen.
+      </p>
+    </app-help-article>
+  `,
+})
+export class ShareHelp {}
+
+@Component({
   imports: [HelpArticle],
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-help-make-it-yours',

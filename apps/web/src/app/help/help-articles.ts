@@ -157,7 +157,7 @@ export const HELP_ARTICLES = [
     summary: 'Change an anchor, add, reorder and remove habits.',
     keywords: 'edit routine anchor habit reorder remove usual time chain editor',
     minutes: 3,
-    related: ['schedules', 'easier-notes'],
+    related: ['schedules', 'easier-notes', 'share'],
   },
   {
     slug: 'templates',
@@ -194,6 +194,15 @@ export const HELP_ARTICLES = [
     keywords: 'pause break vacation holiday travel sick ill resume skip days',
     minutes: 1,
     related: ['never-miss-twice', 'routines'],
+  },
+  {
+    slug: 'share',
+    part: 'using',
+    title: 'Sharing a routine',
+    summary: 'Send a friend a link that sets up the same chain.',
+    keywords: 'share send friend link copy routine together accountability',
+    minutes: 1,
+    related: ['routines', 'templates'],
   },
   {
     slug: 'reminders',

@@ -373,6 +373,26 @@
       Tip: keep a chain to 3 or 4 small habits. Short chains are easier to finish.
     </p>
 
+    <section class="pause-zone" aria-labelledby="share-title">
+      <h2 id="share-title" class="pause-title">Share this routine</h2>
+      <p class="row-sub">
+        Send a friend a link to set up the same chain. It includes the habits, 2-minute versions,
+        make-it-easy notes and schedules, but none of your check-ins, notes or reasons why.
+      </p>
+      <button
+        type="button"
+        class="btn-text"
+        id="share-routine"
+        [disabled]="!habits().length"
+        (click)="share()"
+      >
+        Share a link…
+      </button>
+      @if (shareStatus()) {
+        <p class="row-sub" role="status">{{ shareStatus() }}</p>
+      }
+    </section>
+
     <section class="pause-zone" aria-labelledby="pause-title">
       <h2 id="pause-title" class="pause-title">Take a break</h2>
       @if (currentPause(); as pause) {
