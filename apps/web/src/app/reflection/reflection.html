@@ -28,6 +28,9 @@
         <div class="habit-top">
           <div class="habit-text">
             <h3 class="habit-name">{{ row.habit.name }}</h3>
+            @if (row.habit.why) {
+              <p class="habit-why">Why: {{ row.habit.why }}</p>
+            }
             <p class="habit-sub">{{ row.summary }}</p>
           </div>
           <div class="dots" role="img" [attr.aria-label]="row.summary">

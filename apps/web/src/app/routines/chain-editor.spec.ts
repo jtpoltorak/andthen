@@ -82,6 +82,25 @@ describe('ChainEditor', () => {
     expect(root.querySelector('.dragging')).toBeNull();
   });
 
+  it('saves and clears a habit\'s "why"', async () => {
+    const { fixture, root, store, routine } = await setup();
+    button(root, 'Edit Drink water').click();
+    await fixture.whenStable();
+    const why = root.querySelector<HTMLInputElement>('input[id^="why-"]')!;
+    type(why, '  So I wake up properly  ');
+    button(root, 'Save').click();
+    await fixture.whenStable();
+    expect(store.habitsOf(routine.id)[0].why).toBe('So I wake up properly');
+    expect(root.textContent).toContain('Why: So I wake up properly');
+
+    button(root, 'Edit Drink water').click();
+    await fixture.whenStable();
+    type(root.querySelector<HTMLInputElement>('input[id^="why-"]')!, '');
+    button(root, 'Save').click();
+    await fixture.whenStable();
+    expect('why' in store.habitsOf(routine.id)[0]).toBe(false);
+  });
+
   it('leaves the order alone when a drag is cancelled', async () => {
     const { fixture, root, names } = await setup();
     root.querySelectorAll<HTMLElement>('.habit-row').forEach((row, i) => {

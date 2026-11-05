@@ -20,6 +20,7 @@ const sample = (): BackupData => ({
       twoMinuteVersion: 'Touch toes',
       makeItEasier: 'Keep the yoga mat out',
       obstacle: 'Running late',
+      why: 'So my back stops aching',
       order: 1,
       createdOn: '2026-10-01',
     },
@@ -101,6 +102,7 @@ describe('parseBackup', () => {
     expect(stretch).toMatchObject({
       makeItEasier: 'Keep the yoga mat out',
       obstacle: 'Running late',
+      why: 'So my back stops aching',
     });
     const restoredWater = result.data.habits.find((h) => h.id === 'h1')!;
     expect('makeItEasier' in restoredWater).toBe(false);
@@ -112,9 +114,10 @@ describe('parseBackup', () => {
     for (const h of backup.data.habits) {
       delete h.makeItEasier;
       delete h.obstacle;
+      delete h.why;
     }
     const result = parseBackup(JSON.stringify(backup));
-    expect(result.ok && result.data.habits.every((h) => !('obstacle' in h))).toBe(true);
+    expect(result.ok && result.data.habits.every((h) => !('obstacle' in h) && !('why' in h))).toBe(true);
   });
 
   it('keeps habit schedules, and reads older habits without one as every day', () => {

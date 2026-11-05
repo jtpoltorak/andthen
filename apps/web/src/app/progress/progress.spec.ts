@@ -68,6 +68,16 @@ describe('Progress', () => {
     expect(root.querySelector('.dot-open')?.getAttribute('title')).toContain('not checked in yet');
   });
 
+  it('shows a habit\'s "why" under its name', async () => {
+    const { root } = await setup({
+      routines: [routine('am')],
+      habits: [habit('water', 'am', { why: 'So I stop getting headaches' }), habit('floss', 'am')],
+      checkIns: [],
+    });
+    const notes = [...root.querySelectorAll('.why-note')].map((n) => n.textContent?.trim());
+    expect(notes).toEqual(['So I stop getting headaches']);
+  });
+
   it('keeps retired habits and routines in history', async () => {
     const { root } = await setup({
       routines: [routine('am'), routine('old', { archivedOn: '2026-11-01' })],

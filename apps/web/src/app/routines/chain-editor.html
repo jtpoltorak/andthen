@@ -102,6 +102,19 @@
                   [value]="draftMini()"
                   (input)="draftMini.set($any($event.target).value)"
                 />
+                <label class="field-label" [for]="'why-' + habit.id">
+                  Why it matters to you <span class="optional">(optional)</span>
+                </label>
+                <input
+                  class="text-input"
+                  type="text"
+                  autocomplete="off"
+                  maxlength="140"
+                  placeholder="e.g. So I have energy for the kids"
+                  [id]="'why-' + habit.id"
+                  [value]="draftWhy()"
+                  (input)="draftWhy.set($any($event.target).value)"
+                />
                 <fieldset class="schedule">
                   <legend class="field-label">How often</legend>
                   <div class="segmented" role="radiogroup" aria-label="How often">
@@ -220,6 +233,9 @@
                 <div class="row-text">
                   <div class="habit-name">{{ habit.name }}</div>
                   <div class="row-sub">2 min: {{ habit.twoMinuteVersion }}</div>
+                  @if (habit.why) {
+                    <div class="row-sub why-sub">Why: {{ habit.why }}</div>
+                  }
                   @if (habit.schedule) {
                     <div class="row-sub schedule-sub">{{ describeSchedule(habit.schedule) }}</div>
                   }

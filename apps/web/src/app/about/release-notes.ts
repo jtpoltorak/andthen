@@ -21,6 +21,16 @@ export interface Release {
 
 export const RELEASES: readonly Release[] = [
   {
+    version: '1.5.0',
+    date: '2026-11-05',
+    title: 'Remember why each habit matters.',
+    notes: [
+      'Add an optional “Why it matters to you” line to any habit in the routine editor.',
+      'Your why shows under the habit on Progress and in the weekly reflection.',
+      'It’s included in backups and sync, like your other notes.',
+    ],
+  },
+  {
     version: '1.4.0',
     date: '2026-11-05',
     title: 'Drag to reorder your chain.',

@@ -120,6 +120,9 @@
         <span class="retired-tag">Retired {{ shortDate(row.retiredOn) }}</span>
       }
     </div>
+    @if (row.habit.why) {
+      <p class="why-note">{{ row.habit.why }}</p>
+    }
     @if (row.isNew) {
       <p class="new-note">New this week. Your dots fill in day by day.</p>
     }

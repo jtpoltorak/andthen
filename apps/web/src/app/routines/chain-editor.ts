@@ -89,6 +89,7 @@ export class ChainEditor {
   protected readonly draftMini = signal('');
   protected readonly draftEasier = signal('');
   protected readonly draftObstacle = signal('');
+  protected readonly draftWhy = signal('');
   protected readonly draftScheduleKind = signal<ScheduleKind>('daily');
   protected readonly draftDays = signal<number[]>([...WEEKDAYS]);
   protected readonly draftTimes = signal(3);
@@ -135,6 +136,7 @@ export class ChainEditor {
     this.draftMini.set(habit.twoMinuteVersion);
     this.draftEasier.set(habit.makeItEasier ?? '');
     this.draftObstacle.set(habit.obstacle ?? '');
+    this.draftWhy.set(habit.why ?? '');
     const schedule = habit.schedule;
     this.draftScheduleKind.set(schedule?.kind ?? 'daily');
     this.draftDays.set(schedule?.kind === 'days' ? [...schedule.days] : [...WEEKDAYS]);
@@ -151,6 +153,7 @@ export class ChainEditor {
       twoMinuteVersion: this.draftMini().trim() || suggestTwoMinuteVersion(name),
       makeItEasier: this.draftEasier(),
       obstacle: this.draftObstacle(),
+      why: this.draftWhy(),
       schedule: this.draftSchedule(),
     });
     this.cancel();

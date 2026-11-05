@@ -182,6 +182,15 @@ h1 {
   font-weight: 700;
 }
 
+.why-note {
+  margin: 2px 0 8px;
+  font-size: 14px;
+  font-style: italic;
+  line-height: 1.4;
+  color: var(--muted);
+  overflow-wrap: anywhere;
+}
+
 .new-note {
   margin: -4px 0 10px;
   font-size: 13px;

@@ -170,9 +170,9 @@ export const HELP_ARTICLES = [
   {
     slug: 'easier-notes',
     part: 'using',
-    title: 'Make-it-easier notes',
-    summary: 'Plan for what gets in the way.',
-    keywords: 'obstacle easier note make it easy plan',
+    title: 'Habit notes: your why, and make it easier',
+    summary: 'Remember why it matters, and plan for what gets in the way.',
+    keywords: 'why reason motivation obstacle easier note make it easy plan',
     minutes: 1,
     related: ['make-it-easy', 'routines'],
   },

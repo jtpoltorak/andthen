@@ -36,6 +36,8 @@ export interface Habit {
   makeItEasier?: string;
   /** Optional: what tends to get in the way, e.g. "I'm tired after work". */
   obstacle?: string;
+  /** Optional: why this habit matters to the person, e.g. "So I have energy for the kids". */
+  why?: string;
   /** Optional: when it's due. Missing means every day. */
   schedule?: Schedule;
   order: number;

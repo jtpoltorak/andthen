@@ -156,6 +156,8 @@ function readHabit(raw: unknown, i: number): Habit {
   if (makeItEasier) habit.makeItEasier = makeItEasier;
   const obstacle = text(raw, 'obstacle', where, false)?.trim();
   if (obstacle) habit.obstacle = obstacle;
+  const why = text(raw, 'why', where, false)?.trim();
+  if (why) habit.why = why;
   // Optional: older backups were made before schedules, and every habit was every day.
   const schedule = parseSchedule(raw['schedule']);
   if (schedule === null) fail(`${where} has a schedule AndThen can't read.`);
