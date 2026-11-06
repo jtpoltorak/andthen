@@ -33,8 +33,9 @@ import { HelpArticle } from '../help-article';
       </p>
       <h2>Already use AndThen somewhere else?</h2>
       <p>
-        On the welcome screen, <strong>Restore from a backup</strong> loads a backup file, and
-        <strong>Sign in to sync</strong> brings in everything from your sync account.
+        On the welcome screen, look under <strong>Already use AndThen?</strong>.
+        <strong>Sign in to sync</strong> brings in everything from your sync account, and
+        <strong>Restore from a backup</strong> loads a backup file.
       </p>
       <h2>What next</h2>
       <p>

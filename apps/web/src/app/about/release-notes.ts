@@ -21,6 +21,15 @@ export interface Release {
 
 export const RELEASES: readonly Release[] = [
   {
+    version: '1.14.1',
+    date: '2026-11-06',
+    title: 'A tidier welcome screen.',
+    notes: [
+      'If you already use AndThen, “Sign in to sync” and “Restore from a backup” now sit together under “Already use AndThen?”.',
+      'Nothing wraps awkwardly on small phones any more.',
+    ],
+  },
+  {
     version: '1.14.0',
     date: '2026-11-05',
     title: 'Share a routine.',
