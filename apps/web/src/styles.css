@@ -27,6 +27,9 @@
   --font: 'Manrope', system-ui, -apple-system, 'Segoe UI', sans-serif;
   /* Larger text scales the whole page (see body), so spacing and tap targets grow with it. */
   --zoom: 1;
+  /* The left rail on laptops, shared by the app (Shell) and Help (HelpShell) so they line up. */
+  --rail-width: 260px;
+  --rail-padding: 24px 14px;
   color-scheme: light;
 }
 
@@ -402,6 +405,25 @@ input[role='switch']:focus-visible {
     font-size: 20px;
     scroll-margin-top: 24px;
   }
+}
+
+/* The AndThen logo at the top of the laptop rail, the same in the app and in Help. */
+.rail-brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 48px;
+  margin: 0 0 16px;
+  padding: 0 14px;
+  color: var(--ink);
+  font-size: 20px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  text-decoration: none;
+}
+.rail-brand svg {
+  flex: none;
+  color: var(--accent);
 }
 
 /* A page title with something at its right edge (like a help "?"). */

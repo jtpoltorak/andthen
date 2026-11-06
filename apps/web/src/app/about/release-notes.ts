@@ -21,6 +21,14 @@ export interface Release {
 
 export const RELEASES: readonly Release[] = [
   {
+    version: '1.20.1',
+    date: '2026-11-06',
+    title: 'A steadier sidebar.',
+    notes: [
+      'On a laptop, the left sidebar and the AndThen logo now sit in exactly the same place in the app and in Help, so nothing jumps when you switch.',
+    ],
+  },
+  {
     version: '1.20.0',
     date: '2026-11-06',
     title: 'Help, made for bigger screens.',
