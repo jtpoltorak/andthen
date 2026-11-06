@@ -29,9 +29,10 @@ function pageHeading(): HTMLElement | null {
       margin: 0 auto;
       background: var(--bg);
     }
-    /* The tabbed app gets the whole width on laptops (see Shell); welcome, Run and Help stay narrow. */
+    /* On laptops the tabbed app (Shell) and Help (HelpShell) get the whole width; welcome and Run stay narrow. */
     @media (min-width: 900px) {
-      .app:has(app-shell) {
+      .app:has(app-shell),
+      .app:has(app-help-shell) {
         max-width: none;
       }
     }

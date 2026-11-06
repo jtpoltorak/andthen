@@ -43,6 +43,12 @@ import { HelpArticle } from '../help-article';
         with <strong>+ and then…</strong>, or start a second routine in
         <a routerLink="/routines">Routines</a>.
       </p>
+      <h2>Finding your way around Help</h2>
+      <p>
+        Every screen has a <strong>?</strong> that opens its help. On a laptop or desktop, Help
+        lists every topic down the left side, and longer articles have an
+        <strong>On this page</strong> list on the right to jump between sections.
+      </p>
     </app-help-article>
   `,
 })

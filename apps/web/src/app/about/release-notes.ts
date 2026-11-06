@@ -21,6 +21,16 @@ export interface Release {
 
 export const RELEASES: readonly Release[] = [
   {
+    version: '1.20.0',
+    date: '2026-11-06',
+    title: 'Help, made for bigger screens.',
+    notes: [
+      'On a laptop or desktop, Help lists every topic down the left side, with the one you’re reading highlighted.',
+      'Articles read in a wider, roomier column, and longer ones get an “On this page” list to jump between sections.',
+      'Phones look the same as before.',
+    ],
+  },
+  {
     version: '1.19.0',
     date: '2026-11-06',
     title: 'Made for bigger screens too.',

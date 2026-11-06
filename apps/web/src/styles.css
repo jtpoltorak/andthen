@@ -352,6 +352,7 @@ input[role='switch']:focus-visible {
 .reading h1 {
   font-size: 32px;
   font-weight: 800;
+  line-height: 1.2;
   letter-spacing: -0.02em;
 }
 
@@ -382,6 +383,25 @@ input[role='switch']:focus-visible {
 .reading .muted {
   color: var(--muted);
   font-size: 14px;
+}
+
+/* Help on laptops: a wider, roomier reading column beside the topic sidebar (HelpShell). */
+@media (min-width: 900px) {
+  app-help-shell .reading {
+    width: 100%;
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 40px 40px 64px;
+    font-size: 16px;
+  }
+  app-help-shell .reading h1 {
+    font-size: 38px;
+  }
+  app-help-shell .reading h2 {
+    margin-top: 20px;
+    font-size: 20px;
+    scroll-margin-top: 24px;
+  }
 }
 
 /* A page title with something at its right edge (like a help "?"). */

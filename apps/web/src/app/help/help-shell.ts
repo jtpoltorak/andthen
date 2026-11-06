@@ -1,0 +1,135 @@
+import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
+import { HELP_ARTICLES, HELP_PARTS, type HelpArticleInfo } from './help-articles';
+
+/**
+ * The frame around every Help page. On phones it adds nothing. On laptops (900px and up)
+ * every topic is listed in a sidebar on the left, and the page reads in a wider column.
+ */
+@Component({
+  selector: 'app-help-shell',
+  imports: [RouterOutlet, RouterLink, RouterLinkActive],
+  template: `
+    <div class="help-shell">
+      <nav class="side" aria-label="Help topics">
+        <a class="brand" routerLink="/today">
+          <svg width="24" height="24" viewBox="0 0 30 30" aria-hidden="true">
+            <circle cx="8" cy="15" r="5" fill="currentColor" />
+            <path d="M13 15h4" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" />
+            <circle cx="22.5" cy="15" r="5" fill="none" stroke="currentColor" stroke-width="2.5" />
+          </svg>
+          <span>AndThen</span>
+          <span class="visually-hidden">: back to the app</span>
+        </a>
+        <a
+          class="topic home"
+          routerLink="/help"
+          routerLinkActive="active"
+          ariaCurrentWhenActive="page"
+          [routerLinkActiveOptions]="{ exact: true }"
+          >All help topics</a
+        >
+        @for (part of parts; track part.id) {
+          <h2 class="part">{{ part.title }}</h2>
+          <ul>
+            @for (a of byPart(part.id); track a.slug) {
+              <li>
+                <a
+                  class="topic"
+                  [routerLink]="['/help', a.slug]"
+                  routerLinkActive="active"
+                  ariaCurrentWhenActive="page"
+                  >{{ a.title }}</a
+                >
+              </li>
+            }
+          </ul>
+        }
+      </nav>
+      <div class="content"><router-outlet /></div>
+    </div>
+  `,
+  styles: `
+    .side {
+      display: none;
+    }
+
+    @media (min-width: 900px) {
+      .help-shell {
+        display: grid;
+        grid-template-columns: 280px minmax(0, 1fr);
+        align-items: start;
+      }
+      .side {
+        position: sticky;
+        top: 0;
+        display: flex;
+        flex-direction: column;
+        height: calc(100dvh / var(--zoom));
+        overflow-y: auto;
+        padding: 24px 14px 32px;
+        border-right: 1px solid var(--border);
+        background: var(--surface);
+      }
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        min-height: 44px;
+        margin: 0 0 12px 12px;
+        color: var(--ink);
+        font-size: 19px;
+        font-weight: 800;
+        letter-spacing: -0.02em;
+        text-decoration: none;
+      }
+      .brand svg {
+        color: var(--accent);
+      }
+      .part {
+        margin: 18px 12px 4px;
+        color: var(--muted);
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+      }
+      ul {
+        margin: 0;
+        padding: 0;
+        list-style: none;
+      }
+      .topic {
+        display: flex;
+        align-items: center;
+        min-height: 34px;
+        padding: 6px 12px;
+        border-radius: 10px;
+        color: var(--ink-soft);
+        font-size: 14px;
+        font-weight: 600;
+        line-height: 1.3;
+        text-decoration: none;
+      }
+      .topic:hover {
+        background: var(--bg);
+        color: var(--ink);
+      }
+      .topic.active {
+        background: var(--accent-soft);
+        color: var(--accent-ink);
+        font-weight: 700;
+      }
+      .home {
+        font-weight: 700;
+      }
+    }
+  `,
+  changeDetection: ChangeDetectionStrategy.OnPush,
+})
+export class HelpShell {
+  protected readonly parts = HELP_PARTS;
+  protected byPart(part: string): readonly HelpArticleInfo[] {
+    return HELP_ARTICLES.filter((a) => a.part === part);
+  }
+}
