@@ -33,8 +33,9 @@ import { HelpArticle } from '../help-article';
       </p>
       <h2>Already use AndThen somewhere else?</h2>
       <p>
-        On the welcome screen, <strong>Restore from a backup</strong> loads a backup file, and
-        <strong>Sign in to sync</strong> brings in everything from your sync account.
+        On the welcome screen, look under <strong>Already use AndThen?</strong>.
+        <strong>Sign in to sync</strong> brings in everything from your sync account, and
+        <strong>Restore from a backup</strong> loads a backup file.
       </p>
       <h2>What next</h2>
       <p>
@@ -59,6 +60,12 @@ export class GettingStarted {}
       <p>
         The routine most likely to be next opens on its own: the first unfinished one whose usual
         time has passed, or else the first unfinished one. Tap any other routine to open it.
+      </p>
+      <p>
+        With routines at different times of day, Today groups them under
+        <strong>Morning</strong> (before noon), <strong>Afternoon</strong> (noon to 5 pm),
+        <strong>Evening</strong> and <strong>Anytime</strong> (no usual time). A finished routine
+        folds into one line with a check, so what's left stands out.
       </p>
       <h2>Three answers</h2>
       <ul>
@@ -112,6 +119,11 @@ export class GettingStarted {}
       <p>Tap <strong>Undo</strong> next to any answered habit to clear it, then answer again.</p>
       <h2>Other things you'll see</h2>
       <ul>
+        <li>
+          <strong>The ring</strong> beside the Today title: one piece for each habit planned today,
+          filling teal for Done, amber for 2 minutes and grey for a skip. It shows how many you've
+          done, and a check once every habit has its answer.
+        </li>
         <li><strong>"2 of 3 this week"</strong> on habits scheduled a few times a week.</li>
         <li><strong>"Make it easy: …"</strong> under the next habit, if you've added a note.</li>
         <li>
@@ -119,6 +131,10 @@ export class GettingStarted {}
           <a routerLink="/help/nudges">the nudge article</a>.
         </li>
         <li><strong>Resting today</strong>: routines with nothing scheduled today.</li>
+        <li>
+          <strong>On a computer</strong>: the tabs move to a rail on the left, and a
+          <strong>This week</strong> card sits beside your routines with a dot for each day.
+        </li>
         <li>
           <strong>Weekly reflection</strong>: a card at the end of the week. See
           <a routerLink="/help/reflection">Weekly reflection</a>.
@@ -143,7 +159,7 @@ export class TodayHelp {}
       <p>
         Tap <strong>Edit</strong> next to the anchor at the top to change what the chain starts
         after. You can also give it a <strong>usual time</strong> (optional). The usual time helps
-        Today open the right routine and is when
+        Today open the right routine, places it under Morning, Afternoon or Evening, and is when
         <a routerLink="/help/reminders">reminders</a> arrive.
       </p>
       <h2>Habits</h2>
@@ -374,6 +390,14 @@ export class ShareHelp {}
           same, so it always stands out.
         </li>
         <li>
+          <strong>Larger text</strong>: makes everything about 15% bigger, buttons and spacing too,
+          like zooming in. Screens reflow to fit, so nothing gets cut off.
+        </li>
+        <li>
+          <strong>More contrast</strong>: darker gray text, lines and borders, in light and dark.
+          Handy in bright sunlight.
+        </li>
+        <li>
           <strong>Weeks start on</strong>: Monday or Sunday. It changes "This week" and the grid on
           Progress.
         </li>
@@ -455,10 +479,15 @@ export class RemindersHelp {}
       </p>
       <h2>The dot grid</h2>
       <p>
-        Each habit gets 8 weeks of dots, one per day. The legend above the grid shows each kind:
-        <strong>Done</strong> (teal), <strong>2 min</strong> (amber), <strong>Skipped</strong>,
-        <strong>No check-in</strong>, and <strong>Rest day</strong> for habits with a schedule. Days
-        before a habit existed are left blank.
+        Each habit gets a column of dots per week, one dot per day, with the days of the week down
+        the side. The legend above the grid shows each kind: <strong>Done</strong> (teal),
+        <strong>2 min</strong> (amber), <strong>Skipped</strong>, <strong>No check-in</strong>, and
+        <strong>Rest day</strong> for habits with a schedule. The rest of this week shows as faint
+        rings, waiting to fill in.
+      </p>
+      <p>
+        A new habit's grid starts the week you added it and grows a column each week, up to the last
+        8 weeks. Days before a habit existed are left blank.
       </p>
       <h2>The forgiving chain</h2>
       <p>
@@ -549,6 +578,12 @@ export class NudgesHelp {}
         AndThen runs in your browser, and you can install it like an app. It then opens in its own
         window, works offline, and can send reminders.
       </p>
+      <h2>The quick way</h2>
+      <p>
+        Open <strong>Settings</strong>. Where your browser can install AndThen, an
+        <strong>Install AndThen</strong> card is at the top, with a one-tap button (Chrome, Edge and
+        Android) or the steps for iPhone and iPad. Once it's installed, the card goes away.
+      </p>
       <h2>iPhone and iPad (Safari)</h2>
       <ol>
         <li>Open andthenhabits.com in Safari.</li>
@@ -577,6 +612,9 @@ export class NudgesHelp {}
           things across.
         </li>
         <li>Updates arrive on their own. See <a routerLink="/help/updates">updates</a>.</li>
+        <li>
+          On Android, press and hold the AndThen icon for shortcuts straight to Today or Progress.
+        </li>
       </ul>
     </app-help-article>
   `,

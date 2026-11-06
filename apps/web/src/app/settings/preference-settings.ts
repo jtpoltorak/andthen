@@ -13,7 +13,7 @@ const WEEK_OPTIONS: { value: WeekStart; label: string }[] = [
   { value: 0, label: 'Sunday' },
 ];
 
-/** Name, theme, accent color and week start. Each change saves right away. */
+/** Name, theme, accent color, text size and contrast, and week start. Each change saves right away. */
 @Component({
   selector: 'app-preference-settings',
   template: `
@@ -72,6 +72,34 @@ const WEEK_OPTIONS: { value: WeekStart; label: string }[] = [
         }
       </div>
       <p class="hint">Changes buttons, checkmarks and highlights. The 2-minute amber stays.</p>
+    </fieldset>
+
+    <fieldset>
+      <legend class="field-label">Easier to read</legend>
+      <label class="switch-row">
+        <span class="switch-text">
+          <span class="switch-label">Larger text</span>
+          <span class="switch-hint">Everything a bit bigger, buttons too.</span>
+        </span>
+        <input
+          type="checkbox"
+          role="switch"
+          [checked]="prefs.prefs().largeText"
+          (change)="prefs.setLargeText($any($event.target).checked)"
+        />
+      </label>
+      <label class="switch-row">
+        <span class="switch-text">
+          <span class="switch-label">More contrast</span>
+          <span class="switch-hint">Darker lines and gray text. Handy in bright light.</span>
+        </span>
+        <input
+          type="checkbox"
+          role="switch"
+          [checked]="prefs.prefs().moreContrast"
+          (change)="prefs.setMoreContrast($any($event.target).checked)"
+        />
+      </label>
     </fieldset>
 
     <fieldset>
@@ -211,6 +239,27 @@ const WEEK_OPTIONS: { value: WeekStart; label: string }[] = [
     .swatch input:focus-visible ~ .swatch-dot {
       outline: 3px solid var(--focus);
       outline-offset: 3px;
+    }
+    .switch-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      min-height: 56px;
+    }
+    .switch-text {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    .switch-label {
+      font-size: 16px;
+      font-weight: 700;
+    }
+    .switch-hint {
+      font-size: 14px;
+      line-height: 1.4;
+      color: var(--muted);
     }
     .status {
       font-size: 14px;

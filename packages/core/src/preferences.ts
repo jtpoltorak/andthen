@@ -20,6 +20,10 @@ export interface Preferences {
   theme: Theme;
   accent: Accent;
   weekStartsOn: WeekStart;
+  /** Bigger text (and everything with it) across the app. */
+  largeText: boolean;
+  /** Darker borders and secondary text, for bright light or tired eyes. */
+  moreContrast: boolean;
 }
 
 export const DEFAULT_PREFERENCES: Preferences = {
@@ -27,6 +31,8 @@ export const DEFAULT_PREFERENCES: Preferences = {
   theme: 'system',
   accent: 'teal',
   weekStartsOn: 1,
+  largeText: false,
+  moreContrast: false,
 };
 
 /** Trims a name, folds inner runs of spaces, and caps its length. */
@@ -46,6 +52,8 @@ export function parsePreferences(raw: unknown): Preferences {
     theme: theme ?? DEFAULT_PREFERENCES.theme,
     accent: accent ?? DEFAULT_PREFERENCES.accent,
     weekStartsOn: weekStartsOn ?? DEFAULT_PREFERENCES.weekStartsOn,
+    largeText: r['largeText'] === true,
+    moreContrast: r['moreContrast'] === true,
   };
 }
 
@@ -57,7 +65,9 @@ export function greeting(name: string, hour: number): string {
   return who ? `${part}, ${who}` : part;
 }
 
-/** Weekday labels for a week grid: just M, W and F, so the grid stays calm. */
+/** Weekday labels for a week grid, one letter per row, in the user's week order. */
 export function weekdayLabels(weekStartsOn: WeekStart): string[] {
-  return weekStartsOn === 0 ? ['', 'M', '', 'W', '', 'F', ''] : ['M', '', 'W', '', 'F', '', ''];
+  return weekStartsOn === 0
+    ? ['S', 'M', 'T', 'W', 'T', 'F', 'S']
+    : ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
 }

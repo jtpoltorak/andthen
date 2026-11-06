@@ -146,7 +146,7 @@ export const HELP_ARTICLES = [
     title: 'Today: Done, Did 2 min, Skip, and Run',
     summary: 'What each answer means, how to undo one, and running a routine step by step.',
     keywords:
-      'check in done mini skip undo today screen run focus one at a time step by step journal note mood feel',
+      'check in done mini skip undo today screen run focus one at a time step by step journal note mood feel ring progress',
     minutes: 2,
     related: ['nudges', 'progress'],
   },
@@ -244,9 +244,9 @@ export const HELP_ARTICLES = [
     slug: 'make-it-yours',
     part: 'using',
     title: 'Make it yours: name, look and color',
-    summary: 'A hello by name, light or dark, an accent color, and when weeks start.',
+    summary: 'A hello by name, light or dark, an accent color, larger text, and when weeks start.',
     keywords:
-      'name theme dark mode light color colour accent blue plum clay slate week start sunday',
+      'name theme dark mode light color colour accent blue plum clay slate week start sunday larger bigger text font size zoom contrast accessibility',
     minutes: 1,
     related: ['progress', 'install'],
   },

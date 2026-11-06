@@ -54,10 +54,11 @@
       <button type="button" class="btn-secondary" (click)="go('template')">
         Or pick a ready-made routine
       </button>
-      <app-data-backup class="restore" restoreOnly (restored)="afterRestore()" />
-      <a class="sign-in-link" routerLink="/sign-in"
-        >Use AndThen on another device? Sign in to sync</a
-      >
+      <section class="returning" aria-labelledby="returning-title">
+        <h2 id="returning-title" class="returning-title">Already use AndThen?</h2>
+        <a class="sign-in-link" routerLink="/sign-in">Sign in to sync</a>
+        <app-data-backup class="restore" restoreOnly (restored)="afterRestore()" />
+      </section>
       <footer class="legal">
         <nav aria-label="Legal">
           <a routerLink="/help">Help</a>

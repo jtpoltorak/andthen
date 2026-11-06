@@ -19,13 +19,28 @@ describe('parsePreferences', () => {
 
   it('keeps valid values', () => {
     expect(
-      parsePreferences({ name: '  Sam ', theme: 'dark', accent: 'plum', weekStartsOn: 0 }),
+      parsePreferences({
+        name: '  Sam ',
+        theme: 'dark',
+        accent: 'plum',
+        weekStartsOn: 0,
+        largeText: true,
+        moreContrast: true,
+      }),
     ).toEqual({
       name: 'Sam',
       theme: 'dark',
       accent: 'plum',
       weekStartsOn: 0,
+      largeText: true,
+      moreContrast: true,
     });
+  });
+
+  it('only turns on larger text and more contrast for a real true', () => {
+    const prefs = parsePreferences({ largeText: 'yes', moreContrast: 1 });
+    expect(prefs.largeText).toBe(false);
+    expect(prefs.moreContrast).toBe(false);
   });
 
   it('returns a fresh copy of the defaults', () => {
@@ -57,7 +72,7 @@ describe('greeting', () => {
 
 describe('weekdayLabels', () => {
   it('puts M, W and F under the right columns', () => {
-    expect(weekdayLabels(1)).toEqual(['M', '', 'W', '', 'F', '', '']);
-    expect(weekdayLabels(0)).toEqual(['', 'M', '', 'W', '', 'F', '']);
+    expect(weekdayLabels(1)).toEqual(['M', 'T', 'W', 'T', 'F', 'S', 'S']);
+    expect(weekdayLabels(0)).toEqual(['S', 'M', 'T', 'W', 'T', 'F', 'S']);
   });
 });

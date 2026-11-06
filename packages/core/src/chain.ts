@@ -195,6 +195,33 @@ export function pickActiveRoutine(
   return (due[0] ?? open[0])?.routine.id;
 }
 
+/** A part of the day, from a routine's usual time. Routines with no time are "anytime". */
+export type PartOfDay = 'morning' | 'afternoon' | 'evening' | 'anytime';
+
+const PART_ORDER: readonly PartOfDay[] = ['morning', 'afternoon', 'evening', 'anytime'];
+
+/** Before noon is morning, noon to 5 pm is afternoon, 5 pm on is evening. */
+export function partOfDay(usualTime: string | undefined): PartOfDay {
+  const at = minutesOf(usualTime);
+  if (at === undefined) return 'anytime';
+  if (at < 12 * 60) return 'morning';
+  if (at < 17 * 60) return 'afternoon';
+  return 'evening';
+}
+
+/**
+ * Groups chains by part of the day, in day order, keeping the person's own order
+ * inside each group. Empty groups are left out.
+ */
+export function chainsByPartOfDay<T extends Pick<Chain, 'routine'>>(
+  chains: readonly T[],
+): { part: PartOfDay; chains: T[] }[] {
+  return PART_ORDER.map((part) => ({
+    part,
+    chains: chains.filter((c) => partOfDay(c.routine.usualTime) === part),
+  })).filter((group) => group.chains.length > 0);
+}
+
 /** Records (or replaces) the check-in for a habit on a day. Returns a new array. */
 export function upsertCheckIn(
   checkIns: readonly CheckIn[],

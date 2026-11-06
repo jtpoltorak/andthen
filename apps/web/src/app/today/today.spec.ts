@@ -41,6 +41,31 @@ describe('Today', () => {
     expect(buttonsByText(root, 'Done')).toHaveLength(1);
   });
 
+  it('fills the day ring as habits are answered, and closes it with a check', async () => {
+    const { fixture, root } = await setup();
+    const store = TestBed.inject(HabitStore);
+    const [water, stretch] = store.habitsOf(store.activeRoutines()[0].id);
+    const ring = () => root.querySelector('app-day-ring [role="img"]');
+    expect(ring()?.getAttribute('aria-label')).toBe('0 of 2 habits done today');
+    expect(root.querySelectorAll('app-day-ring .seg')).toHaveLength(2);
+
+    await store.checkIn(water.id, 'mini');
+    await fixture.whenStable();
+    expect(ring()?.getAttribute('aria-label')).toBe('1 of 2 habits done today');
+    expect(root.querySelector('app-day-ring .seg-mini')).not.toBeNull();
+    expect(ring()?.classList).not.toContain('all-done');
+
+    await store.checkIn(stretch.id, 'skip');
+    await fixture.whenStable();
+    expect(ring()?.getAttribute('aria-label')).toBe('1 of 2 habits done today, 1 skipped');
+    expect(ring()?.classList).toContain('all-done');
+  });
+
+  it('shows no day ring when nothing is on today', async () => {
+    const { root } = await setup({ empty: true });
+    expect(root.querySelector('app-day-ring')).toBeNull();
+  });
+
   it('shows the "make it easy" note only for the habit that is up next', async () => {
     const { fixture, root } = await setup();
     const store = TestBed.inject(HabitStore);
@@ -205,6 +230,42 @@ describe('Today', () => {
     await fixture.whenStable();
     const collapsed = root.querySelector('.collapsed');
     expect(collapsed?.textContent).toContain('1 habit to keep alive today');
+  });
+
+  it('groups routines by part of the day once there is more than one', async () => {
+    const { fixture, root } = await setup();
+    const store = TestBed.inject(HabitStore);
+    const titles = () =>
+      [...root.querySelectorAll('.part-title')].map((h) => h.textContent?.trim());
+    // The first routine has no usual time, so it's "anytime"; one group shows no headings.
+    expect(titles()).toEqual([]);
+
+    await store.createChain({
+      anchor: 'After I brush my teeth at night',
+      habitName: 'Read a page',
+      twoMinuteVersion: 'Open the book',
+      usualTime: '21:30',
+    });
+    await fixture.whenStable();
+    expect(titles()).toEqual(['Evening', 'Anytime']);
+  });
+
+  it('folds a finished routine into one line with a check', async () => {
+    const { fixture, root } = await setup();
+    const store = TestBed.inject(HabitStore);
+    const first = store.activeRoutines()[0];
+    await store.createChain({
+      anchor: 'After I get home',
+      habitName: 'Walk',
+      twoMinuteVersion: 'Shoes on',
+    });
+    for (const h of store.habitsOf(first.id)) await store.checkIn(h.id, 'full');
+    await fixture.whenStable();
+    // The open card moves on to the unfinished routine; the finished one folds.
+    const done = root.querySelector('.collapsed-done');
+    expect(done?.textContent).toContain('After I pour my coffee');
+    expect(done?.textContent).toContain('Done');
+    expect(done?.querySelector('.done-check')).not.toBeNull();
   });
 
   it('closes "+ and then..." with Escape and returns focus to it', async () => {

@@ -1,4 +1,5 @@
 import { TestBed } from '@angular/core/testing';
+import { DEFAULT_PREFERENCES } from '@andthen/core';
 import { Router, provideRouter } from '@angular/router';
 import { HABIT_REPOSITORY, InMemoryHabitRepository } from '../data/habit-repository';
 import { HabitStore } from '../data/habit-store';
@@ -110,7 +111,7 @@ describe('ResetData', () => {
       checkIns: [],
       reflections: [],
     });
-    expect(prefs.prefs()).toEqual({ name: '', theme: 'system', accent: 'teal', weekStartsOn: 1 });
+    expect(prefs.prefs()).toEqual(DEFAULT_PREFERENCES);
     expect(reminders.prefs().enabled).toBe(false);
     expect(localStorage.getItem('andthen.prefs')).toBeNull();
     expect(localStorage.getItem('andthen.reminders')).toBeNull();

@@ -40,6 +40,11 @@ interface Drag {
   height: number;
   /** Where each habit row sat when the drag started. */
   rows: RowBox[];
+  /**
+   * Screen pixels per CSS pixel inside the page: above 1 with Larger text, which zooms the
+   * page. Pointer positions are in screen pixels, but a translate is in the row's own.
+   */
+  scale: number;
 }
 
 /** Day toggles, Monday first. Values are `Date.getDay()` numbers. */
@@ -286,6 +291,7 @@ export class ChainEditor {
       dy: 0,
       height: row.getBoundingClientRect().height,
       rows: boxes,
+      scale: row.offsetHeight ? row.getBoundingClientRect().height / row.offsetHeight : 1,
     });
   }
 
@@ -310,12 +316,14 @@ export class ChainEditor {
   protected rowShift(index: number): string | null {
     const drag = this.drag();
     if (!drag) return null;
-    if (index === drag.from) return `translateY(${drag.dy}px)`;
+    const dy = drag.dy / drag.scale;
+    const height = drag.height / drag.scale;
+    if (index === drag.from) return `translateY(${dy}px)`;
     if (drag.from < drag.to && index > drag.from && index <= drag.to) {
-      return `translateY(${-drag.height}px)`;
+      return `translateY(${-height}px)`;
     }
     if (drag.to < drag.from && index >= drag.to && index < drag.from) {
-      return `translateY(${drag.height}px)`;
+      return `translateY(${height}px)`;
     }
     return 'translateY(0)';
   }

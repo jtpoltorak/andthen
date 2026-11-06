@@ -17,6 +17,8 @@ import {
   habitStats,
   hasJournal,
   indexCheckIns,
+  isPausedOn,
+  isPlannedDay,
   journalEntries,
   summarize,
   weekGrid,
@@ -33,9 +35,12 @@ const WEEKS = 8;
 /** How many tiny-journal entries show under each habit. */
 const JOURNAL_SHOWN = 3;
 
+/** A day's status, plus "upcoming" for the rest of this week, drawn as a faint ring to fill. */
+type DotStatus = DayStatus | 'upcoming';
+
 interface Dot {
   date: DayKey;
-  status: DayStatus;
+  status: DotStatus;
   title: string;
   /** Has a tiny-journal mood or note. */
   noted: boolean;
@@ -49,7 +54,7 @@ interface JournalEntry {
 
 interface HabitRow {
   habit: Habit;
-  /** Weeks, oldest first; each is Monday to Sunday. */
+  /** Weeks, oldest first, in the user's week order. Starts at the habit's first week, up to 8. */
   weeks: Dot[][];
   stats: HabitStats;
   /** Set when the habit (or its routine) has been retired. */
@@ -69,7 +74,7 @@ interface RoutineSection {
   retiredHabits: HabitRow[];
 }
 
-const STATUS_WORDS: Record<DayStatus, string> = {
+const STATUS_WORDS: Record<DotStatus, string> = {
   full: 'done',
   mini: 'did the 2-minute version',
   skip: 'skipped',
@@ -77,6 +82,7 @@ const STATUS_WORDS: Record<DayStatus, string> = {
   open: 'not checked in yet',
   rest: 'rest day',
   off: 'not in a routine',
+  upcoming: 'still to come',
 };
 
 const shortDate = (day: DayKey) =>
@@ -197,14 +203,22 @@ export class Progress {
     const retiredOn = until && until <= today ? until : undefined;
     // A retired habit's grid ends on its last day, so old history stays visible.
     const lastDay = retiredOn ? addDays(retiredOn, -1) : today;
-    const weeks = weekGrid(lastDay < today ? lastDay : today, WEEKS, this.weekStartsOn()).map(
-      (week) =>
-        week.map((date): Dot => {
-          const status = dayStatus(habit, routine, index, date, today, this.weekStartsOn());
-          const words = this.journalIndex().get(`${habit.id}|${date}`);
-          const title = `${shortDate(date)}: ${STATUS_WORDS[status]}${words ? ` (${words})` : ''}`;
-          return { date, status, title, noted: !!words };
-        }),
+    const grid = weekGrid(lastDay < today ? lastDay : today, WEEKS, this.weekStartsOn());
+    // Drop whole weeks from before the habit started, so a new habit's grid starts with it
+    // and grows week by week, instead of sitting at the far end of empty columns.
+    const firstWeek = grid.findIndex((week) => week[6] >= from);
+    const weeks = grid.slice(Math.max(0, Math.min(firstWeek, grid.length - 1))).map((week) =>
+      week.map((date): Dot => {
+        const status: DotStatus =
+          !retiredOn && date > today && date >= from
+            ? isPlannedDay(habit.schedule, date) && !isPausedOn(routine, date)
+              ? 'upcoming'
+              : 'rest'
+            : dayStatus(habit, routine, index, date, today, this.weekStartsOn());
+        const words = this.journalIndex().get(`${habit.id}|${date}`);
+        const title = `${shortDate(date)}: ${STATUS_WORDS[status]}${words ? ` (${words})` : ''}`;
+        return { date, status, title, noted: !!words };
+      }),
     );
     const counts = { full: 0, mini: 0, skip: 0 };
     for (const dot of weeks.flat()) {
@@ -213,7 +227,8 @@ export class Progress {
       }
     }
     const gridLabel =
-      `Last ${WEEKS} weeks: ${plural(counts.full, 'day')} done, ` +
+      `${weeks.length === WEEKS ? `Last ${WEEKS} weeks` : `Since ${shortDate(weeks[0][0].date)}`}: ` +
+      `${plural(counts.full, 'day')} done, ` +
       `${counts.mini} with the 2-minute version, ${counts.skip} skipped`;
     const isNew = !retiredOn && from > addDays(today, -7);
     return {

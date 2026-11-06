@@ -21,6 +21,74 @@ export interface Release {
 
 export const RELEASES: readonly Release[] = [
   {
+    version: '1.19.0',
+    date: '2026-11-06',
+    title: 'Made for bigger screens too.',
+    notes: [
+      'On a laptop or desktop, the tabs move to a rail on the left and pages get more room.',
+      'Today shows a This week card beside your routines: a dot for each day, and the week’s totals.',
+      'Phones look the same as before.',
+    ],
+  },
+  {
+    version: '1.18.0',
+    date: '2026-11-06',
+    title: 'Easier to read.',
+    notes: [
+      'New in Settings → You: Larger text makes everything about 15% bigger, buttons too.',
+      'More contrast darkens gray text, lines and borders, in light and dark.',
+      'On Today, a long anchor now gets its own line instead of squeezing into a narrow column.',
+    ],
+  },
+  {
+    version: '1.17.0',
+    date: '2026-11-06',
+    title: 'A better app icon, and easier to install.',
+    notes: [
+      'New Install AndThen card in Settings: one tap on Chrome, Edge and Android, or the steps for iPhone and iPad.',
+      'The app icon is centered, with proper versions for Android home screens and for computers.',
+      'The install screen now shows a preview of the app, and on Android you can press and hold the icon to jump to Today or Progress.',
+      'In dark mode, the browser’s title bar goes dark too.',
+    ],
+  },
+  {
+    version: '1.16.0',
+    date: '2026-11-06',
+    title: 'Morning, afternoon, evening.',
+    notes: [
+      'Today groups your routines by their usual time: Morning, Afternoon, Evening, and Anytime for routines without one.',
+      'A finished routine folds into one quiet line with a check, so what’s left stands out.',
+    ],
+  },
+  {
+    version: '1.15.0',
+    date: '2026-11-06',
+    title: 'Your day at a glance.',
+    notes: [
+      'A small ring beside the Today title fills in as you go: one piece per habit, teal for Done, amber for 2 minutes.',
+      'It closes with a check once every habit has its answer.',
+    ],
+  },
+  {
+    version: '1.14.2',
+    date: '2026-11-06',
+    title: 'Friendlier first weeks on Progress.',
+    notes: [
+      'A new habit’s dot grid now starts the week you added it and grows a column each week, up to 8 weeks.',
+      'The rest of this week shows as faint rings, waiting to fill in.',
+      'Every day of the week is labeled down the side, not just Monday, Wednesday and Friday.',
+    ],
+  },
+  {
+    version: '1.14.1',
+    date: '2026-11-06',
+    title: 'A tidier welcome screen.',
+    notes: [
+      'If you already use AndThen, “Sign in to sync” and “Restore from a backup” now sit together under “Already use AndThen?”.',
+      'Nothing wraps awkwardly on small phones any more.',
+    ],
+  },
+  {
     version: '1.14.0',
     date: '2026-11-05',
     title: 'Share a routine.',

@@ -7,6 +7,8 @@ describe('PreferenceSettings', () => {
     localStorage.clear();
     delete document.documentElement.dataset['theme'];
     delete document.documentElement.dataset['accent'];
+    delete document.documentElement.dataset['text'];
+    delete document.documentElement.dataset['contrast'];
   });
 
   async function setup() {
@@ -57,6 +59,44 @@ describe('PreferenceSettings', () => {
     root.querySelector<HTMLInputElement>('input[name="accent"][value="teal"]')!.click();
     await fixture.whenStable();
     expect(document.documentElement.dataset['accent']).toBeUndefined();
+  });
+
+  it('colors the title bar with the accent in light mode, and dark in dark mode', async () => {
+    const meta = document.createElement('meta');
+    meta.name = 'theme-color';
+    document.head.append(meta);
+    try {
+      const { fixture, prefs } = await setup();
+      prefs.setTheme('light');
+      prefs.setAccent('plum');
+      await fixture.whenStable();
+      expect(meta.content).toBe('#7a4a86');
+
+      prefs.setTheme('dark');
+      await fixture.whenStable();
+      expect(meta.content).toBe('#121815');
+    } finally {
+      meta.remove();
+    }
+  });
+
+  it('turns on larger text and more contrast, and remembers them', async () => {
+    const { fixture, root } = await setup();
+    const [large, contrast] = root.querySelectorAll<HTMLInputElement>('input[role="switch"]');
+    expect(large.checked).toBe(false);
+
+    large.click();
+    contrast.click();
+    await fixture.whenStable();
+    expect(document.documentElement.dataset['text']).toBe('large');
+    expect(document.documentElement.dataset['contrast']).toBe('more');
+    const saved = JSON.parse(localStorage.getItem('andthen.prefs')!);
+    expect(saved.largeText).toBe(true);
+    expect(saved.moreContrast).toBe(true);
+
+    large.click();
+    await fixture.whenStable();
+    expect(document.documentElement.dataset['text']).toBeUndefined();
   });
 
   it('changes the first day of the week', async () => {

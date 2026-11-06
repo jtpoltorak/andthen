@@ -63,9 +63,44 @@ describe('Progress', () => {
     expect(text).toContain('Habit water');
     expect(text).toContain('7 days'); // The single miss doesn't break the chain.
     expect(text).toMatch(/Done\s+6\s+times\s+1 as the 2-minute version/);
-    expect(root.querySelectorAll('.week')).toHaveLength(8);
+    // Started Oct 20, so the grid starts that week: three columns, not eight.
+    expect(root.querySelectorAll('.week')).toHaveLength(3);
     expect(root.querySelectorAll('.dot-full').length).toBeGreaterThanOrEqual(5);
     expect(root.querySelector('.dot-open')?.getAttribute('title')).toContain('not checked in yet');
+    // Saturday and Sunday are still to come.
+    expect(root.querySelectorAll('.dot-upcoming')).toHaveLength(2);
+    expect(root.querySelector('.grid')?.getAttribute('aria-label')).toContain('Since Oct 19');
+    expect(
+      Array.from(root.querySelectorAll('.weekdays span')).map((s) => s.textContent?.trim()),
+    ).toEqual(['M', 'T', 'W', 'T', 'F', 'S', 'S']);
+  });
+
+  it('shows 8 weeks once a habit is older than that', async () => {
+    const { root } = await setup({
+      routines: [routine('am', { createdOn: '2026-08-01' })],
+      habits: [habit('water', 'am', { createdOn: '2026-08-01' })],
+      checkIns: [],
+    });
+    expect(root.querySelectorAll('.week')).toHaveLength(8);
+    expect(root.querySelector('.grid')?.getAttribute('aria-label')).toContain('Last 8 weeks');
+  });
+
+  it('starts a brand-new habit with one week of rings to fill', async () => {
+    const { root } = await setup({
+      routines: [routine('am', { createdOn: TODAY })],
+      habits: [
+        habit('water', 'am', {
+          createdOn: TODAY,
+          schedule: { kind: 'days', days: [1, 2, 3, 4, 5, 6] },
+        }),
+      ],
+      checkIns: [],
+    });
+    expect(root.querySelectorAll('.week')).toHaveLength(1);
+    expect(root.querySelectorAll('.dot-open')).toHaveLength(1);
+    // Saturday is planned; Sunday is a rest day.
+    expect(root.querySelectorAll('.dot-upcoming')).toHaveLength(1);
+    expect(root.querySelectorAll('.grid .dot-rest')).toHaveLength(1);
   });
 
   it('shows a habit\'s "why" under its name', async () => {
