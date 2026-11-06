@@ -50,6 +50,15 @@ export class PreferencesStore {
       if (accent === 'teal') delete root.dataset['accent'];
       else root.dataset['accent'] = accent;
     });
+    // Larger text and more contrast: `data-text` and `data-contrast` on <html> (styles.css).
+    effect(() => {
+      const { largeText, moreContrast } = this.prefs();
+      const root = this.document.documentElement;
+      if (largeText) root.dataset['text'] = 'large';
+      else delete root.dataset['text'];
+      if (moreContrast) root.dataset['contrast'] = 'more';
+      else delete root.dataset['contrast'];
+    });
     // The browser and installed-app title bar follow along: the accent in light mode,
     // the page's own dark color in dark mode, so a bright bar never sits over a dark app.
     const media = this.document.defaultView?.matchMedia?.('(prefers-color-scheme: dark)');
@@ -80,6 +89,14 @@ export class PreferencesStore {
 
   setWeekStart(weekStartsOn: WeekStart): void {
     this.update({ weekStartsOn });
+  }
+
+  setLargeText(largeText: boolean): void {
+    this.update({ largeText });
+  }
+
+  setMoreContrast(moreContrast: boolean): void {
+    this.update({ moreContrast });
   }
 
   /** Back to the defaults. Used by "Reset everything", which clears storage itself. */

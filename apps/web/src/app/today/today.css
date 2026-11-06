@@ -35,14 +35,16 @@ h1 {
 
 .card-head {
   display: flex;
+  flex-wrap: wrap;
   align-items: flex-start;
   justify-content: space-between;
-  gap: 12px;
+  gap: 8px 12px;
   padding-bottom: 18px;
 }
 
 .anchor {
   display: flex;
+  flex: 1 1 140px;
   align-items: center;
   gap: 10px;
   min-width: 0;

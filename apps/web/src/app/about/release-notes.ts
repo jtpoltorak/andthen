@@ -21,6 +21,16 @@ export interface Release {
 
 export const RELEASES: readonly Release[] = [
   {
+    version: '1.18.0',
+    date: '2026-11-06',
+    title: 'Easier to read.',
+    notes: [
+      'New in Settings → You: Larger text makes everything about 15% bigger, buttons too.',
+      'More contrast darkens gray text, lines and borders, in light and dark.',
+      'On Today, a long anchor now gets its own line instead of squeezing into a narrow column.',
+    ],
+  },
+  {
     version: '1.17.0',
     date: '2026-11-06',
     title: 'A better app icon, and easier to install.',

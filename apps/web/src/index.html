@@ -11,7 +11,7 @@
     <link rel="apple-touch-icon" href="icons/apple-touch-icon.png" />
     <link rel="manifest" href="manifest.webmanifest" />
     <script>
-      // Apply a saved theme and accent color before the app boots, so the page doesn't flash.
+      // Apply saved look settings before the app boots, so the page doesn't flash.
       try {
         var prefs = JSON.parse(localStorage.getItem('andthen.prefs') || '{}');
         var theme = prefs.theme;
@@ -19,6 +19,8 @@
         if (/^(blue|plum|clay|slate)$/.test(prefs.accent)) {
           document.documentElement.dataset.accent = prefs.accent;
         }
+        if (prefs.largeText === true) document.documentElement.dataset.text = 'large';
+        if (prefs.moreContrast === true) document.documentElement.dataset.contrast = 'more';
       } catch (e) {}
     </script>
     <link rel="preconnect" href="https://fonts.googleapis.com" />

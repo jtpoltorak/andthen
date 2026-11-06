@@ -123,37 +123,6 @@ const LEAD_LABELS: Record<ReminderLead, string> = {
       font-size: 16px;
       font-weight: 700;
     }
-    input[role='switch'] {
-      appearance: none;
-      position: relative;
-      flex: none;
-      width: 52px;
-      height: 32px;
-      margin: 0;
-      border-radius: 16px;
-      background: var(--disabled);
-      cursor: pointer;
-      transition: background 0.15s;
-    }
-    input[role='switch']::after {
-      content: '';
-      position: absolute;
-      top: 3px;
-      left: 3px;
-      width: 26px;
-      height: 26px;
-      border-radius: 50%;
-      background: var(--knob);
-      box-shadow: 0 1px 3px rgb(0 0 0 / 0.2);
-      transition: transform 0.15s;
-    }
-    input[role='switch']:checked {
-      background: var(--accent);
-    }
-    input[role='switch']:checked::after {
-      transform: translateX(20px);
-    }
-    input[role='switch']:focus-visible,
     select:focus-visible,
     .check-row input:focus-visible {
       outline: 3px solid var(--focus);

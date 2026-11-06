@@ -244,9 +244,9 @@ export const HELP_ARTICLES = [
     slug: 'make-it-yours',
     part: 'using',
     title: 'Make it yours: name, look and color',
-    summary: 'A hello by name, light or dark, an accent color, and when weeks start.',
+    summary: 'A hello by name, light or dark, an accent color, larger text, and when weeks start.',
     keywords:
-      'name theme dark mode light color colour accent blue plum clay slate week start sunday',
+      'name theme dark mode light color colour accent blue plum clay slate week start sunday larger bigger text font size zoom contrast accessibility',
     minutes: 1,
     related: ['progress', 'install'],
   },

@@ -19,13 +19,28 @@ describe('parsePreferences', () => {
 
   it('keeps valid values', () => {
     expect(
-      parsePreferences({ name: '  Sam ', theme: 'dark', accent: 'plum', weekStartsOn: 0 }),
+      parsePreferences({
+        name: '  Sam ',
+        theme: 'dark',
+        accent: 'plum',
+        weekStartsOn: 0,
+        largeText: true,
+        moreContrast: true,
+      }),
     ).toEqual({
       name: 'Sam',
       theme: 'dark',
       accent: 'plum',
       weekStartsOn: 0,
+      largeText: true,
+      moreContrast: true,
     });
+  });
+
+  it('only turns on larger text and more contrast for a real true', () => {
+    const prefs = parsePreferences({ largeText: 'yes', moreContrast: 1 });
+    expect(prefs.largeText).toBe(false);
+    expect(prefs.moreContrast).toBe(false);
   });
 
   it('returns a fresh copy of the defaults', () => {

@@ -7,6 +7,8 @@ describe('PreferenceSettings', () => {
     localStorage.clear();
     delete document.documentElement.dataset['theme'];
     delete document.documentElement.dataset['accent'];
+    delete document.documentElement.dataset['text'];
+    delete document.documentElement.dataset['contrast'];
   });
 
   async function setup() {
@@ -76,6 +78,25 @@ describe('PreferenceSettings', () => {
     } finally {
       meta.remove();
     }
+  });
+
+  it('turns on larger text and more contrast, and remembers them', async () => {
+    const { fixture, root } = await setup();
+    const [large, contrast] = root.querySelectorAll<HTMLInputElement>('input[role="switch"]');
+    expect(large.checked).toBe(false);
+
+    large.click();
+    contrast.click();
+    await fixture.whenStable();
+    expect(document.documentElement.dataset['text']).toBe('large');
+    expect(document.documentElement.dataset['contrast']).toBe('more');
+    const saved = JSON.parse(localStorage.getItem('andthen.prefs')!);
+    expect(saved.largeText).toBe(true);
+    expect(saved.moreContrast).toBe(true);
+
+    large.click();
+    await fixture.whenStable();
+    expect(document.documentElement.dataset['text']).toBeUndefined();
   });
 
   it('changes the first day of the week', async () => {

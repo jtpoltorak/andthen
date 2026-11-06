@@ -92,7 +92,7 @@ import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
     :host {
       display: flex;
       flex-direction: column;
-      min-height: 100dvh;
+      min-height: calc(100dvh / var(--zoom));
     }
     .page {
       flex: 1;

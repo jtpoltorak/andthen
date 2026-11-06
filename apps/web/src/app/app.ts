@@ -25,7 +25,7 @@ function pageHeading(): HTMLElement | null {
   styles: `
     .app {
       max-width: 480px;
-      min-height: 100dvh;
+      min-height: calc(100dvh / var(--zoom));
       margin: 0 auto;
       background: var(--bg);
     }

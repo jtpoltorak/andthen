@@ -386,6 +386,14 @@ export class ShareHelp {}
           same, so it always stands out.
         </li>
         <li>
+          <strong>Larger text</strong>: makes everything about 15% bigger, buttons and spacing too,
+          like zooming in. Screens reflow to fit, so nothing gets cut off.
+        </li>
+        <li>
+          <strong>More contrast</strong>: darker gray text, lines and borders, in light and dark.
+          Handy in bright sunlight.
+        </li>
+        <li>
           <strong>Weeks start on</strong>: Monday or Sunday. It changes "This week" and the grid on
           Progress.
         </li>
