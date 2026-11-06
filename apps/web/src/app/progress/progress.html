@@ -203,6 +203,14 @@
           [attr.aria-label]="trend.label"
           [attr.viewBox]="trendViewBox"
         >
+          <!-- A faint line at "every asked-for day", for scale. -->
+          <line
+            class="trend-top"
+            x1="0"
+            [attr.x2]="trendWidth"
+            [attr.y1]="trendTop"
+            [attr.y2]="trendTop"
+          />
           @for (d of trend.paths; track $index) {
             <path [attr.d]="d" />
           }

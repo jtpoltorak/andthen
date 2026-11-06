@@ -24,6 +24,7 @@
             class="card"
             tabindex="-1"
             [id]="'card-' + chain.routine.id"
+            [style.view-transition-name]="transitionName(chain.routine.id)"
             [attr.aria-label]="chain.routine.anchor"
           >
             <!-- The anchor is the first step of the chain; each connector fills in as you reach the next. -->
@@ -91,7 +92,7 @@
                           stroke-linecap="round"
                           stroke-linejoin="round"
                         >
-                          <path d="M5 12.5l4.5 4.5L19 7.5" />
+                          <path class="tick" pathLength="1" d="M5 12.5l4.5 4.5L19 7.5" />
                         </svg>
                       } @else if (link.status === 'mini') {
                         2m

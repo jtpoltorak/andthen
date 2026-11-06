@@ -142,6 +142,8 @@ export class Progress {
   protected readonly weekdayLabels = computed(() => weekdayLabels(this.weekStartsOn()));
   protected readonly shortDate = shortDate;
   protected readonly trendViewBox = `0 0 ${TREND_W} ${TREND_H}`;
+  protected readonly trendWidth = TREND_W;
+  protected readonly trendTop = TREND_PAD;
 
   private readonly index = computed(() => indexCheckIns(this.store.checkIns()));
 

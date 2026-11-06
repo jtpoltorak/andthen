@@ -89,6 +89,12 @@ describe('habitTrend', () => {
     expect(trendOf('.......'.repeat(4) + 'FFFFFFF'.repeat(3) + 'FFFF').direction).toBe('up');
     expect(trendOf('FFFFFFF'.repeat(5) + '.......'.repeat(2) + 'F...').direction).toBe('down');
     expect(trendOf('FFFFF..'.repeat(7) + 'FFFF').direction).toBe('steady');
+    // One good week after a dip isn't "a quieter stretch".
+    expect(trendOf('FFFFFFF'.repeat(6) + 'FFF.F..' + 'FFFF').direction).toBe('steady');
+    // Two good weeks running after a slow start is.
+    expect(trendOf('F......'.repeat(2) + 'FFF....'.repeat(4) + 'FFFFFFF' + 'FFFF').direction).toBe(
+      'up',
+    );
     const late = habit({ createdOn: '2026-10-26' });
     const two = habitTrend(late, routine(), indexCheckIns(pattern('FFFF', '2026-10-26')), TODAY);
     expect(two.direction).toBeUndefined();

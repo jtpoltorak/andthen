@@ -103,11 +103,16 @@ export class GettingStarted {}
         dashed for a skip. You can see how far along the chain you are at a glance.
       </p>
       <p>
-        Done and Did 2 min give the habit's ring a quick pop, and answering the last habit in a
-        routine brings a small "Chain complete" moment. It's a tiny reward on purpose: feeling
-        finished is part of what makes a habit stick (see
+        Done and Did 2 min give the habit's ring a quick pop, and Done draws its tick in. Answering
+        the last habit in a routine brings a small "Chain complete" moment. It's a tiny reward on
+        purpose: feeling finished is part of what makes a habit stick (see
         <a routerLink="/help/feel-finished">Make it feel finished</a>). If your device is set to
         reduce motion, the animations are turned off.
+      </p>
+      <p>
+        Moving around the app is smooth too: screens cross-fade as you switch tabs, and tapping
+        <strong>Run</strong> grows the routine's card into the Run screen. These also switch off
+        with reduced motion.
       </p>
       <p>
         Anything you don't answer by the end of the day counts as missed. One miss is fine; see

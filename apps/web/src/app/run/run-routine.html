@@ -1,4 +1,4 @@
-<main class="run">
+<main class="run" [style.view-transition-name]="transitionName()">
   <a class="back-link" routerLink="/today">‹ Today</a>
 
   @if (chain(); as chain) {
@@ -94,7 +94,7 @@
             stroke-linecap="round"
             stroke-linejoin="round"
           >
-            <path d="M5 12.5l4.5 4.5L19 7.5" />
+            <path class="tick" pathLength="1" d="M5 12.5l4.5 4.5L19 7.5" />
           </svg>
         </div>
         <h1 id="run-focus" tabindex="-1">Chain complete</h1>

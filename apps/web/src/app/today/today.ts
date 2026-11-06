@@ -29,6 +29,7 @@ import { CheckInJournal } from './check-in-journal';
 import { DayRing } from './day-ring';
 import { WeekPanel } from './week-panel';
 import { RoutineIcon } from '../shared/routine-icon';
+import { routineTransitionName } from '../shared/view-transitions';
 
 /** Long enough for the longest celebration animation in today.css to finish. */
 const CELEBRATE_MS = 1600;
@@ -65,6 +66,7 @@ export class Today {
 
   /** The habit just checked off, so its ring can pop. Cleared once the animation is over. */
   protected readonly poppedHabit = signal<string | undefined>(undefined);
+  protected readonly transitionName = routineTransitionName;
   /** The routine whose chain was just finished, for a short celebration. */
   protected readonly finishedRoutine = signal<string | undefined>(undefined);
   /** Directions, in degrees, for the little sparks around "Chain complete". */

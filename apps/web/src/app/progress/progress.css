@@ -304,6 +304,12 @@ h1 {
   vector-effect: non-scaling-stroke;
 }
 
+.trend-top {
+  stroke: var(--line);
+  stroke-width: 1;
+  stroke-dasharray: 2 3;
+}
+
 .trend-line circle {
   fill: var(--accent);
 }

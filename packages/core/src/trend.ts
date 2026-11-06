@@ -28,6 +28,8 @@ export interface HabitTrend {
 
 /** How far the recent average must move, as a share, to count as up or down. */
 const MOVE = 0.1;
+/** How many of the latest weeks count as "recent". */
+const RECENT = 2;
 /** Weeks needed before the line says anything. */
 const MIN_WEEKS = 3;
 
@@ -81,16 +83,17 @@ export function habitTrend(
   return { weeks: trend, direction: direction(trend) };
 }
 
-/** Compares the last three weeks with a share against the ones before them. */
+/**
+ * Compares the last two weeks with the ones before them. Both recent weeks have to agree
+ * before the line says "up" or "down", so one good or bad week never flips it.
+ */
 function direction(weeks: readonly TrendWeek[]): TrendDirection | undefined {
   const shares = weeks.map((w) => w.share).filter((s): s is number => s !== undefined);
   if (shares.length < MIN_WEEKS) return undefined;
-  // With only a few weeks, compare the latest week with the first.
-  const recentCount = shares.length >= 6 ? 3 : 1;
-  const recent = average(shares.slice(-recentCount));
-  const before = average(shares.slice(0, shares.length - recentCount));
-  if (recent - before >= MOVE) return 'up';
-  if (before - recent >= MOVE) return 'down';
+  const recent = shares.slice(-RECENT);
+  const before = average(shares.slice(0, -RECENT));
+  if (Math.min(...recent) - before >= MOVE) return 'up';
+  if (before - Math.max(...recent) >= MOVE) return 'down';
   return 'steady';
 }
 

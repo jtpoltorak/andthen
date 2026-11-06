@@ -21,6 +21,17 @@ export interface Release {
 
 export const RELEASES: readonly Release[] = [
   {
+    version: '1.24.0',
+    date: '2026-11-06',
+    title: 'Smoother moves.',
+    notes: [
+      'Screens now cross-fade as you switch tabs, and the sidebar stays still on a laptop.',
+      'Tapping Run grows the routine’s card into the Run screen, and Back shrinks it home.',
+      'Checking off a habit now draws its tick in.',
+      'All of it switches off when your device is set to reduce motion.',
+    ],
+  },
+  {
     version: '1.23.0',
     date: '2026-11-06',
     title: 'Routine icons.',

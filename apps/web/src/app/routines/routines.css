@@ -49,9 +49,19 @@ h1 {
 /* Icon picker */
 
 .icon-picker {
-  margin: 0 0 20px;
-  padding: 0;
+  min-width: 0;
+  margin-inline: 0;
+  padding: 12px 0 0;
   border: 0;
+  border-top: 1px solid var(--border);
+}
+.icon-picker legend {
+  float: left;
+  width: 100%;
+  padding: 0;
+}
+.icon-picker legend + * {
+  clear: both;
 }
 
 .icon-options {
@@ -65,8 +75,8 @@ h1 {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 40px;
-  height: 40px;
+  width: 38px;
+  height: 38px;
   border: 1px solid var(--border);
   border-radius: 50%;
   background: var(--surface);

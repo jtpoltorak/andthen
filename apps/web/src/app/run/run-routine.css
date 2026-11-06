@@ -208,6 +208,19 @@
 .celebrate .big-ring {
   animation: ring-pop 520ms cubic-bezier(0.34, 1.56, 0.64, 1);
 }
+.celebrate .big-ring .tick {
+  stroke-dasharray: 1;
+  /* 'both' holds it hidden until it draws; with reduced motion it simply shows. */
+  animation: tick-draw 320ms ease-out 220ms both;
+}
+@keyframes tick-draw {
+  from {
+    stroke-dashoffset: 1;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
 @keyframes ring-pop {
   from {
     transform: scale(0.5);

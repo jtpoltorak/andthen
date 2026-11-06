@@ -107,6 +107,8 @@ import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
       flex: 1;
     }
     nav {
+      /* Stays put while the screen beside it changes. */
+      view-transition-name: app-nav;
       position: sticky;
       bottom: 0;
       display: grid;

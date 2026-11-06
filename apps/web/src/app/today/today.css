@@ -194,6 +194,20 @@ h1 {
 .ring-mini.ring-pop::after {
   border-color: var(--amber);
 }
+/* The tick draws itself in once the ring has filled. */
+.ring-pop .tick {
+  stroke-dasharray: 1;
+  /* 'both' holds it hidden until it draws; with reduced motion it simply shows. */
+  animation: tick-draw 280ms ease-out 140ms both;
+}
+@keyframes tick-draw {
+  from {
+    stroke-dashoffset: 1;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
 @keyframes ring-pop {
   0% {
     transform: scale(0.6);
