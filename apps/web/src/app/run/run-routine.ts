@@ -11,6 +11,7 @@ import { RouterLink } from '@angular/router';
 import { type ChainLink, type CheckInKind } from '@andthen/core';
 import { HabitStore } from '../data/habit-store';
 import { focusAfterRender } from '../shared/focus';
+import { RoutineIcon } from '../shared/routine-icon';
 
 /**
  * Run a routine: one habit at a time, big and calm, in chain order.
@@ -18,7 +19,7 @@ import { focusAfterRender } from '../shared/focus';
  */
 @Component({
   selector: 'app-run-routine',
-  imports: [RouterLink],
+  imports: [RouterLink, RoutineIcon],
   templateUrl: './run-routine.html',
   styleUrl: './run-routine.css',
   changeDetection: ChangeDetectionStrategy.OnPush,

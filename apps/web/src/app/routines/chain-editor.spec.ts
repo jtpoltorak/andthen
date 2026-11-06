@@ -61,6 +61,26 @@ describe('ChainEditor', () => {
     Object.defineProperty(navigator, 'share', { value: share, configurable: true });
   });
 
+  it('picks an icon for the routine, and can take it off again', async () => {
+    const { fixture, root, store, routine } = await setup();
+    const radio = (name: string) =>
+      [...root.querySelectorAll<HTMLLabelElement>('.icon-option')]
+        .find((l) => l.textContent?.trim() === name)!
+        .querySelector('input')!;
+    expect(radio('No icon').checked).toBe(true);
+    expect(root.querySelector('.rail app-routine-icon')).toBeNull();
+
+    radio('Mug').click();
+    await fixture.whenStable();
+    expect(store.routine(routine.id)?.icon).toBe('coffee');
+    expect(root.querySelector('.rail app-routine-icon.tile')).toBeTruthy();
+
+    radio('No icon').click();
+    await fixture.whenStable();
+    expect(store.routine(routine.id)?.icon).toBeUndefined();
+    expect('icon' in store.routine(routine.id)!).toBe(false);
+  });
+
   it('shows the anchor and the chain in order', async () => {
     const { root, names } = await setup();
     expect(root.textContent).toContain('After I pour my coffee');

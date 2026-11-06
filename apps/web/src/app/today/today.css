@@ -512,6 +512,15 @@ h1 {
 .collapsed-done .collapsed-anchor {
   color: var(--muted);
 }
+.collapsed-icon {
+  margin-right: 8px;
+  vertical-align: -3px;
+  color: var(--accent-ink);
+}
+.paused-icon {
+  margin-right: 4px;
+  vertical-align: -2px;
+}
 .done-check {
   display: inline-flex;
   align-items: center;

@@ -7,11 +7,45 @@
       <app-help-link slug="routines" />
     </div>
 
+    <fieldset class="icon-picker">
+      <legend class="field-label">Icon</legend>
+      <div class="icon-options">
+        <label class="icon-option" [class.selected]="!r.icon" title="No icon">
+          <input
+            type="radio"
+            name="routine-icon"
+            class="visually-hidden"
+            [checked]="!r.icon"
+            (change)="setIcon(undefined)"
+          />
+          <span class="anchor-dot" aria-hidden="true"></span>
+          <span class="visually-hidden">No icon</span>
+        </label>
+        @for (icon of icons; track icon) {
+          <label class="icon-option" [class.selected]="r.icon === icon" [title]="iconNames[icon]">
+            <input
+              type="radio"
+              name="routine-icon"
+              class="visually-hidden"
+              [checked]="r.icon === icon"
+              (change)="setIcon(icon)"
+            />
+            <app-routine-icon [icon]="icon" [size]="18" />
+            <span class="visually-hidden">{{ iconNames[icon] }}</span>
+          </label>
+        }
+      </div>
+    </fieldset>
+
     <ol class="chain" aria-label="Chain">
       <!-- The anchor: the thing the person already does. -->
       <li class="chain-row">
         <div class="rail" aria-hidden="true">
-          <span class="anchor-dot"></span>
+          @if (r.icon) {
+            <app-routine-icon [icon]="r.icon" [tile]="true" />
+          } @else {
+            <span class="anchor-dot"></span>
+          }
           <span class="line"></span>
         </div>
         <div class="row-body">

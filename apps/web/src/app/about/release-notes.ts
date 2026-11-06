@@ -21,6 +21,16 @@ export interface Release {
 
 export const RELEASES: readonly Release[] = [
   {
+    version: '1.23.0',
+    date: '2026-11-06',
+    title: 'Routine icons.',
+    notes: [
+      'Give each routine an icon, like a mug, a moon or a laptop, so they’re easy to tell apart on Today, Routines, Progress and the Run screen.',
+      'Ready-made routines come with an icon, and a shared routine brings its icon along.',
+      'Icons are kept in backups and sync to your other devices.',
+    ],
+  },
+  {
     version: '1.22.0',
     date: '2026-11-06',
     title: 'Am I getting steadier?',

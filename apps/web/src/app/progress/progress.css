@@ -158,6 +158,10 @@ h1 {
   background: var(--muted);
 }
 
+.anchor-icon {
+  color: var(--accent-ink);
+}
+
 .retired-tag {
   padding: 2px 8px;
   border-radius: 999px;

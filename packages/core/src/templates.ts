@@ -1,3 +1,5 @@
+import type { RoutineIcon } from './model';
+
 /** One habit in a starter routine, with its ready-made 2-minute version. */
 export interface TemplateHabit {
   name: string;
@@ -17,6 +19,7 @@ export interface RoutineTemplate {
   blurb: string;
   anchor: string;
   usualTime: string;
+  icon: RoutineIcon;
   habits: readonly TemplateHabit[];
 }
 
@@ -27,6 +30,7 @@ export const ROUTINE_TEMPLATES: readonly RoutineTemplate[] = [
     blurb: 'Wake up your body before you pick up your phone.',
     anchor: 'After I wake up',
     usualTime: '07:00',
+    icon: 'sun',
     habits: [
       {
         name: 'Drink a glass of water',
@@ -43,6 +47,7 @@ export const ROUTINE_TEMPLATES: readonly RoutineTemplate[] = [
     blurb: 'Give your eyes and back a quick break in the middle of the day.',
     anchor: 'After lunch',
     usualTime: '12:30',
+    icon: 'laptop',
     habits: [
       {
         name: 'Take a short walk',
@@ -59,6 +64,7 @@ export const ROUTINE_TEMPLATES: readonly RoutineTemplate[] = [
     blurb: 'Switch out of work mode when you walk in the door.',
     anchor: 'After I get home',
     usualTime: '17:30',
+    icon: 'home',
     habits: [
       { name: 'Put my keys and bag in their spot', twoMinuteVersion: 'Hang up my keys' },
       { name: 'Tidy for 10 minutes', twoMinuteVersion: 'Put away one thing' },
@@ -75,6 +81,7 @@ export const ROUTINE_TEMPLATES: readonly RoutineTemplate[] = [
     blurb: 'Make it easier to fall asleep and start tomorrow well.',
     anchor: 'After I brush my teeth at night',
     usualTime: '22:00',
+    icon: 'moon',
     habits: [
       {
         name: 'Charge my phone outside the bedroom',

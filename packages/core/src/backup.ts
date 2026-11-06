@@ -1,5 +1,14 @@
 import { cleanCheckInNote, isMood } from './journal';
-import type { CheckIn, CheckInKind, DayKey, Habit, Pause, Reflection, Routine } from './model';
+import {
+  isRoutineIcon,
+  type CheckIn,
+  type CheckInKind,
+  type DayKey,
+  type Habit,
+  type Pause,
+  type Reflection,
+  type Routine,
+} from './model';
 import { normalizePauses } from './pause';
 import { cleanNote } from './reflection';
 import { parseSchedule } from './schedule';
@@ -138,6 +147,8 @@ function readRoutine(raw: unknown, i: number): Routine {
     if (!TIME_RE.test(usualTime)) fail(`${where} has a bad time in "usualTime".`);
     routine.usualTime = usualTime;
   }
+  // Optional: an icon this version doesn't know (from a newer one) is left off, not an error.
+  if (isRoutineIcon(raw['icon'])) routine.icon = raw['icon'];
   const archivedOn = day(raw, 'archivedOn', where, false);
   if (archivedOn) routine.archivedOn = archivedOn;
   // Optional: older backups were made before pauses.

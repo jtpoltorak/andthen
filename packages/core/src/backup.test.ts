@@ -169,6 +169,18 @@ describe('parseBackup', () => {
     expect(result.ok).toBe(false);
   });
 
+  it('keeps a routine icon, and leaves off one it does not know', () => {
+    const backup = createBackup(sample());
+    const raw = backup.data.routines as unknown as Record<string, unknown>[];
+    raw[0]['icon'] = 'coffee';
+    const kept = parseBackup(JSON.parse(JSON.stringify(backup)));
+    expect(kept.ok && kept.data.routines[0].icon).toBe('coffee');
+    raw[0]['icon'] = 'rocket';
+    const dropped = parseBackup(JSON.parse(JSON.stringify(backup)));
+    expect(dropped.ok).toBe(true);
+    expect(dropped.ok && 'icon' in dropped.data.routines[0]).toBe(false);
+  });
+
   it('drops unknown fields', () => {
     const backup = createBackup(sample());
     (backup.data.routines[0] as unknown as Record<string, unknown>)['evil'] = '<script>';

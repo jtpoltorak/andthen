@@ -1,4 +1,4 @@
-import type { Habit, Routine, Schedule } from './model';
+import { isRoutineIcon, type Habit, type Routine, type RoutineIcon, type Schedule } from './model';
 import { parseSchedule } from './schedule';
 
 /** One habit in a shared routine. Only what's needed to set it up, nothing personal. */
@@ -17,6 +17,7 @@ export interface SharedRoutine {
   name?: string;
   anchor: string;
   usualTime?: string;
+  icon?: RoutineIcon;
   habits: SharedHabit[];
 }
 
@@ -41,6 +42,7 @@ export function toSharedRoutine(routine: Routine, habits: readonly Habit[]): Sha
   };
   if (routine.name) shared.name = routine.name;
   if (routine.usualTime) shared.usualTime = routine.usualTime;
+  if (routine.icon) shared.icon = routine.icon;
   return shared;
 }
 
@@ -54,6 +56,7 @@ interface Wire {
   n?: string;
   a: string;
   t?: string;
+  i?: string;
   h: { n: string; m: string; e?: string; s?: Schedule }[];
 }
 
@@ -63,6 +66,7 @@ export function encodeSharedRoutine(shared: SharedRoutine): string {
     ...(shared.name ? { n: shared.name } : {}),
     a: shared.anchor,
     ...(shared.usualTime ? { t: shared.usualTime } : {}),
+    ...(shared.icon ? { i: shared.icon } : {}),
     h: shared.habits.map((h) => ({
       n: h.name,
       m: h.twoMinuteVersion,
@@ -107,6 +111,7 @@ export function decodeSharedRoutine(code: string): SharedRoutine | null {
   if (name) shared.name = name;
   const time = wire['t'];
   if (typeof time === 'string' && TIME_RE.test(time)) shared.usualTime = time;
+  if (isRoutineIcon(wire['i'])) shared.icon = wire['i'];
   return shared;
 }
 

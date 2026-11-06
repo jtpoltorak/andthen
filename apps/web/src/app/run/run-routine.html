@@ -26,6 +26,9 @@
     } @else if (step(); as link) {
       @for (current of [link]; track current.habit.id) {
         <section class="focus" aria-live="polite">
+          @if (chain.routine.icon) {
+            <app-routine-icon class="cue-icon" [icon]="chain.routine.icon" [tile]="true" />
+          }
           <p class="cue">
             @if (stepNumber() === 1) {
               {{ chain.routine.anchor }}, and then…

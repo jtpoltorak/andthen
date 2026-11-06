@@ -28,6 +28,7 @@ import { HelpLink } from '../help/help-link';
 import { CheckInJournal } from './check-in-journal';
 import { DayRing } from './day-ring';
 import { WeekPanel } from './week-panel';
+import { RoutineIcon } from '../shared/routine-icon';
 
 /** Long enough for the longest celebration animation in today.css to finish. */
 const CELEBRATE_MS = 1600;
@@ -46,6 +47,7 @@ const lowerFirst = (text: string) => (text ? text.charAt(0).toLowerCase() + text
     CheckInJournal,
     DayRing,
     WeekPanel,
+    RoutineIcon,
   ],
   templateUrl: './today.html',
   styleUrl: './today.css',

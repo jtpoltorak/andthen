@@ -4,11 +4,12 @@ import { isPausedOn } from '@andthen/core';
 import { HabitStore } from '../data/habit-store';
 import { EmptyState } from '../shared/empty-state';
 import { HelpLink } from '../help/help-link';
+import { RoutineIcon } from '../shared/routine-icon';
 
 /** Routines tab: every chain at a glance. Tap one to edit it. */
 @Component({
   selector: 'app-routines',
-  imports: [RouterLink, HelpLink, EmptyState],
+  imports: [RouterLink, HelpLink, EmptyState, RoutineIcon],
   template: `
     <main class="page">
       <div class="title-row">
@@ -29,7 +30,12 @@ import { HelpLink } from '../help/help-link';
             <span class="routine-name">{{ item.routine.name }}</span>
           }
           <span class="routine-anchor">
-            <span class="anchor-dot" aria-hidden="true"></span>{{ item.routine.anchor }}
+            @if (item.routine.icon) {
+              <app-routine-icon class="anchor-icon" [icon]="item.routine.icon" />
+            } @else {
+              <span class="anchor-dot" aria-hidden="true"></span>
+            }
+            {{ item.routine.anchor }}
             @if (item.paused) {
               <span class="paused-tag">Paused</span>
             }

@@ -42,6 +42,49 @@ h1 {
   background: var(--muted);
 }
 
+.anchor-icon {
+  color: var(--accent-ink);
+}
+
+/* Icon picker */
+
+.icon-picker {
+  margin: 0 0 20px;
+  padding: 0;
+  border: 0;
+}
+
+.icon-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 6px;
+}
+
+.icon-option {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border: 1px solid var(--border);
+  border-radius: 50%;
+  background: var(--surface);
+  color: var(--ink-soft);
+  cursor: pointer;
+}
+
+.icon-option.selected {
+  border: 2px solid var(--accent);
+  background: var(--accent-soft);
+  color: var(--accent-ink);
+}
+
+.icon-option:has(input:focus-visible) {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
 /* Routines list */
 
 .routine-card {

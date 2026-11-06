@@ -65,6 +65,9 @@
   }
 }
 
+.cue-icon {
+  margin-bottom: 8px;
+}
 .cue {
   margin: 0;
   color: var(--accent-ink);

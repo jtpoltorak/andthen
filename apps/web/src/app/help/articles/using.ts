@@ -168,6 +168,13 @@ export class TodayHelp {}
         Today open the right routine, places it under Morning, Afternoon or Evening, and is when
         <a routerLink="/help/reminders">reminders</a> arrive.
       </p>
+      <h2>An icon</h2>
+      <p>
+        Pick an icon at the top of the editor, like a mug, a moon or a laptop, so routines are easy
+        to tell apart at a glance. It shows on Today, Routines, Progress and the Run screen, and
+        goes along when you share the routine. Ready-made routines come with one. Pick the plain dot
+        to go without.
+      </p>
       <h2>Habits</h2>
       <ul>
         <li>

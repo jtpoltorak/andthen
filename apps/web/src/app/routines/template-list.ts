@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
 import { ROUTINE_TEMPLATES, type RoutineTemplate } from '@andthen/core';
+import { RoutineIcon } from '../shared/routine-icon';
 
 /**
  * Ready-made routines as tappable cards. One tap picks a whole chain;
@@ -7,6 +8,7 @@ import { ROUTINE_TEMPLATES, type RoutineTemplate } from '@andthen/core';
  */
 @Component({
   selector: 'app-template-list',
+  imports: [RoutineIcon],
   template: `
     <ul class="templates" role="list">
       @for (t of templates(); track t.id) {
@@ -20,7 +22,9 @@ import { ROUTINE_TEMPLATES, type RoutineTemplate } from '@andthen/core';
             (click)="picked.emit(t)"
           >
             <span class="template-head">
-              <span class="template-name">{{ t.name }}</span>
+              <span class="template-name">
+                <app-routine-icon class="template-icon" [icon]="t.icon" />{{ t.name }}
+              </span>
               <span class="template-use" aria-hidden="true">Use</span>
             </span>
             <span class="template-blurb" [id]="'tpl-' + t.id + '-blurb'">{{ t.blurb }}</span>
@@ -36,6 +40,11 @@ import { ROUTINE_TEMPLATES, type RoutineTemplate } from '@andthen/core';
     </ul>
   `,
   styles: `
+    .template-icon {
+      margin-right: 8px;
+      vertical-align: -3px;
+      color: var(--accent-ink);
+    }
     .templates {
       display: flex;
       flex-direction: column;
