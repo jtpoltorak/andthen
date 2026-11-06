@@ -8,6 +8,15 @@ import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
   template: `
     <div class="page"><router-outlet /></div>
     <nav aria-label="Main">
+      <!-- Shown only in the wide layout, at the top of the side rail. -->
+      <a class="brand" routerLink="/today" aria-label="AndThen, Today">
+        <svg width="26" height="26" viewBox="0 0 30 30" aria-hidden="true">
+          <circle cx="8" cy="15" r="5" fill="currentColor" />
+          <path d="M13 15h4" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" />
+          <circle cx="22.5" cy="15" r="5" fill="none" stroke="currentColor" stroke-width="2.5" />
+        </svg>
+        <span>AndThen</span>
+      </a>
       <a routerLink="/today" routerLinkActive="active" ariaCurrentWhenActive="page">
         <svg
           width="22"
@@ -127,6 +136,71 @@ import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
     a.active {
       color: var(--accent-ink);
       font-weight: 700;
+    }
+    .brand {
+      display: none;
+    }
+
+    /* Laptops and desktops: the tabs move to a rail on the left, and pages get more room. */
+    @media (min-width: 900px) {
+      :host {
+        display: grid;
+        grid-template-columns: 220px minmax(0, 1fr);
+        align-items: start;
+      }
+      nav {
+        grid-column: 1;
+        grid-row: 1;
+        top: 0;
+        bottom: auto;
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        height: calc(100dvh / var(--zoom));
+        padding: 24px 14px;
+        border-top: none;
+        border-inline: none;
+        border-right: 1px solid var(--border);
+      }
+      .page {
+        grid-column: 2;
+        grid-row: 1;
+        width: 100%;
+        max-width: 600px;
+        margin: 0 auto;
+      }
+      .page:has(app-today) {
+        max-width: 960px;
+      }
+      a {
+        flex-direction: row;
+        justify-content: flex-start;
+        gap: 12px;
+        padding: 0 14px;
+        border-radius: 12px;
+        font-size: 15px;
+      }
+      a:hover {
+        background: var(--bg);
+        color: var(--ink);
+      }
+      a.active {
+        background: var(--accent-soft);
+        color: var(--accent-ink);
+      }
+      .brand,
+      .brand:hover {
+        display: flex;
+        margin-bottom: 16px;
+        background: none;
+        color: var(--ink);
+        font-size: 20px;
+        font-weight: 800;
+        letter-spacing: -0.02em;
+      }
+      .brand svg {
+        color: var(--accent);
+      }
     }
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,

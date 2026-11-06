@@ -27,6 +27,7 @@ import { EmptyState } from '../shared/empty-state';
 import { HelpLink } from '../help/help-link';
 import { CheckInJournal } from './check-in-journal';
 import { DayRing } from './day-ring';
+import { WeekPanel } from './week-panel';
 
 /** Long enough for the longest celebration animation in today.css to finish. */
 const CELEBRATE_MS = 1600;
@@ -36,7 +37,16 @@ const lowerFirst = (text: string) => (text ? text.charAt(0).toLowerCase() + text
 /** Today: each routine is a card; the active one is open and asks "what's next?" */
 @Component({
   selector: 'app-today',
-  imports: [RouterLink, NgTemplateOutlet, Autofocus, HelpLink, EmptyState, CheckInJournal, DayRing],
+  imports: [
+    RouterLink,
+    NgTemplateOutlet,
+    Autofocus,
+    HelpLink,
+    EmptyState,
+    CheckInJournal,
+    DayRing,
+    WeekPanel,
+  ],
   templateUrl: './today.html',
   styleUrl: './today.css',
   changeDetection: ChangeDetectionStrategy.OnPush,

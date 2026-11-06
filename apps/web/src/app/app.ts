@@ -29,6 +29,12 @@ function pageHeading(): HTMLElement | null {
       margin: 0 auto;
       background: var(--bg);
     }
+    /* The tabbed app gets the whole width on laptops (see Shell); welcome, Run and Help stay narrow. */
+    @media (min-width: 900px) {
+      .app:has(app-shell) {
+        max-width: none;
+      }
+    }
   `,
   host: {
     // Roll "today" over after midnight, notice permission changes made elsewhere,

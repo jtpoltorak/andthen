@@ -132,6 +132,10 @@ export class GettingStarted {}
         </li>
         <li><strong>Resting today</strong>: routines with nothing scheduled today.</li>
         <li>
+          <strong>On a computer</strong>: the tabs move to a rail on the left, and a
+          <strong>This week</strong> card sits beside your routines with a dot for each day.
+        </li>
+        <li>
           <strong>Weekly reflection</strong>: a card at the end of the week. See
           <a routerLink="/help/reflection">Weekly reflection</a>.
         </li>
