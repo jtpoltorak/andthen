@@ -456,10 +456,15 @@ export class RemindersHelp {}
       </p>
       <h2>The dot grid</h2>
       <p>
-        Each habit gets 8 weeks of dots, one per day. The legend above the grid shows each kind:
-        <strong>Done</strong> (teal), <strong>2 min</strong> (amber), <strong>Skipped</strong>,
-        <strong>No check-in</strong>, and <strong>Rest day</strong> for habits with a schedule. Days
-        before a habit existed are left blank.
+        Each habit gets a column of dots per week, one dot per day, with the days of the week down
+        the side. The legend above the grid shows each kind: <strong>Done</strong> (teal),
+        <strong>2 min</strong> (amber), <strong>Skipped</strong>, <strong>No check-in</strong>, and
+        <strong>Rest day</strong> for habits with a schedule. The rest of this week shows as faint
+        rings, waiting to fill in.
+      </p>
+      <p>
+        A new habit's grid starts the week you added it and grows a column each week, up to the last
+        8 weeks. Days before a habit existed are left blank.
       </p>
       <h2>The forgiving chain</h2>
       <p>

@@ -57,7 +57,7 @@ describe('greeting', () => {
 
 describe('weekdayLabels', () => {
   it('puts M, W and F under the right columns', () => {
-    expect(weekdayLabels(1)).toEqual(['M', '', 'W', '', 'F', '', '']);
-    expect(weekdayLabels(0)).toEqual(['', 'M', '', 'W', '', 'F', '']);
+    expect(weekdayLabels(1)).toEqual(['M', 'T', 'W', 'T', 'F', 'S', 'S']);
+    expect(weekdayLabels(0)).toEqual(['S', 'M', 'T', 'W', 'T', 'F', 'S']);
   });
 });

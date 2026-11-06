@@ -133,6 +133,10 @@ h1 {
 .dot-off {
   background: transparent;
 }
+/* The rest of this week, still to fill in. */
+.dot-upcoming {
+  border: 1.5px solid var(--line);
+}
 
 /* Routine cards */
 

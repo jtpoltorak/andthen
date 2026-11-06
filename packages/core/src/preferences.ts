@@ -57,7 +57,9 @@ export function greeting(name: string, hour: number): string {
   return who ? `${part}, ${who}` : part;
 }
 
-/** Weekday labels for a week grid: just M, W and F, so the grid stays calm. */
+/** Weekday labels for a week grid, one letter per row, in the user's week order. */
 export function weekdayLabels(weekStartsOn: WeekStart): string[] {
-  return weekStartsOn === 0 ? ['', 'M', '', 'W', '', 'F', ''] : ['M', '', 'W', '', 'F', '', ''];
+  return weekStartsOn === 0
+    ? ['S', 'M', 'T', 'W', 'T', 'F', 'S']
+    : ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
 }

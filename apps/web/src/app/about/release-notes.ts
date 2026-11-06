@@ -21,6 +21,16 @@ export interface Release {
 
 export const RELEASES: readonly Release[] = [
   {
+    version: '1.14.2',
+    date: '2026-11-06',
+    title: 'Friendlier first weeks on Progress.',
+    notes: [
+      'A new habit’s dot grid now starts the week you added it and grows a column each week, up to 8 weeks.',
+      'The rest of this week shows as faint rings, waiting to fill in.',
+      'Every day of the week is labeled down the side, not just Monday, Wednesday and Friday.',
+    ],
+  },
+  {
     version: '1.14.1',
     date: '2026-11-06',
     title: 'A tidier welcome screen.',
