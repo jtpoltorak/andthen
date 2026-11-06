@@ -122,9 +122,9 @@ export class GettingStarted {}
       <p>
         Tap <strong>Run</strong> on a routine's card for a calm, full-screen view: "After I pour my
         coffee, and then…", one habit at a time, with big Done, Did 2 min and Skip buttons. Your
-        "why" and make-it-easy notes show along the way, and a bar at the top fills in as you go.
-        Made a mistake? Tap <strong>Undo</strong> at the bottom. When the chain is done, you're back
-        on Today with one tap.
+        "why" and make-it-easy notes show along the way, and, for a chain of two or more, a bar at
+        the top fills in as you go. Made a mistake? Tap <strong>Undo</strong> at the bottom. When
+        the chain is done, you're back on Today with one tap.
       </p>
       <h2>Changing an answer</h2>
       <p>Tap <strong>Undo</strong> next to any answered habit to clear it, then answer again.</p>

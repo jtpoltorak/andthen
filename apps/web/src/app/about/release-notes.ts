@@ -21,6 +21,13 @@ export interface Release {
 
 export const RELEASES: readonly Release[] = [
   {
+    version: '1.24.1',
+    date: '2026-11-06',
+    notes: [
+      'The Run screen no longer shows an empty progress bar for a routine with just one habit.',
+    ],
+  },
+  {
     version: '1.24.0',
     date: '2026-11-06',
     title: 'Smoother moves.',
