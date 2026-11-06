@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { AboutCard } from '../about/about-card';
 import { DataBackup } from './data-backup';
@@ -7,6 +7,8 @@ import { ReminderSettings } from './reminder-settings';
 import { ResetData } from './reset-data';
 import { SyncSettings } from '../sync/sync-settings';
 import { HelpLink } from '../help/help-link';
+import { InstallPrompt } from '../shared/install-prompt';
+import { InstallSettings } from './install-settings';
 
 /** Settings tab: preferences, reminders, backup, starting over, and about the app. */
 @Component({
@@ -20,6 +22,7 @@ import { HelpLink } from '../help/help-link';
     AboutCard,
     HelpLink,
     RouterLink,
+    InstallSettings,
   ],
   template: `
     <main class="page">
@@ -27,6 +30,16 @@ import { HelpLink } from '../help/help-link';
         <h1>Settings</h1>
         <a class="help-all" routerLink="/help">Help</a>
       </div>
+
+      @if (install.way() !== 'none') {
+        <section aria-labelledby="install-heading">
+          <div class="section-head">
+            <h2 id="install-heading">Install AndThen</h2>
+            <app-help-link slug="install" />
+          </div>
+          <app-install-settings />
+        </section>
+      }
 
       <section aria-labelledby="prefs-heading">
         <div class="section-head">
@@ -115,4 +128,6 @@ import { HelpLink } from '../help/help-link';
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class Settings {}
+export class Settings {
+  protected readonly install = inject(InstallPrompt);
+}

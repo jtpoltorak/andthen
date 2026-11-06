@@ -19,6 +19,9 @@ export const ACCENT_SWATCHES: Record<Accent, string> = {
   slate: '#4a5560',
 };
 
+/** The dark theme's page color, for the title bar in dark mode (matches --bg in styles.css). */
+export const DARK_TITLE_BAR = '#121815';
+
 /** Also read by the small script in index.html, so the right theme shows before Angular boots. */
 export const PREFERENCES_KEY = 'andthen.prefs';
 
@@ -32,6 +35,9 @@ export class PreferencesStore {
 
   readonly prefs = signal<Preferences>(parsePreferences(readJson(PREFERENCES_KEY)));
 
+  /** Whether the device itself is in dark mode, for the "system" theme. */
+  private readonly systemDark = signal(false);
+
   constructor() {
     // The page follows the theme: `data-theme` on <html> picks the colors in styles.css.
     effect(() => {
@@ -43,10 +49,20 @@ export class PreferencesStore {
       const root = this.document.documentElement;
       if (accent === 'teal') delete root.dataset['accent'];
       else root.dataset['accent'] = accent;
-      // The browser and installed-app title bar follow along.
+    });
+    // The browser and installed-app title bar follow along: the accent in light mode,
+    // the page's own dark color in dark mode, so a bright bar never sits over a dark app.
+    const media = this.document.defaultView?.matchMedia?.('(prefers-color-scheme: dark)');
+    if (media) {
+      this.systemDark.set(media.matches);
+      media.addEventListener?.('change', (e) => this.systemDark.set(e.matches));
+    }
+    effect(() => {
+      const { accent, theme } = this.prefs();
+      const dark = theme === 'dark' || (theme === 'system' && this.systemDark());
       this.document
         .querySelector('meta[name="theme-color"]')
-        ?.setAttribute('content', ACCENT_SWATCHES[accent]);
+        ?.setAttribute('content', dark ? DARK_TITLE_BAR : ACCENT_SWATCHES[accent]);
     });
   }
 

@@ -566,6 +566,12 @@ export class NudgesHelp {}
         AndThen runs in your browser, and you can install it like an app. It then opens in its own
         window, works offline, and can send reminders.
       </p>
+      <h2>The quick way</h2>
+      <p>
+        Open <strong>Settings</strong>. Where your browser can install AndThen, an
+        <strong>Install AndThen</strong> card is at the top, with a one-tap button (Chrome, Edge and
+        Android) or the steps for iPhone and iPad. Once it's installed, the card goes away.
+      </p>
       <h2>iPhone and iPad (Safari)</h2>
       <ol>
         <li>Open andthenhabits.com in Safari.</li>
@@ -594,6 +600,9 @@ export class NudgesHelp {}
           things across.
         </li>
         <li>Updates arrive on their own. See <a routerLink="/help/updates">updates</a>.</li>
+        <li>
+          On Android, press and hold the AndThen icon for shortcuts straight to Today or Progress.
+        </li>
       </ul>
     </app-help-article>
   `,

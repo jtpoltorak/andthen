@@ -21,6 +21,17 @@ export interface Release {
 
 export const RELEASES: readonly Release[] = [
   {
+    version: '1.17.0',
+    date: '2026-11-06',
+    title: 'A better app icon, and easier to install.',
+    notes: [
+      'New Install AndThen card in Settings: one tap on Chrome, Edge and Android, or the steps for iPhone and iPad.',
+      'The app icon is centered, with proper versions for Android home screens and for computers.',
+      'The install screen now shows a preview of the app, and on Android you can press and hold the icon to jump to Today or Progress.',
+      'In dark mode, the browser’s title bar goes dark too.',
+    ],
+  },
+  {
     version: '1.16.0',
     date: '2026-11-06',
     title: 'Morning, afternoon, evening.',

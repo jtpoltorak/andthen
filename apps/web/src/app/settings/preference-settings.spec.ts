@@ -59,6 +59,25 @@ describe('PreferenceSettings', () => {
     expect(document.documentElement.dataset['accent']).toBeUndefined();
   });
 
+  it('colors the title bar with the accent in light mode, and dark in dark mode', async () => {
+    const meta = document.createElement('meta');
+    meta.name = 'theme-color';
+    document.head.append(meta);
+    try {
+      const { fixture, prefs } = await setup();
+      prefs.setTheme('light');
+      prefs.setAccent('plum');
+      await fixture.whenStable();
+      expect(meta.content).toBe('#7a4a86');
+
+      prefs.setTheme('dark');
+      await fixture.whenStable();
+      expect(meta.content).toBe('#121815');
+    } finally {
+      meta.remove();
+    }
+  });
+
   it('changes the first day of the week', async () => {
     const { fixture, prefs, root } = await setup();
     root.querySelectorAll<HTMLInputElement>('input[name="week-start"]')[1].click();

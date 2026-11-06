@@ -8,6 +8,7 @@ import { HabitStore } from './data/habit-store';
 import { PreferencesStore } from './data/preferences';
 import { Reminders } from './reminders/reminders';
 import { focusAfterRender } from './shared/focus';
+import { InstallPrompt } from './shared/install-prompt';
 import { SyncService } from './sync/sync.service';
 
 /** The new screen's main heading, made focusable so focus can move to it. */
@@ -42,6 +43,8 @@ export class App {
   // Created at boot so the chosen theme applies on every screen, the welcome flow included.
   private readonly preferences = inject(PreferencesStore);
   private readonly updates = inject(AppUpdates);
+  // Created at boot too: the browser offers its install prompt only once, early on.
+  private readonly install = inject(InstallPrompt);
 
   constructor() {
     this.reminders.start();
