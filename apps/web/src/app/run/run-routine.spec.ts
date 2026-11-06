@@ -52,6 +52,15 @@ describe('RunRoutine', () => {
     expect(document.activeElement?.id).toBe('run-focus');
   });
 
+  it('leaves out the step tracker when the chain has just one habit', async () => {
+    const { fixture, root, store, routine } = await setup();
+    expect(root.querySelectorAll('.step-dot')).toHaveLength(2);
+    await store.archiveHabit(store.habitsOf(routine.id)[1].id);
+    await fixture.whenStable();
+    expect(root.querySelector('.steps')).toBeNull();
+    expect(root.textContent).toContain('1 of 1');
+  });
+
   it('shows the why and make-it-easy notes, and undoes the last answer', async () => {
     const { fixture, root, store, routine, heading } = await setup();
     const [water] = store.habitsOf(routine.id);

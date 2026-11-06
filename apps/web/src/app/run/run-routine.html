@@ -2,20 +2,23 @@
   <a class="back-link" routerLink="/today">‹ Today</a>
 
   @if (chain(); as chain) {
-    <ol class="steps" aria-label="Chain">
-      @for (link of chain.links; track link.habit.id) {
-        <li
-          class="step-dot"
-          [class.dot-full]="link.status === 'full'"
-          [class.dot-mini]="link.status === 'mini'"
-          [class.dot-skip]="link.status === 'skip'"
-          [class.dot-now]="link.isNext"
-          [title]="link.habit.name"
-        >
-          <span class="visually-hidden">{{ link.habit.name }}: {{ answerLabel(link) }}</span>
-        </li>
-      }
-    </ol>
+    <!-- One segment per habit. A one-habit chain has nothing to track, so it's left out. -->
+    @if (chain.links.length > 1) {
+      <ol class="steps" aria-label="Chain">
+        @for (link of chain.links; track link.habit.id) {
+          <li
+            class="step-dot"
+            [class.dot-full]="link.status === 'full'"
+            [class.dot-mini]="link.status === 'mini'"
+            [class.dot-skip]="link.status === 'skip'"
+            [class.dot-now]="link.isNext"
+            [title]="link.habit.name"
+          >
+            <span class="visually-hidden">{{ link.habit.name }}: {{ answerLabel(link) }}</span>
+          </li>
+        }
+      </ol>
+    }
 
     @if (chain.paused) {
       <section class="finish">
