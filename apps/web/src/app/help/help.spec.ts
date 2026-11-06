@@ -3,7 +3,8 @@ import { provideRouter } from '@angular/router';
 import { HELP_ARTICLES, HELP_PARTS, helpArticle } from './help-articles';
 import { HelpHome, filterArticles } from './help-home';
 import { HelpLink } from './help-link';
-import { HELP_COMPONENTS, HELP_ROUTES } from './help.routes';
+import { HELP_COMPONENTS, HELP_PAGES, HELP_ROUTES } from './help.routes';
+import { HelpShell } from './help-shell';
 
 describe('help articles', () => {
   it('have unique slugs, a known part, and related reads that exist', () => {
@@ -22,7 +23,7 @@ describe('help articles', () => {
   it('each has a route', () => {
     for (const a of HELP_ARTICLES) {
       expect(
-        HELP_ROUTES.some((route) => route.path === a.slug),
+        HELP_PAGES.some((route) => route.path === a.slug),
         a.slug,
       ).toBe(true);
     }
@@ -89,5 +90,50 @@ describe('help link', () => {
     const a = (fixture.nativeElement as HTMLElement).querySelector('a')!;
     expect(a.getAttribute('href')).toBe('/help/reminders');
     expect(a.getAttribute('aria-label')).toBe('Help: reminders');
+  });
+});
+
+describe('help on laptops', () => {
+  it('lists every topic in the sidebar, grouped by part', async () => {
+    TestBed.configureTestingModule({ providers: [provideRouter(HELP_ROUTES.map((x) => x))] });
+    const fixture = TestBed.createComponent(HelpShell);
+    await fixture.whenStable();
+    const root = fixture.nativeElement as HTMLElement;
+    const links = [...root.querySelectorAll<HTMLAnchorElement>('nav .topic')];
+    // "All help topics", then every article.
+    expect(links).toHaveLength(HELP_ARTICLES.length + 1);
+    expect(root.querySelectorAll('nav .part')).toHaveLength(3);
+    expect(links[1].getAttribute('href')).toBe(`/help/${HELP_ARTICLES[0].slug}`);
+  });
+
+  it('filters the sidebar as you type', async () => {
+    TestBed.configureTestingModule({ providers: [provideRouter(HELP_ROUTES.map((x) => x))] });
+    const fixture = TestBed.createComponent(HelpShell);
+    await fixture.whenStable();
+    const root = fixture.nativeElement as HTMLElement;
+    const input = root.querySelector<HTMLInputElement>('#help-side-filter')!;
+    input.value = 'backup';
+    input.dispatchEvent(new Event('input'));
+    await fixture.whenStable();
+    const titles = [...root.querySelectorAll('nav .topic')].map((a) => a.textContent?.trim());
+    expect(titles).toContain(helpArticle('backup')!.title);
+    expect(titles.length).toBeLessThan(HELP_ARTICLES.length);
+    expect(root.querySelector('nav .part')).toBeNull();
+  });
+
+  it('gives a longer article an "On this page" list that jumps to each heading', async () => {
+    TestBed.configureTestingModule({ providers: [provideRouter(HELP_ROUTES.map((x) => x))] });
+    const fixture = TestBed.createComponent(HELP_COMPONENTS.today);
+    await fixture.whenStable();
+    const root = fixture.nativeElement as HTMLElement;
+    const toc = [...root.querySelectorAll<HTMLAnchorElement>('.toc a')];
+    expect(toc.map((a) => a.textContent?.trim())).toContain('Three answers');
+    const target = root.querySelector<HTMLElement>(toc[0].getAttribute('href')!);
+    expect(target?.textContent).toBe(toc[0].textContent?.trim());
+
+    target!.scrollIntoView = vi.fn();
+    toc[0].click();
+    expect(target!.scrollIntoView).toHaveBeenCalled();
+    expect(document.activeElement).toBe(target);
   });
 });

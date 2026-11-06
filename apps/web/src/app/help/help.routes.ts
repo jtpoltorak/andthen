@@ -2,6 +2,7 @@ import type { Type } from '@angular/core';
 import type { Routes } from '@angular/router';
 import { HELP_ARTICLES, type HelpSlug } from './help-articles';
 import { HelpHome } from './help-home';
+import { HelpShell } from './help-shell';
 import * as habits from './articles/habits';
 import * as using from './articles/using';
 import * as questions from './articles/questions';
@@ -42,8 +43,8 @@ export const HELP_COMPONENTS: Record<HelpSlug, Type<unknown>> = {
   contact: questions.ContactHelp,
 };
 
-/** `/help` and `/help/<slug>`, loaded only when someone opens Help. */
-export const HELP_ROUTES: Routes = [
+/** The pages inside the help frame: the help home, then one per article. */
+export const HELP_PAGES: Routes = [
   { path: '', component: HelpHome, title: 'Help · AndThen' },
   ...HELP_ARTICLES.map((a) => ({
     path: a.slug,
@@ -52,3 +53,9 @@ export const HELP_ROUTES: Routes = [
   })),
   { path: '**', redirectTo: '' },
 ];
+
+/**
+ * `/help` and `/help/<slug>`, loaded only when someone opens Help. The shell adds the
+ * topic sidebar on laptops.
+ */
+export const HELP_ROUTES: Routes = [{ path: '', component: HelpShell, children: HELP_PAGES }];
