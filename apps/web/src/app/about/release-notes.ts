@@ -21,6 +21,15 @@ export interface Release {
 
 export const RELEASES: readonly Release[] = [
   {
+    version: '1.21.0',
+    date: '2026-11-06',
+    title: 'The AndThen idea, in one picture.',
+    notes: [
+      'A new diagram on the Help home and in “Chain it” shows how one thing you already do leads to a few tiny habits, each cueing the next.',
+      'Further reading now lists more books and free-to-read research on building habits, with a line on what each is good for.',
+    ],
+  },
+  {
     version: '1.20.1',
     date: '2026-11-06',
     title: 'A steadier sidebar.',

@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, computed, signal } from '@angular/c
 import { RouterLink } from '@angular/router';
 import { Copyright } from '../legal/copyright';
 import { BackButton } from '../shared/back-button';
+import { AndThenDiagram } from './and-then-diagram';
 import { HELP_ARTICLES, HELP_PARTS, type HelpArticleInfo } from './help-articles';
 
 /** Lower-cased words of an article, for the filter box. */
@@ -18,7 +19,7 @@ export function filterArticles(query: string): HelpArticleInfo[] {
 /** `/help`: every article, grouped, with a filter box. */
 @Component({
   selector: 'app-help-home',
-  imports: [BackButton, RouterLink, Copyright],
+  imports: [BackButton, RouterLink, Copyright, AndThenDiagram],
   template: `
     <main class="reading">
       <app-back-button />
@@ -26,6 +27,7 @@ export function filterArticles(query: string): HelpArticleInfo[] {
       <p class="lede">
         How habits stick, how AndThen works, and what to do when something doesn’t.
       </p>
+      <app-and-then-diagram />
 
       <label class="field-label" for="help-filter">Find a topic</label>
       <input
