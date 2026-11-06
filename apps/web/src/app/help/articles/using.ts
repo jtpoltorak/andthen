@@ -61,6 +61,12 @@ export class GettingStarted {}
         The routine most likely to be next opens on its own: the first unfinished one whose usual
         time has passed, or else the first unfinished one. Tap any other routine to open it.
       </p>
+      <p>
+        With routines at different times of day, Today groups them under
+        <strong>Morning</strong> (before noon), <strong>Afternoon</strong> (noon to 5 pm),
+        <strong>Evening</strong> and <strong>Anytime</strong> (no usual time). A finished routine
+        folds into one line with a check, so what's left stands out.
+      </p>
       <h2>Three answers</h2>
       <ul>
         <li><strong>Done</strong> (teal check): you did the full habit.</li>
@@ -149,7 +155,7 @@ export class TodayHelp {}
       <p>
         Tap <strong>Edit</strong> next to the anchor at the top to change what the chain starts
         after. You can also give it a <strong>usual time</strong> (optional). The usual time helps
-        Today open the right routine and is when
+        Today open the right routine, places it under Morning, Afternoon or Evening, and is when
         <a routerLink="/help/reminders">reminders</a> arrive.
       </p>
       <h2>Habits</h2>

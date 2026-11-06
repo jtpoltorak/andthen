@@ -10,7 +10,9 @@ import { NgTemplateOutlet } from '@angular/common';
 import {
   type ChainLink,
   type CheckInKind,
+  type PartOfDay,
   addDays,
+  chainsByPartOfDay,
   fromDayKey,
   greeting,
   pickActiveRoutine,
@@ -67,6 +69,15 @@ export class Today {
   protected readonly chains = computed(() =>
     this.store.chains().filter((c) => !c.paused && (c.total > 0 || c.resting === 0)),
   );
+  /** Routines grouped into Morning, Afternoon, Evening and Anytime, by their usual time. */
+  protected readonly groups = computed(() => chainsByPartOfDay(this.chains()));
+  protected readonly partLabels: Record<PartOfDay, string> = {
+    morning: 'Morning',
+    afternoon: 'Afternoon',
+    evening: 'Evening',
+    anytime: 'Anytime',
+  };
+
   /** Every habit planned today, in order, for the ring beside the title. */
   protected readonly statuses = computed(() =>
     this.chains().flatMap((c) => c.links.map((l) => l.status)),

@@ -21,6 +21,15 @@ export interface Release {
 
 export const RELEASES: readonly Release[] = [
   {
+    version: '1.16.0',
+    date: '2026-11-06',
+    title: 'Morning, afternoon, evening.',
+    notes: [
+      'Today groups your routines by their usual time: Morning, Afternoon, Evening, and Anytime for routines without one.',
+      'A finished routine folds into one quiet line with a check, so what’s left stands out.',
+    ],
+  },
+  {
     version: '1.15.0',
     date: '2026-11-06',
     title: 'Your day at a glance.',

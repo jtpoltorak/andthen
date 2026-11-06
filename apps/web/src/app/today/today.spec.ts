@@ -232,6 +232,42 @@ describe('Today', () => {
     expect(collapsed?.textContent).toContain('1 habit to keep alive today');
   });
 
+  it('groups routines by part of the day once there is more than one', async () => {
+    const { fixture, root } = await setup();
+    const store = TestBed.inject(HabitStore);
+    const titles = () =>
+      [...root.querySelectorAll('.part-title')].map((h) => h.textContent?.trim());
+    // The first routine has no usual time, so it's "anytime"; one group shows no headings.
+    expect(titles()).toEqual([]);
+
+    await store.createChain({
+      anchor: 'After I brush my teeth at night',
+      habitName: 'Read a page',
+      twoMinuteVersion: 'Open the book',
+      usualTime: '21:30',
+    });
+    await fixture.whenStable();
+    expect(titles()).toEqual(['Evening', 'Anytime']);
+  });
+
+  it('folds a finished routine into one line with a check', async () => {
+    const { fixture, root } = await setup();
+    const store = TestBed.inject(HabitStore);
+    const first = store.activeRoutines()[0];
+    await store.createChain({
+      anchor: 'After I get home',
+      habitName: 'Walk',
+      twoMinuteVersion: 'Shoes on',
+    });
+    for (const h of store.habitsOf(first.id)) await store.checkIn(h.id, 'full');
+    await fixture.whenStable();
+    // The open card moves on to the unfinished routine; the finished one folds.
+    const done = root.querySelector('.collapsed-done');
+    expect(done?.textContent).toContain('After I pour my coffee');
+    expect(done?.textContent).toContain('Done');
+    expect(done?.querySelector('.done-check')).not.toBeNull();
+  });
+
   it('closes "+ and then..." with Escape and returns focus to it', async () => {
     const { fixture, root } = await setup();
     buttonsByText(root, '+ and then')[0].click();

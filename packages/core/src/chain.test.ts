@@ -2,10 +2,12 @@ import { describe, expect, it } from 'vitest';
 import {
   buildChain,
   buildDay,
+  chainsByPartOfDay,
   indexCheckIns,
   missedYesterday,
   nudgeFor,
   nextOrder,
+  partOfDay,
   pickActiveRoutine,
   removeCheckIn,
   upsertCheckIn,
@@ -200,6 +202,35 @@ describe('buildDay and pickActiveRoutine', () => {
     }));
     const day = buildDay([routine(), evening], allHabits, checkIns, TODAY);
     expect(pickActiveRoutine(day, 12 * 60)).toBeUndefined();
+  });
+});
+
+describe('partOfDay and chainsByPartOfDay', () => {
+  it('splits the day at noon and 5 pm', () => {
+    expect(partOfDay('05:00')).toBe('morning');
+    expect(partOfDay('11:59')).toBe('morning');
+    expect(partOfDay('12:00')).toBe('afternoon');
+    expect(partOfDay('16:59')).toBe('afternoon');
+    expect(partOfDay('17:00')).toBe('evening');
+    expect(partOfDay('23:30')).toBe('evening');
+    expect(partOfDay(undefined)).toBe('anytime');
+    expect(partOfDay('later')).toBe('anytime');
+  });
+
+  it('groups in day order, keeps the given order inside a group, and drops empty groups', () => {
+    const at = (id: string, usualTime?: string) => ({ routine: routine({ id, usualTime }) });
+    const groups = chainsByPartOfDay([
+      at('bed', '22:00'),
+      at('any'),
+      at('coffee', '07:30'),
+      at('dinner', '18:00'),
+      at('wake', '06:00'),
+    ]);
+    expect(groups.map((g) => [g.part, g.chains.map((c) => c.routine.id)])).toEqual([
+      ['morning', ['coffee', 'wake']],
+      ['evening', ['bed', 'dinner']],
+      ['anytime', ['any']],
+    ]);
   });
 });
 

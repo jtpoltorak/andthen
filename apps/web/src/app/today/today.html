@@ -13,249 +13,276 @@
     }
   </header>
 
-  @for (chain of chains(); track chain.routine.id) {
-    @if (chain.routine.id === openRoutineId()) {
-      <section
-        class="card"
-        tabindex="-1"
-        [id]="'card-' + chain.routine.id"
-        [attr.aria-label]="chain.routine.anchor"
-      >
-        <!-- The anchor is the first step of the chain; each connector fills in as you reach the next. -->
-        <div class="link anchor-row">
-          <div class="rail" aria-hidden="true">
-            <span class="anchor-node"></span>
-            <span class="line" [attr.data-fill]="chain.links.at(0)?.status"
-              ><span class="fill"></span
-            ></span>
-          </div>
-          <div class="card-head">
-            <div class="anchor">
-              <span>{{ chain.routine.anchor }}</span>
+  @for (group of groups(); track group.part) {
+    @if (groups().length > 1) {
+      <h2 class="part-title">{{ partLabels[group.part] }}</h2>
+    }
+    @for (chain of group.chains; track chain.routine.id) {
+      @if (chain.routine.id === openRoutineId()) {
+        <section
+          class="card"
+          tabindex="-1"
+          [id]="'card-' + chain.routine.id"
+          [attr.aria-label]="chain.routine.anchor"
+        >
+          <!-- The anchor is the first step of the chain; each connector fills in as you reach the next. -->
+          <div class="link anchor-row">
+            <div class="rail" aria-hidden="true">
+              <span class="anchor-node"></span>
+              <span class="line" [attr.data-fill]="chain.links.at(0)?.status"
+                ><span class="fill"></span
+              ></span>
             </div>
-            <span class="head-meta">
-              <span class="count">{{ chain.doneCount }} of {{ chain.total }}</span>
-              @if (!chain.complete) {
-                <a class="run-link" [routerLink]="['/run', chain.routine.id]">
+            <div class="card-head">
+              <div class="anchor">
+                <span>{{ chain.routine.anchor }}</span>
+              </div>
+              <span class="head-meta">
+                <span class="count">{{ chain.doneCount }} of {{ chain.total }}</span>
+                @if (!chain.complete) {
+                  <a class="run-link" [routerLink]="['/run', chain.routine.id]">
+                    <svg
+                      width="12"
+                      height="12"
+                      viewBox="0 0 24 24"
+                      fill="currentColor"
+                      aria-hidden="true"
+                    >
+                      <path d="M7 4.5v15l13-7.5z" />
+                    </svg>
+                    Run<span class="visually-hidden">
+                      {{ chain.routine.anchor }}, one habit at a time</span
+                    >
+                  </a>
+                }
+                <a class="edit-link" [routerLink]="['/routines', chain.routine.id]">
+                  Edit<span class="visually-hidden"> {{ chain.routine.anchor }}</span>
+                </a>
+              </span>
+            </div>
+          </div>
+
+          <ol class="links">
+            @for (link of chain.links; track link.habit.id; let last = $last, i = $index) {
+              <li class="link">
+                <div class="rail" aria-hidden="true">
+                  <span
+                    class="ring"
+                    [class.ring-full]="link.status === 'full'"
+                    [class.ring-mini]="link.status === 'mini'"
+                    [class.ring-skip]="link.status === 'skip'"
+                    [class.ring-next]="link.isNext"
+                    [class.ring-nudge]="link.nudge === 'dont-miss-twice'"
+                    [class.ring-pop]="link.habit.id === poppedHabit()"
+                  >
+                    @if (link.status === 'full') {
+                      <svg
+                        width="15"
+                        height="15"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="3"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      >
+                        <path d="M5 12.5l4.5 4.5L19 7.5" />
+                      </svg>
+                    } @else if (link.status === 'mini') {
+                      2m
+                    }
+                  </span>
+                  @if (!last) {
+                    <span class="line" [attr.data-fill]="chain.links.at(i + 1)?.status">
+                      <span class="fill"></span>
+                    </span>
+                  }
+                </div>
+
+                <div class="link-body">
+                  <div class="link-name">{{ link.habit.name }}</div>
+                  @if (link.week; as week) {
+                    <div class="week-count">{{ week.done }} of {{ week.target }} this week</div>
+                  }
+                  @if (link.nudge === 'dont-miss-twice') {
+                    <div class="badge">{{ missedLabel(link) }} · don't miss twice</div>
+                  } @else if (link.nudge === 'welcome-back') {
+                    <div class="badge badge-soft">Welcome back · 2 minutes counts</div>
+                  }
+                  <div class="link-sub">
+                    {{ subtitle(link) }}
+                    @if (link.status !== 'pending') {
+                      <button type="button" class="undo" (click)="undo(chain.routine.id, link)">
+                        Undo<span class="visually-hidden"> {{ link.habit.name }}</span>
+                      </button>
+                    }
+                  </div>
+
+                  <!-- The tiny journal: one tap for how it felt, and a few optional words. -->
+                  @if (link.status === 'full' || link.status === 'mini') {
+                    <app-check-in-journal
+                      [habitId]="link.habit.id"
+                      [habitName]="link.habit.name"
+                      [open]="link.habit.id === journaling()"
+                      (opened)="journaling.set(link.habit.id)"
+                      (closed)="journaling.set(undefined)"
+                    />
+                  }
+
+                  @if (link.isNext && link.habit.makeItEasier) {
+                    <div class="easier-note">Make it easy: {{ link.habit.makeItEasier }}</div>
+                  }
+                  @if (link.isNext) {
+                    <!-- After a miss, the 2-minute version comes first, in reading and tab order too. -->
+                    <div class="actions" [class.nudge]="link.nudge">
+                      @if (link.nudge) {
+                        <ng-container *ngTemplateOutlet="miniBtn; context: { $implicit: link }" />
+                        <ng-container *ngTemplateOutlet="doneBtn; context: { $implicit: link }" />
+                      } @else {
+                        <ng-container *ngTemplateOutlet="doneBtn; context: { $implicit: link }" />
+                        <ng-container *ngTemplateOutlet="miniBtn; context: { $implicit: link }" />
+                      }
+                      <button
+                        type="button"
+                        class="act act-skip"
+                        (click)="answer(chain.routine.id, link, 'skip')"
+                      >
+                        Skip<span class="visually-hidden"> {{ link.habit.name }}</span>
+                      </button>
+                    </div>
+                  }
+                  <ng-template #doneBtn let-link>
+                    <button
+                      type="button"
+                      class="act act-done"
+                      (click)="answer(chain.routine.id, link, 'full')"
+                    >
+                      Done<span class="visually-hidden"> {{ link.habit.name }}</span>
+                    </button>
+                  </ng-template>
+                  <ng-template #miniBtn let-link>
+                    <button
+                      type="button"
+                      class="act act-mini"
+                      (click)="answer(chain.routine.id, link, 'mini')"
+                    >
+                      Did 2 min<span class="visually-hidden"> of {{ link.habit.name }}</span>
+                    </button>
+                  </ng-template>
+                </div>
+              </li>
+            }
+          </ol>
+
+          @if (chain.complete) {
+            <div
+              class="complete"
+              role="status"
+              tabindex="-1"
+              [class.complete-celebrate]="chain.routine.id === finishedRoutine()"
+            >
+              @if (chain.routine.id === finishedRoutine()) {
+                <span class="sparks" aria-hidden="true">
+                  @for (spark of sparks; track $index) {
+                    <span class="spark" [style.--angle]="spark + 'deg'"></span>
+                  }
+                </span>
+              }
+              <div class="complete-title">Chain complete</div>
+              <div class="complete-note">Small still counts. See you tomorrow.</div>
+            </div>
+          }
+
+          @if (addingTo() === chain.routine.id) {
+            <form
+              class="add-form"
+              (submit)="$event.preventDefault(); addLink(chain.routine.id)"
+              (keydown.escape)="cancelAdding(chain.routine.id)"
+            >
+              <label class="field-label" for="next-link">And then I'll...</label>
+              <div class="add-row">
+                <input
+                  appAutofocus
+                  id="next-link"
+                  class="text-input"
+                  type="text"
+                  placeholder="e.g. Stretch"
+                  autocomplete="off"
+                  [value]="draft()"
+                  (input)="draft.set($any($event.target).value)"
+                />
+                <button type="submit" class="add-btn">Add</button>
+              </div>
+              <button type="button" class="cancel-btn" (click)="cancelAdding(chain.routine.id)">
+                Cancel
+              </button>
+            </form>
+          } @else {
+            <button
+              type="button"
+              class="and-then"
+              [id]="'and-then-' + chain.routine.id"
+              (click)="startAdding(chain.routine.id)"
+            >
+              + and then...
+            </button>
+          }
+        </section>
+      } @else {
+        <button
+          type="button"
+          class="collapsed"
+          [class.collapsed-done]="chain.complete"
+          aria-expanded="false"
+          (click)="open(chain.routine.id)"
+        >
+          <span class="collapsed-text">
+            <span class="collapsed-anchor">
+              @if (chain.complete) {
+                <span class="done-check" aria-hidden="true">
                   <svg
                     width="12"
                     height="12"
                     viewBox="0 0 24 24"
-                    fill="currentColor"
-                    aria-hidden="true"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="3.5"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
                   >
-                    <path d="M7 4.5v15l13-7.5z" />
+                    <path d="M5 12.5l4.5 4.5L19 7.5" />
                   </svg>
-                  Run<span class="visually-hidden">
-                    {{ chain.routine.anchor }}, one habit at a time</span
-                  >
-                </a>
-              }
-              <a class="edit-link" [routerLink]="['/routines', chain.routine.id]">
-                Edit<span class="visually-hidden"> {{ chain.routine.anchor }}</span>
-              </a>
-            </span>
-          </div>
-        </div>
-
-        <ol class="links">
-          @for (link of chain.links; track link.habit.id; let last = $last, i = $index) {
-            <li class="link">
-              <div class="rail" aria-hidden="true">
-                <span
-                  class="ring"
-                  [class.ring-full]="link.status === 'full'"
-                  [class.ring-mini]="link.status === 'mini'"
-                  [class.ring-skip]="link.status === 'skip'"
-                  [class.ring-next]="link.isNext"
-                  [class.ring-nudge]="link.nudge === 'dont-miss-twice'"
-                  [class.ring-pop]="link.habit.id === poppedHabit()"
-                >
-                  @if (link.status === 'full') {
-                    <svg
-                      width="15"
-                      height="15"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      stroke-width="3"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                    >
-                      <path d="M5 12.5l4.5 4.5L19 7.5" />
-                    </svg>
-                  } @else if (link.status === 'mini') {
-                    2m
-                  }
                 </span>
-                @if (!last) {
-                  <span class="line" [attr.data-fill]="chain.links.at(i + 1)?.status">
-                    <span class="fill"></span>
-                  </span>
-                }
-              </div>
-
-              <div class="link-body">
-                <div class="link-name">{{ link.habit.name }}</div>
-                @if (link.week; as week) {
-                  <div class="week-count">{{ week.done }} of {{ week.target }} this week</div>
-                }
-                @if (link.nudge === 'dont-miss-twice') {
-                  <div class="badge">{{ missedLabel(link) }} · don't miss twice</div>
-                } @else if (link.nudge === 'welcome-back') {
-                  <div class="badge badge-soft">Welcome back · 2 minutes counts</div>
-                }
-                <div class="link-sub">
-                  {{ subtitle(link) }}
-                  @if (link.status !== 'pending') {
-                    <button type="button" class="undo" (click)="undo(chain.routine.id, link)">
-                      Undo<span class="visually-hidden"> {{ link.habit.name }}</span>
-                    </button>
-                  }
-                </div>
-
-                <!-- The tiny journal: one tap for how it felt, and a few optional words. -->
-                @if (link.status === 'full' || link.status === 'mini') {
-                  <app-check-in-journal
-                    [habitId]="link.habit.id"
-                    [habitName]="link.habit.name"
-                    [open]="link.habit.id === journaling()"
-                    (opened)="journaling.set(link.habit.id)"
-                    (closed)="journaling.set(undefined)"
-                  />
-                }
-
-                @if (link.isNext && link.habit.makeItEasier) {
-                  <div class="easier-note">Make it easy: {{ link.habit.makeItEasier }}</div>
-                }
-                @if (link.isNext) {
-                  <!-- After a miss, the 2-minute version comes first, in reading and tab order too. -->
-                  <div class="actions" [class.nudge]="link.nudge">
-                    @if (link.nudge) {
-                      <ng-container *ngTemplateOutlet="miniBtn; context: { $implicit: link }" />
-                      <ng-container *ngTemplateOutlet="doneBtn; context: { $implicit: link }" />
-                    } @else {
-                      <ng-container *ngTemplateOutlet="doneBtn; context: { $implicit: link }" />
-                      <ng-container *ngTemplateOutlet="miniBtn; context: { $implicit: link }" />
-                    }
-                    <button
-                      type="button"
-                      class="act act-skip"
-                      (click)="answer(chain.routine.id, link, 'skip')"
-                    >
-                      Skip<span class="visually-hidden"> {{ link.habit.name }}</span>
-                    </button>
-                  </div>
-                }
-                <ng-template #doneBtn let-link>
-                  <button
-                    type="button"
-                    class="act act-done"
-                    (click)="answer(chain.routine.id, link, 'full')"
-                  >
-                    Done<span class="visually-hidden"> {{ link.habit.name }}</span>
-                  </button>
-                </ng-template>
-                <ng-template #miniBtn let-link>
-                  <button
-                    type="button"
-                    class="act act-mini"
-                    (click)="answer(chain.routine.id, link, 'mini')"
-                  >
-                    Did 2 min<span class="visually-hidden"> of {{ link.habit.name }}</span>
-                  </button>
-                </ng-template>
-              </div>
-            </li>
-          }
-        </ol>
-
-        @if (chain.complete) {
-          <div
-            class="complete"
-            role="status"
-            tabindex="-1"
-            [class.complete-celebrate]="chain.routine.id === finishedRoutine()"
-          >
-            @if (chain.routine.id === finishedRoutine()) {
-              <span class="sparks" aria-hidden="true">
-                @for (spark of sparks; track $index) {
-                  <span class="spark" [style.--angle]="spark + 'deg'"></span>
-                }
+              }
+              {{ chain.routine.anchor }}
+            </span>
+            @if (chain.atRisk) {
+              <span class="collapsed-nudge">
+                {{ chain.atRisk === 1 ? '1 habit' : chain.atRisk + ' habits' }} to keep alive today
               </span>
             }
-            <div class="complete-title">Chain complete</div>
-            <div class="complete-note">Small still counts. See you tomorrow.</div>
-          </div>
-        }
-
-        @if (addingTo() === chain.routine.id) {
-          <form
-            class="add-form"
-            (submit)="$event.preventDefault(); addLink(chain.routine.id)"
-            (keydown.escape)="cancelAdding(chain.routine.id)"
-          >
-            <label class="field-label" for="next-link">And then I'll...</label>
-            <div class="add-row">
-              <input
-                appAutofocus
-                id="next-link"
-                class="text-input"
-                type="text"
-                placeholder="e.g. Stretch"
-                autocomplete="off"
-                [value]="draft()"
-                (input)="draft.set($any($event.target).value)"
-              />
-              <button type="submit" class="add-btn">Add</button>
-            </div>
-            <button type="button" class="cancel-btn" (click)="cancelAdding(chain.routine.id)">
-              Cancel
-            </button>
-          </form>
-        } @else {
-          <button
-            type="button"
-            class="and-then"
-            [id]="'and-then-' + chain.routine.id"
-            (click)="startAdding(chain.routine.id)"
-          >
-            + and then...
-          </button>
-        }
-      </section>
-    } @else {
-      <button
-        type="button"
-        class="collapsed"
-        aria-expanded="false"
-        (click)="open(chain.routine.id)"
-      >
-        <span class="collapsed-text">
-          <span class="collapsed-anchor">{{ chain.routine.anchor }}</span>
-          @if (chain.atRisk) {
-            <span class="collapsed-nudge">
-              {{ chain.atRisk === 1 ? '1 habit' : chain.atRisk + ' habits' }} to keep alive today
-            </span>
-          }
-        </span>
-        <span class="collapsed-meta">
-          {{ chain.doneCount }} of {{ chain.total }}
-          <svg
-            width="18"
-            height="18"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            aria-hidden="true"
-          >
-            <path d="M6 9l6 6 6-6" />
-          </svg>
-        </span>
-      </button>
+          </span>
+          <span class="collapsed-meta">
+            {{ chain.complete ? 'Done' : chain.doneCount + ' of ' + chain.total }}
+            @if (chain.complete) {
+              <span class="visually-hidden">, {{ chain.doneCount }} of {{ chain.total }}</span>
+            }
+            <svg
+              width="18"
+              height="18"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
+            >
+              <path d="M6 9l6 6 6-6" />
+            </svg>
+          </span>
+        </button>
+      }
     }
   } @empty {
     @if (paused().length) {
