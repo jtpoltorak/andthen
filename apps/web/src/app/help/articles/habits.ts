@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { AndThenDiagram } from '../and-then-diagram';
 import { HelpArticle } from '../help-article';
 
 // Part 1: How habits stick. The ideas behind AndThen, in our own words.
@@ -91,7 +92,7 @@ export class StartSmall {}
 export class Anchors {}
 
 @Component({
-  imports: [HelpArticle, RouterLink],
+  imports: [HelpArticle, RouterLink, AndThenDiagram],
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-help-chains',
   template: `
@@ -105,6 +106,8 @@ export class Anchors {}
         write down today's one important task." Each step cues the next, so you only have to
         remember the first one.
       </p>
+      <h2>The whole idea in one picture</h2>
+      <app-and-then-diagram />
       <h2>Building a chain that holds</h2>
       <ul>
         <li>
@@ -366,35 +369,101 @@ export class ReflectAdjust {}
 @Component({
   imports: [HelpArticle, RouterLink],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  styles: `
+    .reading-list li + li {
+      margin-top: 12px;
+    }
+    .for {
+      display: block;
+      color: var(--muted);
+      font-size: 14px;
+    }
+  `,
   selector: 'app-help-further-reading',
   template: `
     <app-help-article slug="further-reading">
       <p class="lede">
         AndThen didn't invent these ideas. They come from writers and researchers worth reading in
-        full.
+        full. Here's where to go next, and what each is good for.
       </p>
-      <ul>
+      <h2>Books</h2>
+      <ul class="reading-list">
         <li>
-          <strong><em>Atomic Habits</em>, by James Clear.</strong> Popularized habit stacking, the
-          "two-minute rule" and "never miss twice", and the idea that habits are shaped by cues,
-          ease and reward. A big influence on AndThen.
+          <strong><em>Atomic Habits</em></strong> by James Clear (2018). The most popular guide to
+          habit stacking, making habits easy, and not missing twice. A big influence on AndThen.
+          <span class="for">Read it for: a practical system you can start with today.</span>
         </li>
         <li>
-          <strong><em>Tiny Habits</em>, by BJ Fogg.</strong> Anchoring tiny new behaviors to
-          existing routines, and celebrating small wins.
+          <strong><em>Tiny Habits</em></strong> by BJ Fogg (2019). From a Stanford behavior
+          scientist: anchor a very small behavior to something you already do, then celebrate it
+          straight away. <span class="for">Read it for: making habits small enough to stick.</span>
         </li>
         <li>
-          <strong>Research on implementation intentions</strong> by Peter Gollwitzer and others:
-          deciding "when X happens, I'll do Y" makes follow-through much more likely.
+          <strong><em>Good Habits, Bad Habits</em></strong> by Wendy Wood (2019). A researcher's
+          look at how much of daily life runs on habit, and why changing your surroundings beats
+          relying on willpower.
+          <span class="for">Read it for: the science, explained plainly.</span>
         </li>
         <li>
-          <strong>Research on how long habits take to form</strong>, notably a 2010 study by
-          Phillippa Lally and colleagues at University College London.
+          <strong><em>The Power of Habit</em></strong> by Charles Duhigg (2012). Stories from people
+          and companies about the cue, routine and reward behind everyday habits.
+          <span class="for">Read it for: understanding habits you'd like to change.</span>
+        </li>
+        <li>
+          <strong><em>How to Change</em></strong> by Katy Milkman (2021). A behavioral scientist on
+          the obstacles that get in the way of change, like forgetting, procrastinating and giving
+          up, and what helps with each.
+          <span class="for">Read it for: getting unstuck.</span>
+        </li>
+        <li>
+          <strong><em>Better Than Before</em></strong> by Gretchen Rubin (2015). Different people
+          build habits in different ways, so knowing your own tendencies helps you pick strategies
+          that fit. <span class="for">Read it for: making habits fit you.</span>
         </li>
       </ul>
+      <h2>Research</h2>
+      <p>Free to read online:</p>
+      <ul class="reading-list">
+        <li>
+          <a href="https://doi.org/10.1002/ejsp.674" target="_blank" rel="noopener"
+            >How are habits formed</a
+          >, Phillippa Lally and colleagues, <em>European Journal of Social Psychology</em> (2010).
+          People followed a new daily habit for 12 weeks. How long it took to feel automatic varied
+          a lot from person to person, and missing a single day didn't undo progress. See
+          <a routerLink="/help/how-long">How long it really takes</a>.
+        </li>
+        <li>
+          <a
+            href="https://www.socmot.uni-konstanz.de/sites/default/files/99_Gollwitzer_Implementation_Intentions.pdf"
+            target="_blank"
+            rel="noopener"
+            >Implementation intentions: strong effects of simple plans</a
+          >, Peter Gollwitzer, <em>American Psychologist</em> (1999). Planning exactly when and
+          where you'll act ("when X happens, I'll do Y") makes you much more likely to follow
+          through. It's the idea behind anchors.
+        </li>
+        <li>
+          <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC3505409/" target="_blank" rel="noopener"
+            >Making health habitual</a
+          >, Benjamin Gardner, Phillippa Lally and Jane Wardle,
+          <em>British Journal of General Practice</em> (2012). A short, readable summary of how
+          habits form, with practical tips: pick a simple action, tie it to the same cue, repeat.
+        </li>
+        <li>
+          <a
+            href="https://dornsife.usc.edu/wendy-wood/wp-content/uploads/sites/183/2023/10/wood.runger.2016.pdf"
+            target="_blank"
+            rel="noopener"
+            >Psychology of habit</a
+          >, Wendy Wood and Dennis Rünger, <em>Annual Review of Psychology</em> (2016). A deeper
+          review of what habits are, how they form through repetition in a stable context, and why
+          they persist.
+        </li>
+      </ul>
+      <h2>A note on our words</h2>
       <p>
-        The help guide puts these ideas in our own words and doesn't speak for any of these authors.
-        AndThen isn't affiliated with or endorsed by them.
+        The help guide puts these ideas in our own words. It doesn't quote or speak for any of these
+        authors, and AndThen isn't affiliated with or endorsed by them. Links open on other sites.
       </p>
       <p class="muted">
         AndThen is a self-help tool, not medical or mental-health advice. If a habit touches your

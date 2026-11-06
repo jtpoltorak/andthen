@@ -124,9 +124,10 @@ export const HELP_ARTICLES = [
     slug: 'further-reading',
     part: 'habits',
     title: 'Further reading and credits',
-    summary: 'The books and research these ideas come from.',
-    keywords: 'atomic habits james clear tiny habits bj fogg research books sources',
-    minutes: 1,
+    summary: 'Books and research on building habits, and what each is good for.',
+    keywords:
+      'atomic habits james clear tiny habits bj fogg wendy wood good habits bad habits power of habit duhigg how to change milkman better than before rubin research study studies papers books sources further reading lally gollwitzer',
+    minutes: 3,
     related: ['start-small', 'anchors'],
   },
 

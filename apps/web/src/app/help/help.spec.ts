@@ -137,3 +137,25 @@ describe('help on laptops', () => {
     expect(document.activeElement).toBe(target);
   });
 });
+
+describe('the AndThen diagram', () => {
+  it('reads in order: a cue, and then tiny habits, and then check it off', async () => {
+    TestBed.configureTestingModule({ providers: [provideRouter([])] });
+    const fixture = TestBed.createComponent(HelpHome);
+    await fixture.whenStable();
+    const diagram = (fixture.nativeElement as HTMLElement).querySelector('app-and-then-diagram')!;
+    expect(diagram).toBeTruthy();
+    const kinds = Array.from(diagram.querySelectorAll('.step .kind')).map((k) => k.textContent);
+    expect(kinds).toEqual([
+      'Something you already do',
+      'A tiny habit',
+      'The next tiny habit',
+      'Check it off',
+    ]);
+    // The "and then" connectors are drawing only, so screen readers hear just the steps.
+    for (const link of Array.from(diagram.querySelectorAll('.link'))) {
+      expect(link.getAttribute('aria-hidden')).toBe('true');
+    }
+    expect(diagram.querySelector('figcaption')?.textContent).toContain('The AndThen loop');
+  });
+});
