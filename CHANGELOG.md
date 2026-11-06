@@ -6,7 +6,7 @@
 
 Help, made for bigger screens.
 
-- On a laptop or desktop, Help lists every topic down the left side, with the one you’re reading highlighted.
+- On a laptop or desktop, Help lists every topic down the left side, with a search box on top and the one you’re reading highlighted.
 - Articles read in a wider, roomier column, and longer ones get an “On this page” list to jump between sections.
 - Phones look the same as before.
 

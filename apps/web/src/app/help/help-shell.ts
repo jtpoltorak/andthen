@@ -1,6 +1,7 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, signal } from '@angular/core';
 import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { HELP_ARTICLES, HELP_PARTS, type HelpArticleInfo } from './help-articles';
+import { filterArticles } from './help-home';
 
 /**
  * The frame around every Help page. On phones it adds nothing. On laptops (900px and up)
@@ -29,10 +30,23 @@ import { HELP_ARTICLES, HELP_PARTS, type HelpArticleInfo } from './help-articles
           [routerLinkActiveOptions]="{ exact: true }"
           >All help topics</a
         >
-        @for (part of parts; track part.id) {
-          <h2 class="part">{{ part.title }}</h2>
+        <label class="visually-hidden" for="help-side-filter">Find a topic</label>
+        <input
+          id="help-side-filter"
+          class="filter"
+          type="search"
+          autocomplete="off"
+          placeholder="Find a topic"
+          [value]="query()"
+          (input)="query.set($any($event.target).value)"
+          (keydown.escape)="query.set('')"
+        />
+        @if (query().trim()) {
+          <p class="count" role="status">
+            {{ results().length }} {{ results().length === 1 ? 'topic' : 'topics' }}
+          </p>
           <ul>
-            @for (a of byPart(part.id); track a.slug) {
+            @for (a of results(); track a.slug) {
               <li>
                 <a
                   class="topic"
@@ -44,6 +58,23 @@ import { HELP_ARTICLES, HELP_PARTS, type HelpArticleInfo } from './help-articles
               </li>
             }
           </ul>
+        } @else {
+          @for (part of parts; track part.id) {
+            <h2 class="part">{{ part.title }}</h2>
+            <ul>
+              @for (a of byPart(part.id); track a.slug) {
+                <li>
+                  <a
+                    class="topic"
+                    [routerLink]="['/help', a.slug]"
+                    routerLinkActive="active"
+                    ariaCurrentWhenActive="page"
+                    >{{ a.title }}</a
+                  >
+                </li>
+              }
+            </ul>
+          }
         }
       </nav>
       <div class="content"><router-outlet /></div>
@@ -123,12 +154,36 @@ import { HELP_ARTICLES, HELP_PARTS, type HelpArticleInfo } from './help-articles
       .home {
         font-weight: 700;
       }
+      .filter {
+        width: 100%;
+        min-height: 40px;
+        margin: 10px 0 4px;
+        padding: 0 12px;
+        border: 1.5px solid var(--input-border);
+        border-radius: 10px;
+        background: var(--bg);
+        color: var(--ink);
+        font: inherit;
+        font-size: 14px;
+      }
+      .filter:focus-visible {
+        outline: 3px solid var(--focus);
+        outline-offset: 1px;
+      }
+      .count {
+        margin: 8px 12px 4px;
+        color: var(--muted);
+        font-size: 12px;
+        font-weight: 700;
+      }
     }
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class HelpShell {
   protected readonly parts = HELP_PARTS;
+  protected readonly query = signal('');
+  protected readonly results = computed(() => filterArticles(this.query()));
   protected byPart(part: string): readonly HelpArticleInfo[] {
     return HELP_ARTICLES.filter((a) => a.part === part);
   }

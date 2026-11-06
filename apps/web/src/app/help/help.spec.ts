@@ -106,6 +106,21 @@ describe('help on laptops', () => {
     expect(links[1].getAttribute('href')).toBe(`/help/${HELP_ARTICLES[0].slug}`);
   });
 
+  it('filters the sidebar as you type', async () => {
+    TestBed.configureTestingModule({ providers: [provideRouter(HELP_ROUTES.map((x) => x))] });
+    const fixture = TestBed.createComponent(HelpShell);
+    await fixture.whenStable();
+    const root = fixture.nativeElement as HTMLElement;
+    const input = root.querySelector<HTMLInputElement>('#help-side-filter')!;
+    input.value = 'backup';
+    input.dispatchEvent(new Event('input'));
+    await fixture.whenStable();
+    const titles = [...root.querySelectorAll('nav .topic')].map((a) => a.textContent?.trim());
+    expect(titles).toContain(helpArticle('backup')!.title);
+    expect(titles.length).toBeLessThan(HELP_ARTICLES.length);
+    expect(root.querySelector('nav .part')).toBeNull();
+  });
+
   it('gives a longer article an "On this page" list that jumps to each heading', async () => {
     TestBed.configureTestingModule({ providers: [provideRouter(HELP_ROUTES.map((x) => x))] });
     const fixture = TestBed.createComponent(HELP_COMPONENTS.today);
