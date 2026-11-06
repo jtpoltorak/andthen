@@ -24,6 +24,7 @@ import { Autofocus, byId, focusAfterRender } from '../shared/focus';
 import { EmptyState } from '../shared/empty-state';
 import { HelpLink } from '../help/help-link';
 import { CheckInJournal } from './check-in-journal';
+import { DayRing } from './day-ring';
 
 /** Long enough for the longest celebration animation in today.css to finish. */
 const CELEBRATE_MS = 1600;
@@ -33,7 +34,7 @@ const lowerFirst = (text: string) => (text ? text.charAt(0).toLowerCase() + text
 /** Today: each routine is a card; the active one is open and asks "what's next?" */
 @Component({
   selector: 'app-today',
-  imports: [RouterLink, NgTemplateOutlet, Autofocus, HelpLink, EmptyState, CheckInJournal],
+  imports: [RouterLink, NgTemplateOutlet, Autofocus, HelpLink, EmptyState, CheckInJournal, DayRing],
   templateUrl: './today.html',
   styleUrl: './today.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -65,6 +66,10 @@ export class Today {
    */
   protected readonly chains = computed(() =>
     this.store.chains().filter((c) => !c.paused && (c.total > 0 || c.resting === 0)),
+  );
+  /** Every habit planned today, in order, for the ring beside the title. */
+  protected readonly statuses = computed(() =>
+    this.chains().flatMap((c) => c.links.map((l) => l.status)),
   );
   protected readonly resting = computed(() =>
     this.store.chains().filter((c) => !c.paused && c.total === 0 && c.resting > 0),

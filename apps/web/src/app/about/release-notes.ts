@@ -21,6 +21,15 @@ export interface Release {
 
 export const RELEASES: readonly Release[] = [
   {
+    version: '1.15.0',
+    date: '2026-11-06',
+    title: 'Your day at a glance.',
+    notes: [
+      'A small ring beside the Today title fills in as you go: one piece per habit, teal for Done, amber for 2 minutes.',
+      'It closes with a check once every habit has its answer.',
+    ],
+  },
+  {
     version: '1.14.2',
     date: '2026-11-06',
     title: 'Friendlier first weeks on Progress.',

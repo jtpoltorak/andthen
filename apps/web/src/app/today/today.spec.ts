@@ -41,6 +41,31 @@ describe('Today', () => {
     expect(buttonsByText(root, 'Done')).toHaveLength(1);
   });
 
+  it('fills the day ring as habits are answered, and closes it with a check', async () => {
+    const { fixture, root } = await setup();
+    const store = TestBed.inject(HabitStore);
+    const [water, stretch] = store.habitsOf(store.activeRoutines()[0].id);
+    const ring = () => root.querySelector('app-day-ring [role="img"]');
+    expect(ring()?.getAttribute('aria-label')).toBe('0 of 2 habits done today');
+    expect(root.querySelectorAll('app-day-ring .seg')).toHaveLength(2);
+
+    await store.checkIn(water.id, 'mini');
+    await fixture.whenStable();
+    expect(ring()?.getAttribute('aria-label')).toBe('1 of 2 habits done today');
+    expect(root.querySelector('app-day-ring .seg-mini')).not.toBeNull();
+    expect(ring()?.classList).not.toContain('all-done');
+
+    await store.checkIn(stretch.id, 'skip');
+    await fixture.whenStable();
+    expect(ring()?.getAttribute('aria-label')).toBe('1 of 2 habits done today, 1 skipped');
+    expect(ring()?.classList).toContain('all-done');
+  });
+
+  it('shows no day ring when nothing is on today', async () => {
+    const { root } = await setup({ empty: true });
+    expect(root.querySelector('app-day-ring')).toBeNull();
+  });
+
   it('shows the "make it easy" note only for the habit that is up next', async () => {
     const { fixture, root } = await setup();
     const store = TestBed.inject(HabitStore);

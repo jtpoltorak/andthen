@@ -3,6 +3,9 @@
     <div class="date">{{ dateLabel() }}</div>
     <div class="title-row">
       <h1>Today</h1>
+      @if (statuses().length) {
+        <app-day-ring [statuses]="statuses()" [celebrate]="finishedRoutine() !== undefined" />
+      }
       <app-help-link slug="today" />
     </div>
     @if (greeting(); as hello) {

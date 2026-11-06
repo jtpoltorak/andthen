@@ -113,6 +113,11 @@ export class GettingStarted {}
       <p>Tap <strong>Undo</strong> next to any answered habit to clear it, then answer again.</p>
       <h2>Other things you'll see</h2>
       <ul>
+        <li>
+          <strong>The ring</strong> beside the Today title: one piece for each habit planned today,
+          filling teal for Done, amber for 2 minutes and grey for a skip. It shows how many you've
+          done, and a check once every habit has its answer.
+        </li>
         <li><strong>"2 of 3 this week"</strong> on habits scheduled a few times a week.</li>
         <li><strong>"Make it easy: …"</strong> under the next habit, if you've added a note.</li>
         <li>
