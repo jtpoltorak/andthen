@@ -83,6 +83,8 @@ import { filterArticles } from './help-home';
   styles: `
     .side {
       display: none;
+      /* Stays put while the article beside it changes. */
+      view-transition-name: help-nav;
     }
 
     @media (min-width: 900px) {

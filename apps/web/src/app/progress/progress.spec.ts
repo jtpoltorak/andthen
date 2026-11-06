@@ -85,6 +85,31 @@ describe('Progress', () => {
     expect(root.querySelector('.grid')?.getAttribute('aria-label')).toContain('Last 8 weeks');
   });
 
+  it('draws a trend line once there are three weeks to compare', async () => {
+    const { root } = await setup({
+      routines: [routine('am', { createdOn: '2026-08-01' })],
+      habits: [
+        // Done only on Mondays at first, then every day for the last four weeks.
+        habit('water', 'am', { createdOn: '2026-09-14' }),
+        // Too new for a trend.
+        habit('floss', 'am', { createdOn: '2026-11-02', order: 1 }),
+      ],
+      checkIns: [
+        ...['2026-09-14', '2026-09-21', '2026-09-28', '2026-10-05'].flatMap((d) =>
+          days(d, 1, 'water', 'full'),
+        ),
+        ...days('2026-10-12', 26, 'water', 'full'),
+      ],
+    });
+    const trends = root.querySelectorAll('.trend');
+    expect(trends.length).toBe(1);
+    expect(trends[0].classList).toContain('trend-up');
+    expect(trends[0].textContent).toContain('Getting steadier');
+    const line = trends[0].querySelector('svg')!;
+    expect(line.getAttribute('aria-label')).toMatch(/^Weekly trend, share of days done: 14%, /);
+    expect(line.querySelectorAll('path').length).toBe(1);
+  });
+
   it('starts a brand-new habit with one week of rings to fill', async () => {
     const { root } = await setup({
       routines: [routine('am', { createdOn: TODAY })],

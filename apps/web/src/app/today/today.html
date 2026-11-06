@@ -24,12 +24,17 @@
             class="card"
             tabindex="-1"
             [id]="'card-' + chain.routine.id"
+            [style.view-transition-name]="transitionName(chain.routine.id)"
             [attr.aria-label]="chain.routine.anchor"
           >
             <!-- The anchor is the first step of the chain; each connector fills in as you reach the next. -->
             <div class="link anchor-row">
               <div class="rail" aria-hidden="true">
-                <span class="anchor-node"></span>
+                @if (chain.routine.icon) {
+                  <app-routine-icon [icon]="chain.routine.icon" [tile]="true" />
+                } @else {
+                  <span class="anchor-node"></span>
+                }
                 <span class="line" [attr.data-fill]="chain.links.at(0)?.status"
                   ><span class="fill"></span
                 ></span>
@@ -87,7 +92,7 @@
                           stroke-linecap="round"
                           stroke-linejoin="round"
                         >
-                          <path d="M5 12.5l4.5 4.5L19 7.5" />
+                          <path class="tick" pathLength="1" d="M5 12.5l4.5 4.5L19 7.5" />
                         </svg>
                       } @else if (link.status === 'mini') {
                         2m
@@ -254,6 +259,8 @@
                       <path d="M5 12.5l4.5 4.5L19 7.5" />
                     </svg>
                   </span>
+                } @else if (chain.routine.icon) {
+                  <app-routine-icon class="collapsed-icon" [icon]="chain.routine.icon" />
                 }
                 {{ chain.routine.anchor }}
               </span>
@@ -321,7 +328,12 @@
         @for (chain of paused(); track chain.routine.id) {
           <div class="paused-row">
             <span class="paused-text">
-              <span class="paused-anchor">{{ chain.routine.anchor }}</span>
+              <span class="paused-anchor">
+                @if (chain.routine.icon) {
+                  <app-routine-icon class="paused-icon" [icon]="chain.routine.icon" [size]="14" />
+                }
+                {{ chain.routine.anchor }}
+              </span>
               <span class="paused-note">
                 Paused{{ chain.paused?.until ? ' ' + pausedUntil(chain.paused.until) : '' }}
               </span>

@@ -28,7 +28,7 @@ import {
 import { HABIT_REPOSITORY } from './habit-repository';
 import { PreferencesStore } from './preferences';
 
-export type RoutineEdit = Partial<Pick<Routine, 'anchor' | 'usualTime' | 'name'>>;
+export type RoutineEdit = Partial<Pick<Routine, 'anchor' | 'usualTime' | 'name' | 'icon'>>;
 export type HabitEdit = Partial<
   Pick<Habit, 'name' | 'twoMinuteVersion' | 'makeItEasier' | 'obstacle' | 'why' | 'schedule'>
 >;
@@ -151,6 +151,7 @@ export class HabitStore {
     };
     if (template.name) routine.name = template.name;
     if (template.usualTime) routine.usualTime = template.usualTime;
+    if (template.icon) routine.icon = template.icon;
     const habits: Habit[] = template.habits.map((h, order) => {
       const schedule = 'schedule' in h ? normalizeSchedule(h.schedule) : undefined;
       return {
@@ -191,6 +192,7 @@ export class HabitStore {
     const next: Routine = { ...current, ...trimmed(edit) };
     if (!next.anchor) return; // A chain always needs an anchor.
     if (!next.usualTime) delete next.usualTime;
+    if (!next.icon) delete next.icon;
     await this.repo.putRoutine(next);
     this.routines.update((list) => list.map((r) => (r.id === id ? next : r)));
   }

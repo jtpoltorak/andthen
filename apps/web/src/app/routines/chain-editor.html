@@ -11,7 +11,11 @@
       <!-- The anchor: the thing the person already does. -->
       <li class="chain-row">
         <div class="rail" aria-hidden="true">
-          <span class="anchor-dot"></span>
+          @if (r.icon) {
+            <app-routine-icon [icon]="r.icon" [tile]="true" />
+          } @else {
+            <span class="anchor-dot"></span>
+          }
           <span class="line"></span>
         </div>
         <div class="row-body">
@@ -372,6 +376,37 @@
     <p class="hint tip">
       Tip: keep a chain to 3 or 4 small habits. Short chains are easier to finish.
     </p>
+
+    <fieldset class="pause-zone icon-picker">
+      <legend class="pause-title">Icon</legend>
+      <p class="row-sub">Makes this routine easy to spot on Today, Progress and Run.</p>
+      <div class="icon-options">
+        <label class="icon-option" [class.selected]="!r.icon" title="No icon">
+          <input
+            type="radio"
+            name="routine-icon"
+            class="visually-hidden"
+            [checked]="!r.icon"
+            (change)="setIcon(undefined)"
+          />
+          <span class="anchor-dot" aria-hidden="true"></span>
+          <span class="visually-hidden">No icon</span>
+        </label>
+        @for (icon of icons; track icon) {
+          <label class="icon-option" [class.selected]="r.icon === icon" [title]="iconNames[icon]">
+            <input
+              type="radio"
+              name="routine-icon"
+              class="visually-hidden"
+              [checked]="r.icon === icon"
+              (change)="setIcon(icon)"
+            />
+            <app-routine-icon [icon]="icon" [size]="18" />
+            <span class="visually-hidden">{{ iconNames[icon] }}</span>
+          </label>
+        }
+      </div>
+    </fieldset>
 
     <section class="pause-zone" aria-labelledby="share-title">
       <h2 id="share-title" class="pause-title">Share this routine</h2>

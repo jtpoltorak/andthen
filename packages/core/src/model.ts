@@ -5,6 +5,30 @@ export type DayKey = string;
  * A routine is a chain of habits that starts with an anchor: something the
  * person already does every day ("After I pour my coffee").
  */
+/** The built-in routine icons, in the order the picker shows them. */
+export const ROUTINE_ICONS = [
+  'coffee',
+  'sun',
+  'moon',
+  'bed',
+  'laptop',
+  'book',
+  'pen',
+  'shoe',
+  'weights',
+  'leaf',
+  'heart',
+  'music',
+  'home',
+] as const;
+
+export type RoutineIcon = (typeof ROUTINE_ICONS)[number];
+
+/** True for an icon AndThen knows. Unknown ones (from a newer version) are dropped, not an error. */
+export function isRoutineIcon(value: unknown): value is RoutineIcon {
+  return typeof value === 'string' && (ROUTINE_ICONS as readonly string[]).includes(value);
+}
+
 export interface Routine {
   id: string;
   /** Optional short label, e.g. "Morning". */
@@ -13,6 +37,8 @@ export interface Routine {
   anchor: string;
   /** Usual time of the anchor as `HH:mm`. Used for ordering and optional reminders only. */
   usualTime?: string;
+  /** Optional icon from the built-in set (`ROUTINE_ICONS`), so routines are easy to tell apart. */
+  icon?: RoutineIcon;
   order: number;
   createdOn: DayKey;
   archivedOn?: DayKey;

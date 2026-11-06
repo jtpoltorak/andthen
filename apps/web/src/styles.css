@@ -334,6 +334,30 @@ input[role='switch']:focus-visible {
   white-space: nowrap;
 }
 
+/* Screen changes (View Transitions): a quick cross-fade with a small lift. */
+::view-transition-old(root) {
+  animation: 140ms ease-in both vt-fade-out;
+}
+::view-transition-new(root) {
+  animation: 220ms ease-out both vt-fade-in;
+}
+/* A routine's card growing into its Run screen, and back. */
+::view-transition-group(*) {
+  animation-duration: 300ms;
+  animation-timing-function: cubic-bezier(0.2, 0, 0, 1);
+}
+@keyframes vt-fade-out {
+  to {
+    opacity: 0;
+  }
+}
+@keyframes vt-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   * {
     animation: none !important;

@@ -94,7 +94,11 @@
 <ng-template #routineCard let-section>
   <section class="card" [attr.aria-label]="section.routine.anchor">
     <div class="anchor">
-      <span class="anchor-dot" aria-hidden="true"></span>
+      @if (section.routine.icon) {
+        <app-routine-icon class="anchor-icon" [icon]="section.routine.icon" />
+      } @else {
+        <span class="anchor-dot" aria-hidden="true"></span>
+      }
       <span>{{ section.routine.anchor }}</span>
       @if (section.routine.archivedOn) {
         <span class="retired-tag">Retired {{ shortDate(section.routine.archivedOn) }}</span>
@@ -191,6 +195,30 @@
         </div>
       </dl>
     </div>
+    @if (row.trend; as trend) {
+      <div [class]="'trend trend-' + trend.direction">
+        <svg
+          class="trend-line"
+          role="img"
+          [attr.aria-label]="trend.label"
+          [attr.viewBox]="trendViewBox"
+        >
+          <!-- A faint line at "every asked-for day", for scale. -->
+          <line
+            class="trend-top"
+            x1="0"
+            [attr.x2]="trendWidth"
+            [attr.y1]="trendTop"
+            [attr.y2]="trendTop"
+          />
+          @for (d of trend.paths; track $index) {
+            <path [attr.d]="d" />
+          }
+          <circle [attr.cx]="trend.last.x" [attr.cy]="trend.last.y" r="3" />
+        </svg>
+        <span class="trend-words" aria-hidden="true">{{ trend.words }}</span>
+      </div>
+    }
     @if (row.journal.length) {
       <ul class="journal" aria-label="Recent notes">
         @for (entry of row.journal; track entry.date) {

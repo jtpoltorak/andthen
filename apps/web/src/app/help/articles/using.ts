@@ -103,11 +103,16 @@ export class GettingStarted {}
         dashed for a skip. You can see how far along the chain you are at a glance.
       </p>
       <p>
-        Done and Did 2 min give the habit's ring a quick pop, and answering the last habit in a
-        routine brings a small "Chain complete" moment. It's a tiny reward on purpose: feeling
-        finished is part of what makes a habit stick (see
+        Done and Did 2 min give the habit's ring a quick pop, and Done draws its tick in. Answering
+        the last habit in a routine brings a small "Chain complete" moment. It's a tiny reward on
+        purpose: feeling finished is part of what makes a habit stick (see
         <a routerLink="/help/feel-finished">Make it feel finished</a>). If your device is set to
         reduce motion, the animations are turned off.
+      </p>
+      <p>
+        Moving around the app is smooth too: screens cross-fade as you switch tabs, and tapping
+        <strong>Run</strong> grows the routine's card into the Run screen. These also switch off
+        with reduced motion.
       </p>
       <p>
         Anything you don't answer by the end of the day counts as missed. One miss is fine; see
@@ -167,6 +172,13 @@ export class TodayHelp {}
         after. You can also give it a <strong>usual time</strong> (optional). The usual time helps
         Today open the right routine, places it under Morning, Afternoon or Evening, and is when
         <a routerLink="/help/reminders">reminders</a> arrive.
+      </p>
+      <h2>An icon</h2>
+      <p>
+        Pick an icon at the top of the editor, like a mug, a moon or a laptop, so routines are easy
+        to tell apart at a glance. It shows on Today, Routines, Progress and the Run screen, and
+        goes along when you share the routine. Ready-made routines come with one. Pick the plain dot
+        to go without.
       </p>
       <h2>Habits</h2>
       <ul>
@@ -502,6 +514,15 @@ export class RemindersHelp {}
         also see your longest chain, so a break never erases what you built.
       </p>
       <p>For "times a week" habits, the chain counts weeks that reached their target.</p>
+      <h2>The trend line</h2>
+      <p>
+        Once a habit has three weeks behind it, a tiny line under its dots shows the last 8 weeks.
+        Each point is how much of that week's asked-for days you did, in full or as 2 minutes.
+        Skips, rest days and paused days don't count either way. Beside it, a few words sum it up:
+        <strong>Getting steadier</strong>, <strong>Holding steady</strong>, or
+        <strong>A quieter stretch</strong>. A quieter stretch is normal, and the 2-minute version is
+        the easiest way back.
+      </p>
       <h2>Removed habits and routines</h2>
       <p>Their history stays at the bottom of Progress. Nothing you've done is ever thrown away.</p>
     </app-help-article>

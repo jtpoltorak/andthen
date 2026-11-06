@@ -11,6 +11,8 @@ import { RouterLink } from '@angular/router';
 import { type ChainLink, type CheckInKind } from '@andthen/core';
 import { HabitStore } from '../data/habit-store';
 import { focusAfterRender } from '../shared/focus';
+import { RoutineIcon } from '../shared/routine-icon';
+import { routineTransitionName } from '../shared/view-transitions';
 
 /**
  * Run a routine: one habit at a time, big and calm, in chain order.
@@ -18,7 +20,7 @@ import { focusAfterRender } from '../shared/focus';
  */
 @Component({
   selector: 'app-run-routine',
-  imports: [RouterLink],
+  imports: [RouterLink, RoutineIcon],
   templateUrl: './run-routine.html',
   styleUrl: './run-routine.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -29,6 +31,8 @@ export class RunRoutine {
 
   /** Route param `:id`, bound by the router. */
   readonly id = input.required<string>();
+  /** Matches this routine's card on Today, so the card grows into this screen. */
+  protected readonly transitionName = computed(() => routineTransitionName(this.id()));
 
   protected readonly chain = computed(() =>
     this.store.chains().find((c) => c.routine.id === this.id()),

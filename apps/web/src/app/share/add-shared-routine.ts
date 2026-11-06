@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/cor
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { decodeSharedRoutine, describeSchedule } from '@andthen/core';
 import { HabitStore } from '../data/habit-store';
+import { RoutineIcon } from '../shared/routine-icon';
 
 /**
  * `/add#…`: where a shared routine link lands. Shows the chain someone sent,
@@ -10,7 +11,7 @@ import { HabitStore } from '../data/habit-store';
  */
 @Component({
   selector: 'app-add-shared-routine',
-  imports: [RouterLink],
+  imports: [RouterLink, RoutineIcon],
   template: `
     <main class="page">
       <a class="brand" routerLink="/" aria-label="AndThen home">
@@ -29,7 +30,11 @@ import { HabitStore } from '../data/habit-store';
           }
           <ol class="chain">
             <li class="step anchor">
-              <span class="node anchor-node" aria-hidden="true"></span>
+              @if (routine.icon) {
+                <app-routine-icon [icon]="routine.icon" [tile]="true" />
+              } @else {
+                <span class="node anchor-node" aria-hidden="true"></span>
+              }
               <span class="text">{{ routine.anchor }}</span>
             </li>
             @for (habit of routine.habits; track $index) {

@@ -14,3 +14,4 @@ export * from './reflection';
 export * from './journal';
 export * from './share';
 export * from './sync';
+export * from './trend';

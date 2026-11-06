@@ -15,6 +15,8 @@ import {
   fromDayKey,
   habitSpan,
   habitStats,
+  habitTrend,
+  type TrendDirection,
   hasJournal,
   indexCheckIns,
   isPausedOn,
@@ -29,6 +31,7 @@ import { HabitStore } from '../data/habit-store';
 import { PreferencesStore } from '../data/preferences';
 import { EmptyState } from '../shared/empty-state';
 import { HelpLink } from '../help/help-link';
+import { RoutineIcon } from '../shared/routine-icon';
 
 /** How many weeks the dot grid shows. */
 const WEEKS = 8;
@@ -66,6 +69,19 @@ interface HabitRow {
   schedule: string;
   /** The latest tiny-journal entries, newest first. */
   journal: JournalEntry[];
+  /** Set once there are 3 weeks to draw, and only while the habit is current. */
+  trend?: TrendLine;
+}
+
+/** A tiny line of the last 8 weeks: how much of each week the habit was done. */
+interface TrendLine {
+  /** SVG paths, one per run of weeks with a share (a gap breaks the line). */
+  paths: string[];
+  /** The latest point, drawn as a dot. */
+  last: { x: number; y: number };
+  direction: TrendDirection;
+  words: string;
+  label: string;
 }
 
 interface RoutineSection {
@@ -95,12 +111,24 @@ const weekdayDate = (day: DayKey) =>
     day: 'numeric',
   });
 
+/** Size of the trend line's drawing area, in SVG units. */
+const TREND_W = 112;
+const TREND_H = 28;
+/** Room at the top and bottom so the line and its dot aren't clipped. */
+const TREND_PAD = 3;
+
+const TREND_WORDS: Record<TrendDirection, string> = {
+  up: 'Getting steadier',
+  steady: 'Holding steady',
+  down: 'A quieter stretch. The 2-minute version counts.',
+};
+
 const plural = (n: number, word: string) => `${n} ${word}${n === 1 ? '' : 's'}`;
 
 /** Progress: a weekly recap, then an 8-week dot grid and a forgiving chain count per habit. */
 @Component({
   selector: 'app-progress',
-  imports: [RouterLink, NgTemplateOutlet, HelpLink, EmptyState],
+  imports: [RouterLink, NgTemplateOutlet, HelpLink, EmptyState, RoutineIcon],
   templateUrl: './progress.html',
   styleUrl: './progress.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -113,6 +141,9 @@ export class Progress {
 
   protected readonly weekdayLabels = computed(() => weekdayLabels(this.weekStartsOn()));
   protected readonly shortDate = shortDate;
+  protected readonly trendViewBox = `0 0 ${TREND_W} ${TREND_H}`;
+  protected readonly trendWidth = TREND_W;
+  protected readonly trendTop = TREND_PAD;
 
   private readonly index = computed(() => indexCheckIns(this.store.checkIns()));
 
@@ -239,11 +270,51 @@ export class Progress {
       gridLabel,
       isNew,
       schedule: habit.schedule ? describeSchedule(habit.schedule) : '',
+      trend: retiredOn ? undefined : this.trend(habit, routine),
       journal: journalEntries(this.store.checkIns(), habit.id, JOURNAL_SHOWN).map((c) => ({
         date: c.date,
         label: weekdayDate(c.date),
         words: describeJournal(c),
       })),
+    };
+  }
+
+  private trend(habit: Habit, routine: Routine): TrendLine | undefined {
+    const { weeks, direction } = habitTrend(
+      habit,
+      routine,
+      this.index(),
+      this.store.today(),
+      WEEKS,
+      this.weekStartsOn(),
+    );
+    if (!direction) return undefined;
+    const step = TREND_W / (weeks.length - 1);
+    const y = (share: number) => TREND_PAD + (1 - share) * (TREND_H - 2 * TREND_PAD);
+    const paths: string[] = [];
+    let run: string[] = [];
+    let last = { x: 0, y: 0 };
+    weeks.forEach((w, i) => {
+      if (w.share === undefined) {
+        if (run.length) paths.push(run.join(' '));
+        run = [];
+        return;
+      }
+      last = { x: Math.round(i * step * 10) / 10, y: Math.round(y(w.share) * 10) / 10 };
+      run.push(`${run.length ? 'L' : 'M'}${last.x} ${last.y}`);
+    });
+    if (run.length) paths.push(run.join(' '));
+    const shares = weeks
+      .filter((w) => w.share !== undefined)
+      .map((w) => `${Math.round(w.share! * 100)}%`)
+      .join(', ');
+    const words = TREND_WORDS[direction];
+    return {
+      paths,
+      last,
+      direction,
+      words,
+      label: `Weekly trend, share of days done: ${shares}. ${words}`,
     };
   }
 }

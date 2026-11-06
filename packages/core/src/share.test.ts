@@ -48,6 +48,16 @@ describe('share a routine', () => {
     expect(decodeSharedRoutine(code)).toEqual(shared);
   });
 
+  it('carries the routine icon, and ignores one it does not know', () => {
+    const shared = toSharedRoutine({ ...routine, icon: 'moon' }, [habit({})]);
+    expect(shared.icon).toBe('moon');
+    expect(decodeSharedRoutine(encodeSharedRoutine(shared))?.icon).toBe('moon');
+    const unknown = encodeSharedRoutine({ ...shared, icon: 'rocket' as never });
+    const decoded = decodeSharedRoutine(unknown);
+    expect(decoded).not.toBeNull();
+    expect(decoded && 'icon' in decoded).toBe(false);
+  });
+
   it('turns away codes that are broken, empty or from a newer version', () => {
     const enc = (o: unknown) =>
       btoa(JSON.stringify(o)).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');

@@ -21,6 +21,35 @@ export interface Release {
 
 export const RELEASES: readonly Release[] = [
   {
+    version: '1.24.0',
+    date: '2026-11-06',
+    title: 'Smoother moves.',
+    notes: [
+      'Screens now cross-fade as you switch tabs, and the sidebar stays still on a laptop.',
+      'Tapping Run grows the routine’s card into the Run screen, and Back shrinks it home.',
+      'Checking off a habit now draws its tick in.',
+      'All of it switches off when your device is set to reduce motion.',
+    ],
+  },
+  {
+    version: '1.23.0',
+    date: '2026-11-06',
+    title: 'Routine icons.',
+    notes: [
+      'Give each routine an icon, like a mug, a moon or a laptop, so they’re easy to tell apart on Today, Routines, Progress and the Run screen.',
+      'Ready-made routines come with an icon, and a shared routine brings its icon along.',
+      'Icons are kept in backups and sync to your other devices.',
+    ],
+  },
+  {
+    version: '1.22.0',
+    date: '2026-11-06',
+    title: 'Am I getting steadier?',
+    notes: [
+      'Each habit on Progress now has a tiny trend line for the last 8 weeks, with a few words on which way it’s heading.',
+    ],
+  },
+  {
     version: '1.21.0',
     date: '2026-11-06',
     title: 'The AndThen idea, in one picture.',

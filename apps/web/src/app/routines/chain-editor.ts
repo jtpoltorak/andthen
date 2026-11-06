@@ -24,7 +24,10 @@ import {
   suggestTwoMinuteVersion,
   encodeSharedRoutine,
   toSharedRoutine,
+  ROUTINE_ICONS,
+  type RoutineIcon as RoutineIconId,
 } from '@andthen/core';
+import { ROUTINE_ICON_NAMES, RoutineIcon } from '../shared/routine-icon';
 
 type ScheduleKind = 'daily' | 'days' | 'weekly';
 
@@ -70,7 +73,7 @@ type Editing = { kind: 'anchor' } | { kind: 'habit'; id: string } | undefined;
  */
 @Component({
   selector: 'app-chain-editor',
-  imports: [RouterLink, Autofocus, HelpLink],
+  imports: [RouterLink, Autofocus, HelpLink, RoutineIcon],
   templateUrl: './chain-editor.html',
   styleUrl: './routines.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -185,6 +188,14 @@ export class ChainEditor {
   protected isEditingHabit(habit: Habit): boolean {
     const e = this.editing();
     return e?.kind === 'habit' && e.id === habit.id;
+  }
+
+  protected readonly icons = ROUTINE_ICONS;
+  protected readonly iconNames = ROUTINE_ICON_NAMES;
+
+  /** Picking an icon saves straight away; there's nothing else to confirm. */
+  protected async setIcon(icon: RoutineIconId | undefined): Promise<void> {
+    await this.store.updateRoutine(this.id(), { icon });
   }
 
   protected editAnchor(): void {
