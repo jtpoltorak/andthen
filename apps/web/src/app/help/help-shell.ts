@@ -13,8 +13,8 @@ import { filterArticles } from './help-home';
   template: `
     <div class="help-shell">
       <nav class="side" aria-label="Help topics">
-        <a class="brand" routerLink="/today">
-          <svg width="24" height="24" viewBox="0 0 30 30" aria-hidden="true">
+        <a class="rail-brand" routerLink="/today">
+          <svg width="26" height="26" viewBox="0 0 30 30" aria-hidden="true">
             <circle cx="8" cy="15" r="5" fill="currentColor" />
             <path d="M13 15h4" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" />
             <circle cx="22.5" cy="15" r="5" fill="none" stroke="currentColor" stroke-width="2.5" />
@@ -88,7 +88,7 @@ import { filterArticles } from './help-home';
     @media (min-width: 900px) {
       .help-shell {
         display: grid;
-        grid-template-columns: 280px minmax(0, 1fr);
+        grid-template-columns: var(--rail-width) minmax(0, 1fr);
         align-items: start;
       }
       .side {
@@ -98,27 +98,13 @@ import { filterArticles } from './help-home';
         flex-direction: column;
         height: calc(100dvh / var(--zoom));
         overflow-y: auto;
-        padding: 24px 14px 32px;
+        padding: var(--rail-padding);
+        scrollbar-gutter: stable;
         border-right: 1px solid var(--border);
         background: var(--surface);
       }
-      .brand {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        min-height: 44px;
-        margin: 0 0 12px 12px;
-        color: var(--ink);
-        font-size: 19px;
-        font-weight: 800;
-        letter-spacing: -0.02em;
-        text-decoration: none;
-      }
-      .brand svg {
-        color: var(--accent);
-      }
       .part {
-        margin: 18px 12px 4px;
+        margin: 18px 14px 4px;
         color: var(--muted);
         font-size: 12px;
         font-weight: 700;
@@ -134,7 +120,7 @@ import { filterArticles } from './help-home';
         display: flex;
         align-items: center;
         min-height: 34px;
-        padding: 6px 12px;
+        padding: 6px 14px;
         border-radius: 10px;
         color: var(--ink-soft);
         font-size: 14px;
@@ -171,7 +157,7 @@ import { filterArticles } from './help-home';
         outline-offset: 1px;
       }
       .count {
-        margin: 8px 12px 4px;
+        margin: 8px 14px 4px;
         color: var(--muted);
         font-size: 12px;
         font-weight: 700;

@@ -9,7 +9,7 @@ import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
     <div class="page"><router-outlet /></div>
     <nav aria-label="Main">
       <!-- Shown only in the wide layout, at the top of the side rail. -->
-      <a class="brand" routerLink="/today" aria-label="AndThen, Today">
+      <a class="rail-brand" routerLink="/today" aria-label="AndThen, Today">
         <svg width="26" height="26" viewBox="0 0 30 30" aria-hidden="true">
           <circle cx="8" cy="15" r="5" fill="currentColor" />
           <path d="M13 15h4" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" />
@@ -17,7 +17,7 @@ import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
         </svg>
         <span>AndThen</span>
       </a>
-      <a routerLink="/today" routerLinkActive="active" ariaCurrentWhenActive="page">
+      <a class="tab" routerLink="/today" routerLinkActive="active" ariaCurrentWhenActive="page">
         <svg
           width="22"
           height="22"
@@ -36,7 +36,7 @@ import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
         </svg>
         Today
       </a>
-      <a routerLink="/routines" routerLinkActive="active" ariaCurrentWhenActive="page">
+      <a class="tab" routerLink="/routines" routerLinkActive="active" ariaCurrentWhenActive="page">
         <svg
           width="22"
           height="22"
@@ -53,7 +53,7 @@ import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
         </svg>
         Routines
       </a>
-      <a routerLink="/progress" routerLinkActive="active" ariaCurrentWhenActive="page">
+      <a class="tab" routerLink="/progress" routerLinkActive="active" ariaCurrentWhenActive="page">
         <svg
           width="22"
           height="22"
@@ -76,7 +76,7 @@ import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
         </svg>
         Progress
       </a>
-      <a routerLink="/settings" routerLinkActive="active" ariaCurrentWhenActive="page">
+      <a class="tab" routerLink="/settings" routerLinkActive="active" ariaCurrentWhenActive="page">
         <svg
           width="22"
           height="22"
@@ -121,7 +121,7 @@ import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
         border-inline: 1px solid var(--border);
       }
     }
-    a {
+    .tab {
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -133,11 +133,11 @@ import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
       font-weight: 600;
       text-decoration: none;
     }
-    a.active {
+    .tab.active {
       color: var(--accent-ink);
       font-weight: 700;
     }
-    .brand {
+    .rail-brand {
       display: none;
     }
 
@@ -145,7 +145,7 @@ import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
     @media (min-width: 900px) {
       :host {
         display: grid;
-        grid-template-columns: 220px minmax(0, 1fr);
+        grid-template-columns: var(--rail-width) minmax(0, 1fr);
         align-items: start;
       }
       nav {
@@ -157,7 +157,7 @@ import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
         flex-direction: column;
         gap: 4px;
         height: calc(100dvh / var(--zoom));
-        padding: 24px 14px;
+        padding: var(--rail-padding);
         border-top: none;
         border-inline: none;
         border-right: 1px solid var(--border);
@@ -172,7 +172,7 @@ import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
       .page:has(app-today) {
         max-width: 960px;
       }
-      a {
+      .tab {
         flex-direction: row;
         justify-content: flex-start;
         gap: 12px;
@@ -180,26 +180,16 @@ import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
         border-radius: 12px;
         font-size: 15px;
       }
-      a:hover {
+      .tab:hover {
         background: var(--bg);
         color: var(--ink);
       }
-      a.active {
+      .tab.active {
         background: var(--accent-soft);
         color: var(--accent-ink);
       }
-      .brand,
-      .brand:hover {
+      .rail-brand {
         display: flex;
-        margin-bottom: 16px;
-        background: none;
-        color: var(--ink);
-        font-size: 20px;
-        font-weight: 800;
-        letter-spacing: -0.02em;
-      }
-      .brand svg {
-        color: var(--accent);
       }
     }
   `,
