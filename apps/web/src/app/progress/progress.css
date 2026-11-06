@@ -275,6 +275,45 @@ h1 {
   font-weight: 800;
 }
 
+/* Trend: the last 8 weeks as a tiny line */
+
+.trend {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.trend-line {
+  flex: none;
+  width: 112px;
+  height: 28px;
+  overflow: visible;
+}
+
+.trend-line path {
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  vector-effect: non-scaling-stroke;
+}
+
+.trend-line circle {
+  fill: var(--accent);
+}
+
+.trend-words {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--muted);
+}
+
+.trend-up .trend-words {
+  color: var(--accent-ink);
+}
+
 /* Retired */
 
 details summary {

@@ -191,6 +191,22 @@
         </div>
       </dl>
     </div>
+    @if (row.trend; as trend) {
+      <div [class]="'trend trend-' + trend.direction">
+        <svg
+          class="trend-line"
+          role="img"
+          [attr.aria-label]="trend.label"
+          [attr.viewBox]="trendViewBox"
+        >
+          @for (d of trend.paths; track $index) {
+            <path [attr.d]="d" />
+          }
+          <circle [attr.cx]="trend.last.x" [attr.cy]="trend.last.y" r="3" />
+        </svg>
+        <span class="trend-words" aria-hidden="true">{{ trend.words }}</span>
+      </div>
+    }
     @if (row.journal.length) {
       <ul class="journal" aria-label="Recent notes">
         @for (entry of row.journal; track entry.date) {

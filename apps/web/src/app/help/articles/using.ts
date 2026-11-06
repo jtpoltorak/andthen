@@ -502,6 +502,15 @@ export class RemindersHelp {}
         also see your longest chain, so a break never erases what you built.
       </p>
       <p>For "times a week" habits, the chain counts weeks that reached their target.</p>
+      <h2>The trend line</h2>
+      <p>
+        Once a habit has three weeks behind it, a tiny line under its dots shows the last 8 weeks.
+        Each point is how much of that week's asked-for days you did, in full or as 2 minutes.
+        Skips, rest days and paused days don't count either way. Beside it, a few words sum it up:
+        <strong>Getting steadier</strong>, <strong>Holding steady</strong>, or
+        <strong>A quieter stretch</strong>. A quieter stretch is normal, and the 2-minute version is
+        the easiest way back.
+      </p>
       <h2>Removed habits and routines</h2>
       <p>Their history stays at the bottom of Progress. Nothing you've done is ever thrown away.</p>
     </app-help-article>

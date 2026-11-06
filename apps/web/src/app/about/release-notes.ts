@@ -21,6 +21,14 @@ export interface Release {
 
 export const RELEASES: readonly Release[] = [
   {
+    version: '1.22.0',
+    date: '2026-11-06',
+    title: 'Am I getting steadier?',
+    notes: [
+      'Each habit on Progress now has a tiny trend line for the last 8 weeks, with a few words on which way it’s heading.',
+    ],
+  },
+  {
     version: '1.21.0',
     date: '2026-11-06',
     title: 'The AndThen idea, in one picture.',
