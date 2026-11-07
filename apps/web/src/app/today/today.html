@@ -199,6 +199,32 @@
               </div>
             }
 
+            <!-- The routine's plant: it grows with every Done and 2 min, and never wilts. -->
+            @if (garden().get(chain.routine.id); as plant) {
+              <div class="garden-row">
+                <app-plant
+                  [stage]="plant.stage.stage"
+                  [resting]="plant.resting"
+                  [grow]="grew()?.routineId === chain.routine.id"
+                  [size]="56"
+                />
+                <div class="garden-text">
+                  @if (grew()?.routineId === chain.routine.id) {
+                    <span class="garden-grew">{{ grew()?.text }}</span>
+                    <span class="garden-hint"
+                      >{{ plant.stage.name }} · {{ growthHint(plant) }}</span
+                    >
+                  } @else {
+                    <span class="garden-stage">{{ plant.stage.name }}</span>
+                    <span class="garden-hint">{{ growthHint(plant) }}</span>
+                  }
+                </div>
+                <span class="visually-hidden" role="status">{{
+                  grew()?.routineId === chain.routine.id ? grew()?.text : ''
+                }}</span>
+              </div>
+            }
+
             @if (addingTo() === chain.routine.id) {
               <form
                 class="add-form"
@@ -272,6 +298,14 @@
               }
             </span>
             <span class="collapsed-meta">
+              @if (garden().get(chain.routine.id); as plant) {
+                <app-plant
+                  class="collapsed-plant"
+                  [stage]="plant.stage.stage"
+                  [resting]="plant.resting"
+                  [size]="30"
+                />
+              }
               {{ chain.complete ? 'Done' : chain.doneCount + ' of ' + chain.total }}
               @if (chain.complete) {
                 <span class="visually-hidden">, {{ chain.doneCount }} of {{ chain.total }}</span>

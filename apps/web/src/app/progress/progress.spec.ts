@@ -160,4 +160,26 @@ describe('Progress', () => {
     expect(text).toContain('Best chain: 4 days');
     expect(text).toContain('Starts with one check-in');
   });
+
+  it('grows a plant per routine in the garden, and rests a paused one', async () => {
+    const { root } = await setup({
+      routines: [
+        routine('am', { name: 'Morning' }),
+        routine('pm', { order: 1, pauses: [{ from: '2026-11-04' }] }),
+      ],
+      habits: [habit('water', 'am'), habit('read', 'pm')],
+      checkIns: [
+        ...days('2026-10-30', 5, 'water', 'full'),
+        { habitId: 'water', date: '2026-11-05', kind: 'mini' },
+        { habitId: 'water', date: '2026-11-04', kind: 'skip' },
+        ...days('2026-10-28', 2, 'read', 'full'),
+      ],
+    });
+    const plots = [...root.querySelectorAll('.plot')].map((p) => p.textContent ?? '');
+    expect(plots).toHaveLength(2);
+    // Five Done and one 2 min; the skip doesn't count.
+    expect(plots[0]).toMatch(/Morning[\s\S]*Seedling · 6[\s\S]*9 more to a young plant/);
+    expect(plots[1]).toMatch(/Sprout · 2[\s\S]*Resting while paused/);
+    expect(root.querySelectorAll('.plot-resting')).toHaveLength(1);
+  });
 });

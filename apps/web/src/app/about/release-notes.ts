@@ -21,6 +21,17 @@ export interface Release {
 
 export const RELEASES: readonly Release[] = [
   {
+    version: '1.25.0',
+    date: '2026-11-07',
+    title: 'A little garden.',
+    notes: [
+      'Each routine now grows its own plant, from a seed to a sprout, a seedling, a young plant, a bud and full bloom.',
+      'Every Done and every 2-minute check-in helps it grow. Skips and missed days never take growth away, and plants never wilt.',
+      'A paused routine, or one that’s been quiet for a week, rests with a little moon until your next check-in.',
+      'See each plant at the foot of its card on Today, and the whole garden on Progress.',
+    ],
+  },
+  {
     version: '1.24.1',
     date: '2026-11-06',
     notes: [

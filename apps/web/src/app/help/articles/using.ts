@@ -135,6 +135,11 @@ export class GettingStarted {}
           filling teal for Done, amber for 2 minutes and grey for a skip. It shows how many you've
           done, and a check once every habit has its answer.
         </li>
+        <li>
+          <strong>A little plant</strong> at the foot of each routine's card: it grows with every
+          Done and 2 min, and tells you how many check-ins until its next stage. See
+          <a routerLink="/help/progress">Your garden</a>.
+        </li>
         <li><strong>"2 of 3 this week"</strong> on habits scheduled a few times a week.</li>
         <li><strong>"Make it easy: …"</strong> under the next habit, if you've added a note.</li>
         <li>
@@ -487,6 +492,23 @@ export class RemindersHelp {}
         version. Below it: how many check-ins were done, done as 2 minutes, and skipped. Choose
         whether weeks start on Monday or Sunday in
         <a routerLink="/settings">Settings</a>.
+      </p>
+      <h2>Your garden</h2>
+      <p>
+        Each routine grows its own little plant. Every Done and every 2-minute check-in in the
+        routine helps it grow, so the tiny version is just as good for it. It goes from a
+        <strong>seed</strong> to a <strong>sprout</strong> after your first check-in, then a
+        <strong>seedling</strong> at 5, a <strong>young plant</strong> at 15,
+        <strong>budding</strong> at 30, and <strong>in bloom</strong> at 60.
+      </p>
+      <p>
+        Growth is a running total, not a streak. Skips and missed days never take any away, and
+        plants never wilt. A paused routine, or one with no check-ins for a week, shows faded with a
+        little moon. It's only resting, and it wakes up with your next check-in.
+      </p>
+      <p>
+        On <a routerLink="/today">Today</a>, each routine's plant sits at the foot of its card with
+        how many check-ins until the next stage, and you'll get a short note the moment it grows.
       </p>
       <h2>Share your week</h2>
       <p>

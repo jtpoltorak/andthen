@@ -432,3 +432,79 @@ details summary {
   font-style: italic;
   color: var(--ink);
 }
+
+/* The routine garden */
+
+.garden {
+  gap: 14px;
+}
+
+.plots {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.plot {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 12px 12px 14px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-control);
+  text-align: center;
+}
+
+.plot-resting {
+  border-style: dashed;
+  border-color: var(--dashed-soft);
+}
+
+.plot-name {
+  margin-top: 4px;
+  font-size: 15px;
+  font-weight: 800;
+  overflow-wrap: anywhere;
+}
+
+.plot-stage,
+.plot-note {
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.plot-note {
+  font-size: 12px;
+}
+
+.plot-resting .plot-note {
+  font-weight: 700;
+  color: var(--ink-soft);
+}
+
+.plot-bar {
+  display: block;
+  width: 100%;
+  height: 6px;
+  margin-top: 4px;
+  border-radius: 3px;
+  background: var(--accent-soft);
+  overflow: hidden;
+}
+
+.plot-fill {
+  display: block;
+  height: 100%;
+  border-radius: 3px;
+  background: var(--accent);
+}
+
+.garden-note {
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--muted);
+}

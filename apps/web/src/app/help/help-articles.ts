@@ -218,8 +218,10 @@ export const HELP_ARTICLES = [
     slug: 'progress',
     part: 'using',
     title: 'Reading your Progress',
-    summary: 'The weekly recap, the dot grid, the forgiving chain, and the trend line.',
-    keywords: 'progress dots grid chain streak recap week stats trend line steadier',
+    summary:
+      'Your garden, the weekly recap, the dot grid, the forgiving chain, and the trend line.',
+    keywords:
+      'progress dots grid chain streak recap week stats trend line steadier garden plant grow seed sprout bloom',
     minutes: 3,
     related: ['never-miss-twice', 'reflection'],
   },

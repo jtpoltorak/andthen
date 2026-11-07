@@ -13,6 +13,7 @@ import {
   describeJournal,
   describeSchedule,
   fromDayKey,
+  growthHint,
   habitSpan,
   habitStats,
   habitTrend,
@@ -28,6 +29,7 @@ import {
   weekdayLabels,
 } from '@andthen/core';
 import { HabitStore } from '../data/habit-store';
+import { Plant } from '../shared/plant';
 import { PreferencesStore } from '../data/preferences';
 import { EmptyState } from '../shared/empty-state';
 import { HelpLink } from '../help/help-link';
@@ -128,7 +130,7 @@ const plural = (n: number, word: string) => `${n} ${word}${n === 1 ? '' : 's'}`;
 /** Progress: a weekly recap, then an 8-week dot grid and a forgiving chain count per habit. */
 @Component({
   selector: 'app-progress',
-  imports: [RouterLink, NgTemplateOutlet, HelpLink, EmptyState, RoutineIcon],
+  imports: [RouterLink, NgTemplateOutlet, HelpLink, EmptyState, RoutineIcon, Plant],
   templateUrl: './progress.html',
   styleUrl: './progress.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -163,6 +165,23 @@ export class Progress {
       this.store.today(),
     ),
   );
+
+  /** The routine garden: one plant per active routine, in routine order. */
+  protected readonly garden = computed(() => {
+    const plants = this.store.garden();
+    const today = this.store.today();
+    return this.store.activeRoutines().flatMap((routine) => {
+      const growth = plants.get(routine.id);
+      if (!growth) return [];
+      const paused = isPausedOn(routine, today);
+      const note = paused
+        ? 'Resting while paused'
+        : growth.resting
+          ? 'Resting. It wakes with your next check-in.'
+          : growthHint(growth);
+      return [{ routine, growth, note, percent: Math.round(growth.progress * 100) }];
+    });
+  });
 
   /** Saved weekly reflections that have a note, newest first. */
   protected readonly reflections = computed(() =>
