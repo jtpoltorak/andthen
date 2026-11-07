@@ -19,6 +19,8 @@ import {
   nextOrder,
   normalizeSchedule,
   removeCheckIn,
+  routineGrowth,
+  type RoutineGrowth,
   toDayKey,
   upsertCheckIn,
   withJournal,
@@ -75,6 +77,16 @@ export class HabitStore {
       this.preferences.prefs().weekStartsOn,
     ),
   );
+
+  /** Each routine's plant in the garden: how much it has grown, by routine id. */
+  readonly garden = computed(() => {
+    const today = this.today();
+    const habits = this.habits();
+    const checkIns = this.checkIns();
+    return new Map<string, RoutineGrowth>(
+      this.routines().map((r) => [r.id, routineGrowth(r, habits, checkIns, today)]),
+    );
+  });
 
   /** Loads everything once; later calls reuse the same promise. */
   load(): Promise<void> {

@@ -678,3 +678,37 @@ h1 {
   font-size: 14px;
   font-weight: 700;
 }
+
+/* The routine garden: the routine's plant, at the foot of its card. */
+.garden-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 2px 0 14px;
+  padding: 6px 12px 6px 4px;
+  border-radius: var(--radius-control);
+  background: var(--accent-soft);
+}
+
+.garden-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.garden-stage,
+.garden-grew {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--accent-ink);
+}
+
+.garden-hint {
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.collapsed-plant {
+  margin: -4px 0;
+}

@@ -15,3 +15,4 @@ export * from './journal';
 export * from './share';
 export * from './sync';
 export * from './trend';
+export * from './garden';

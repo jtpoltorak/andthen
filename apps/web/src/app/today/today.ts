@@ -15,6 +15,8 @@ import {
   chainsByPartOfDay,
   fromDayKey,
   greeting,
+  grewInto,
+  growthHint,
   pickActiveRoutine,
   suggestTwoMinuteVersion,
 } from '@andthen/core';
@@ -29,10 +31,13 @@ import { CheckInJournal } from './check-in-journal';
 import { DayRing } from './day-ring';
 import { WeekPanel } from './week-panel';
 import { RoutineIcon } from '../shared/routine-icon';
+import { Plant } from '../shared/plant';
 import { routineTransitionName } from '../shared/view-transitions';
 
 /** Long enough for the longest celebration animation in today.css to finish. */
 const CELEBRATE_MS = 1600;
+/** How long "Your plant sprouted" stays before the usual hint comes back. */
+const GREW_MS = 6000;
 
 const lowerFirst = (text: string) => (text ? text.charAt(0).toLowerCase() + text.slice(1) : '');
 
@@ -49,6 +54,7 @@ const lowerFirst = (text: string) => (text ? text.charAt(0).toLowerCase() + text
     DayRing,
     WeekPanel,
     RoutineIcon,
+    Plant,
   ],
   templateUrl: './today.html',
   styleUrl: './today.css',
@@ -72,6 +78,12 @@ export class Today {
   /** Directions, in degrees, for the little sparks around "Chain complete". */
   protected readonly sparks = [0, 45, 90, 135, 180, 225, 270, 315];
   private celebrateTimer?: ReturnType<typeof setTimeout>;
+
+  /** The garden: each routine's plant, and the routine whose plant just reached a new stage. */
+  protected readonly garden = this.store.garden;
+  protected readonly growthHint = growthHint;
+  protected readonly grew = signal<{ routineId: string; text: string } | undefined>(undefined);
+  private grewTimer?: ReturnType<typeof setTimeout>;
 
   /** The habit whose "how did it feel?" box is open: the one just checked off. */
   protected readonly journaling = signal<string | undefined>(undefined);
@@ -148,8 +160,10 @@ export class Today {
   }
 
   protected async answer(routineId: string, link: ChainLink, kind: CheckInKind): Promise<void> {
+    const before = this.garden().get(routineId)?.growth ?? 0;
     await this.store.checkIn(link.habit.id, kind);
     this.celebrate(routineId, link, kind);
+    this.noteGrowth(routineId, before);
     // A skip doesn't ask how it felt.
     if (kind === 'skip') this.journaling.set(undefined);
     else this.journaling.set(link.habit.id);
@@ -170,6 +184,16 @@ export class Today {
       this.poppedHabit.set(undefined);
       this.finishedRoutine.set(undefined);
     }, CELEBRATE_MS);
+  }
+
+  /** Says so, once, when a check-in grows the routine's plant into its next stage. */
+  private noteGrowth(routineId: string, before: number): void {
+    const after = this.garden().get(routineId)?.growth ?? 0;
+    const stage = grewInto(before, after);
+    if (!stage) return;
+    clearTimeout(this.grewTimer);
+    this.grew.set({ routineId, text: `${stage.reached}!` });
+    this.grewTimer = setTimeout(() => this.grew.set(undefined), GREW_MS);
   }
 
   protected async undo(routineId: string, link: ChainLink): Promise<void> {

@@ -30,6 +30,42 @@
     </div>
   </section>
 
+  @if (garden().length) {
+    <section class="card garden" aria-labelledby="garden-title">
+      <h2 id="garden-title" class="eyebrow">Your garden</h2>
+      <ul class="plots">
+        @for (plot of garden(); track plot.routine.id) {
+          <li class="plot" [class.plot-resting]="plot.growth.resting">
+            <app-plant
+              [stage]="plot.growth.stage.stage"
+              [resting]="plot.growth.resting"
+              [size]="84"
+            />
+            <span class="plot-name">{{ plot.routine.name || plot.routine.anchor }}</span>
+            <span class="plot-stage">
+              {{ plot.growth.stage.name }} · {{ plot.growth.growth }}
+              <span class="visually-hidden">check-ins</span>
+            </span>
+            @if (!plot.growth.resting) {
+              <span class="plot-bar" aria-hidden="true"
+                ><span class="plot-fill" [style.width.%]="plot.percent"></span
+              ></span>
+            }
+            <span class="plot-note">{{ plot.note }}</span>
+          </li>
+        }
+      </ul>
+      <p class="garden-note">
+        @if (week().full + week().mini > 0) {
+          This week your garden grew {{ week().full + week().mini }}
+          {{ week().full + week().mini === 1 ? 'time' : 'times' }}.
+        } @else {
+          Every Done and 2 min helps a plant grow. Missed days never take growth away.
+        }
+      </p>
+    </section>
+  }
+
   @if (sections().length || retiredSections().length) {
     <div class="legend" aria-hidden="true">
       <span><i class="dot dot-full"></i>Done</span>
