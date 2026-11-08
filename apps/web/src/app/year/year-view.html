@@ -1,0 +1,89 @@
+<main class="page">
+  <a class="back-link" routerLink="/progress">‹ Progress</a>
+  <div class="title-row">
+    <h1>Your year</h1>
+    <app-help-link slug="progress" />
+  </div>
+  <p class="range">{{ range() }}</p>
+
+  <div class="totals">
+    <span class="total total-main">
+      Showed up {{ view().showedUp }} {{ view().showedUp === 1 ? 'day' : 'days' }}
+    </span>
+    <span class="total">
+      {{ view().checkIns }} {{ view().checkIns === 1 ? 'check-in' : 'check-ins' }}
+    </span>
+    @if (bestMonth(); as best) {
+      <span class="total">Best month: {{ best }}</span>
+    }
+  </div>
+
+  @if (routines().length > 1) {
+    <fieldset class="filter">
+      <legend class="visually-hidden">Show</legend>
+      <label class="pill" [class.pill-on]="!routineId()">
+        <input
+          type="radio"
+          name="routine"
+          [checked]="!routineId()"
+          (change)="routineId.set(undefined)"
+        />
+        All routines
+      </label>
+      @for (r of routines(); track r.id) {
+        <label class="pill" [class.pill-on]="routineId() === r.id">
+          <input
+            type="radio"
+            name="routine"
+            [checked]="routineId() === r.id"
+            (change)="routineId.set(r.id)"
+          />
+          {{ routineLabel(r) }}
+        </label>
+      }
+    </fieldset>
+  }
+
+  <div class="months">
+    @for (month of months(); track month.first) {
+      <section class="month">
+        <h2 class="month-name" aria-hidden="true">
+          {{ month.name }}
+          @if ($first || month.first.endsWith('-01-01')) {
+            <span class="month-year">{{ month.year }}</span>
+          }
+        </h2>
+        <p class="visually-hidden">{{ month.summary }}</p>
+        <div class="grid" aria-hidden="true">
+          @for (label of dayLabels(); track $index) {
+            <span class="weekday">{{ label }}</span>
+          }
+          @for (blank of month.blanks; track $index) {
+            <span></span>
+          }
+          @for (d of month.days; track d.day) {
+            <span
+              [class]="'cell cell-' + d.kind + (d.level !== undefined ? ' level-' + d.level : '')"
+              [title]="dayTitle(d)"
+            ></span>
+          }
+        </div>
+      </section>
+    }
+  </div>
+
+  <div class="legend" aria-hidden="true">
+    <span>Less</span>
+    <span class="cell cell-day level-0"></span>
+    <span class="cell cell-day level-1"></span>
+    <span class="cell cell-day level-2"></span>
+    <span class="cell cell-day level-3"></span>
+    <span>More</span>
+    <span class="legend-rest"><span class="cell cell-rest"></span> Rest or paused</span>
+  </div>
+
+  <p class="footnote">
+    Each square is a day, shaded by how much of that day's habits you did, in full or as 2 minutes.
+    Skips, rest days and pauses never count against you.
+  </p>
+</main>

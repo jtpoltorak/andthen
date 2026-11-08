@@ -556,6 +556,19 @@ export class RemindersHelp {}
         <strong>A quieter stretch</strong>. A quieter stretch is normal, and the 2-minute version is
         the easiest way back.
       </p>
+      <h2>Your year</h2>
+      <p>
+        Tap <strong>See your year</strong> under This week for the last 12 months as little
+        calendars, one per month. Each day is shaded by how much of what it asked for you did, in
+        full or as 2 minutes: a light grey square for none, darker shades for some and most, and the
+        full accent color for all of it. Days with nothing asked for, like rest days and paused
+        days, show as a small dot, and skips never count against you.
+      </p>
+      <p>
+        Pick a routine at the top to see just that one. Above the calendars you'll find how many
+        days you showed up, your check-ins, and your best month. On a laptop, point at a day to see
+        exactly what you did.
+      </p>
       <h2>Removed habits and routines</h2>
       <p>Their history stays at the bottom of Progress. Nothing you've done is ever thrown away.</p>
     </app-help-article>

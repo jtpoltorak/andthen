@@ -75,6 +75,11 @@ export const routes: Routes = [
         loadComponent: () => import('./recap/weekly-recap').then((m) => m.WeeklyRecap),
         title: 'Your week · AndThen',
       },
+      {
+        path: 'year',
+        loadComponent: () => import('./year/year-view').then((m) => m.YearView),
+        title: 'Your year · AndThen',
+      },
       { path: 'settings', component: Settings, title: 'Settings · AndThen' },
     ],
   },
