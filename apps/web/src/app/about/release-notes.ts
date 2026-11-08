@@ -21,6 +21,16 @@ export interface Release {
 
 export const RELEASES: readonly Release[] = [
   {
+    version: '1.30.0',
+    date: '2026-11-08',
+    title: 'Your day at a glance.',
+    notes: [
+      'A new card on Progress lays your routines on a timeline of the day: when you planned them, when they usually happen, and today’s check-ins.',
+      'Each check-in now notes the time, so the timeline fills in over the next few days.',
+      'If a routine keeps starting well off its planned time, the card offers to move it, and its reminder moves too.',
+    ],
+  },
+  {
     version: '1.29.0',
     date: '2026-11-08',
     title: 'A sky that follows the day.',

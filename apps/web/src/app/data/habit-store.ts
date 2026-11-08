@@ -22,7 +22,7 @@ import {
   routineGrowth,
   type RoutineGrowth,
   toDayKey,
-  upsertCheckIn,
+  checkInTime,
   withJournal,
   type Mood,
   type SharedRoutine,
@@ -315,8 +315,13 @@ export class HabitStore {
 
   async checkIn(habitId: string, kind: CheckInKind): Promise<void> {
     const date = this.today();
-    await this.repo.putCheckIn({ habitId, date, kind });
-    this.checkIns.update((list) => upsertCheckIn(list, habitId, date, kind));
+    // The time goes along for day at a glance on Progress.
+    const checkIn: CheckIn = { habitId, date, kind, at: checkInTime(new Date()) };
+    await this.repo.putCheckIn(checkIn);
+    this.checkIns.update((list) => [
+      ...list.filter((c) => !(c.habitId === habitId && c.date === date)),
+      checkIn,
+    ]);
   }
 
   /** Today's check-in for a habit, if there is one. */

@@ -140,11 +140,11 @@ describe('POST /v1/sync', () => {
     expect(again).toEqual({ cursor: pulled.cursor, changes: [], more: false });
   });
 
-  it("carries a check-in's tiny journal (mood and note) to the other device", async () => {
+  it("carries a check-in's tiny journal and time to the other device", async () => {
     const token = await signIn();
     const phone = device(token, 'phone');
     const laptop = device(token, 'laptop');
-    const noted: CheckIn = { ...checkIn('full'), mood: 'good', note: 'Before work' };
+    const noted: CheckIn = { ...checkIn('full'), mood: 'good', note: 'Before work', at: '07:25' };
 
     await phone.sync([putChange('checkIns', noted, 'phone', T)]);
     const pulled = await laptop.sync();

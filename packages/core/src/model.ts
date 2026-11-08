@@ -96,6 +96,8 @@ export interface CheckIn {
   /** The tiny journal: how it felt, and a few words. Both optional. */
   mood?: Mood;
   note?: string;
+  /** Local time of the check-in as `HH:mm`. Only on check-ins from version 1.30.0 on. */
+  at?: string;
 }
 
 export type LinkStatus = CheckInKind | 'pending';

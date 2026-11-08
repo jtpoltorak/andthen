@@ -588,6 +588,19 @@ export class RemindersHelp {}
         days you showed up, your check-ins, and your best month. On a laptop, point at a day to see
         exactly what you did.
       </p>
+      <h2>Your day at a glance</h2>
+      <p>
+        This card lays your routines on a timeline of the day. A dashed outline marks the time you
+        planned, a soft band shows when the routine usually happens (from the last 4 weeks), and
+        dots show today's check-ins. A line marks the time right now.
+      </p>
+      <p>
+        Each Done and 2 min notes the time on your device. Check-ins from before version 1.30.0 have
+        no time, so the bands fill in over the first few days. When a routine keeps starting well
+        before or after its planned time, the card offers to move it, for example from 7:00 to 7:30.
+        Moving it changes the routine's usual time, so its reminder moves too. Tap
+        <strong>Keep</strong> and that suggestion won't come back.
+      </p>
       <h2>Removed habits and routines</h2>
       <p>Their history stays at the bottom of Progress. Nothing you've done is ever thrown away.</p>
     </app-help-article>

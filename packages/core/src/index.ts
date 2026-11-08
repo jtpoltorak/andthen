@@ -18,3 +18,4 @@ export * from './trend';
 export * from './garden';
 export * from './year';
 export * from './milestones';
+export * from './glance';
