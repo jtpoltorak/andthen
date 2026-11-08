@@ -712,3 +712,62 @@ h1 {
 .collapsed-plant {
   margin: -4px 0;
 }
+
+/* Gentle milestones: a quiet card, shown once. */
+.milestone-card {
+  display: flex;
+  gap: 14px;
+  margin-bottom: 14px;
+  padding: 18px 20px;
+  border-radius: var(--radius-card);
+  background: var(--amber-soft);
+  color: var(--amber-soft-ink);
+}
+.milestone-art {
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+.milestone-text {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+.milestone-eyebrow {
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.milestone-card h2 {
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--ink);
+}
+.milestone-card p:not(.milestone-eyebrow) {
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--ink-soft);
+}
+.milestone-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 14px;
+  margin-top: 8px;
+}
+.milestone-thanks {
+  min-height: 44px;
+  padding: 0 18px;
+  border: none;
+  border-radius: 12px;
+  background: var(--ink);
+  color: var(--bg);
+  font-size: 15px;
+  font-weight: 700;
+}
+.milestone-all {
+  color: var(--amber-soft-ink);
+  font-size: 14px;
+  font-weight: 700;
+}

@@ -317,4 +317,20 @@ describe('Today', () => {
       expect(root.textContent).toContain('1 of 3 this week');
     });
   });
+
+  it('marks the first check-in with a gentle milestone, once', async () => {
+    localStorage.removeItem('andthen.milestonesSeen');
+    const { fixture, root } = await setup();
+    const store = TestBed.inject(HabitStore);
+    expect(root.querySelector('.milestone-card')).toBeNull();
+    const [water] = store.habitsOf(store.activeRoutines()[0].id);
+    await store.checkIn(water.id, 'mini');
+    await fixture.whenStable();
+    expect(root.querySelector('.milestone-card')?.textContent).toContain('Your first check-in');
+    buttonsByText(root, 'Thanks')[0].click();
+    await fixture.whenStable();
+    expect(root.querySelector('.milestone-card')).toBeNull();
+    expect(localStorage.getItem('andthen.milestonesSeen')).toContain('checkins-1');
+    localStorage.removeItem('andthen.milestonesSeen');
+  });
 });

@@ -17,3 +17,4 @@ export * from './sync';
 export * from './trend';
 export * from './garden';
 export * from './year';
+export * from './milestones';

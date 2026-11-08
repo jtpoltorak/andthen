@@ -21,6 +21,17 @@ export interface Release {
 
 export const RELEASES: readonly Release[] = [
   {
+    version: '1.28.0',
+    date: '2026-11-08',
+    title: 'Gentle milestones.',
+    notes: [
+      'Quiet markers for how far you’ve come: your first check-in, 25, 100 and more check-ins, and 7, 30, 100 and 365 days showed up.',
+      'When you reach one, a small card says so on Today, once. Tap Thanks and it’s put away.',
+      'Progress lists every milestone you’ve reached, with the date, and what’s next.',
+      'They only count up. Missed days never take one away.',
+    ],
+  },
+  {
     version: '1.27.0',
     date: '2026-11-08',
     title: 'Your year at a glance.',

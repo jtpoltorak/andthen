@@ -30,6 +30,7 @@ import {
 } from '@andthen/core';
 import { HabitStore } from '../data/habit-store';
 import { Plant } from '../shared/plant';
+import { MilestonesStore } from '../milestones/milestones-store';
 import { PreferencesStore } from '../data/preferences';
 import { EmptyState } from '../shared/empty-state';
 import { HelpLink } from '../help/help-link';
@@ -165,6 +166,9 @@ export class Progress {
       this.store.today(),
     ),
   );
+
+  /** Gentle milestones reached so far, and the next one. */
+  protected readonly milestones = inject(MilestonesStore).progress;
 
   /** The routine garden: one plant per active routine, in routine order. */
   protected readonly garden = computed(() => {
