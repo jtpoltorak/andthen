@@ -99,6 +99,10 @@ export class PreferencesStore {
     this.update({ moreContrast });
   }
 
+  setSkyHeader(skyHeader: boolean): void {
+    this.update({ skyHeader });
+  }
+
   /** Back to the defaults. Used by "Reset everything", which clears storage itself. */
   reset(): void {
     this.prefs.set({ ...DEFAULT_PREFERENCES });

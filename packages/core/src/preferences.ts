@@ -24,6 +24,8 @@ export interface Preferences {
   largeText: boolean;
   /** Darker borders and secondary text, for bright light or tired eyes. */
   moreContrast: boolean;
+  /** Today's header picks up the sky: sunrise, daylight, dusk or night. Off by default. */
+  skyHeader: boolean;
 }
 
 export const DEFAULT_PREFERENCES: Preferences = {
@@ -33,6 +35,7 @@ export const DEFAULT_PREFERENCES: Preferences = {
   weekStartsOn: 1,
   largeText: false,
   moreContrast: false,
+  skyHeader: false,
 };
 
 /** Trims a name, folds inner runs of spaces, and caps its length. */
@@ -54,6 +57,7 @@ export function parsePreferences(raw: unknown): Preferences {
     weekStartsOn: weekStartsOn ?? DEFAULT_PREFERENCES.weekStartsOn,
     largeText: r['largeText'] === true,
     moreContrast: r['moreContrast'] === true,
+    skyHeader: r['skyHeader'] === true,
   };
 }
 
@@ -63,6 +67,16 @@ export function greeting(name: string, hour: number): string {
     hour < 5 ? 'Hi' : hour < 12 ? 'Good morning' : hour < 17 ? 'Good afternoon' : 'Good evening';
   const who = cleanName(name);
   return who ? `${part}, ${who}` : part;
+}
+
+export type SkyPhase = 'dawn' | 'day' | 'dusk' | 'night';
+
+/** Which sky Today shows at a given hour: dawn 5 to 9, day 9 to 5, dusk 5 to 8, night after. */
+export function skyPhase(hour: number): SkyPhase {
+  if (hour >= 5 && hour < 9) return 'dawn';
+  if (hour >= 9 && hour < 17) return 'day';
+  if (hour >= 17 && hour < 20) return 'dusk';
+  return 'night';
 }
 
 /** Weekday labels for a week grid, one letter per row, in the user's week order. */

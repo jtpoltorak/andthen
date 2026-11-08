@@ -32,6 +32,16 @@
   color: var(--muted);
 }
 
+/* The optional sky sits behind the header, so the header keeps its own layer. */
+.with-sky {
+  position: relative;
+  isolation: isolate;
+}
+/* A little darker over the tinted sky, so the date stays easy to read. */
+.with-sky .date {
+  color: var(--ink-soft);
+}
+
 h1 {
   margin: 4px 0 8px;
   font-size: 32px;
