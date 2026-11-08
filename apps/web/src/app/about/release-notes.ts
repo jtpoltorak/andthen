@@ -21,6 +21,16 @@ export interface Release {
 
 export const RELEASES: readonly Release[] = [
   {
+    version: '1.32.0',
+    date: '2026-11-08',
+    title: 'Dots you can tell apart by shape.',
+    notes: [
+      'A 2-minute dot is now half filled with a ring around it, so it stands apart from a solid Done dot even when teal and amber are hard to tell apart.',
+      'Skips stay a dashed ring and days with no check-in a plain grey dot.',
+      'The new shapes show on Progress, This week, the weekly recap, Run and your share card.',
+    ],
+  },
+  {
     version: '1.31.0',
     date: '2026-11-08',
     title: 'The anchor draws itself.',

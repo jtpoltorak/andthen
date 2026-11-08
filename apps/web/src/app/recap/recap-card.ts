@@ -274,6 +274,15 @@ function dot(
       ctx.fill();
       break;
     case 'mini':
+      // Half filled with a ring, so it reads apart from Done without relying on color.
+      ctx.strokeStyle = c.amber;
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.arc(x, y, r - 1.5, 0, Math.PI * 2);
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.arc(x, y, r, 0, Math.PI);
+      ctx.closePath();
       ctx.fillStyle = c.amber;
       ctx.fill();
       break;
