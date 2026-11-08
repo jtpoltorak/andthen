@@ -52,6 +52,20 @@ const WEEK_OPTIONS: { value: WeekStart; label: string }[] = [
           </label>
         }
       </div>
+      <label class="switch-row">
+        <span class="switch-text">
+          <span class="switch-label">Sky that follows the day</span>
+          <span class="switch-hint"
+            >Today's header goes from sunrise to daylight, dusk and stars.</span
+          >
+        </span>
+        <input
+          type="checkbox"
+          role="switch"
+          [checked]="prefs.prefs().skyHeader"
+          (change)="prefs.setSkyHeader($any($event.target).checked)"
+        />
+      </label>
     </fieldset>
 
     <fieldset>

@@ -32,6 +32,7 @@ import { DayRing } from './day-ring';
 import { WeekPanel } from './week-panel';
 import { RoutineIcon } from '../shared/routine-icon';
 import { Plant } from '../shared/plant';
+import { Sky } from './sky';
 import { MilestonesStore } from '../milestones/milestones-store';
 import { routineTransitionName } from '../shared/view-transitions';
 
@@ -56,6 +57,7 @@ const lowerFirst = (text: string) => (text ? text.charAt(0).toLowerCase() + text
     WeekPanel,
     RoutineIcon,
     Plant,
+    Sky,
   ],
   templateUrl: './today.html',
   styleUrl: './today.css',
@@ -130,6 +132,9 @@ export class Today {
   /** Gentle milestones: a quiet card, once, when one is reached. */
   protected readonly milestones = inject(MilestonesStore);
   private readonly preferences = inject(PreferencesStore);
+
+  /** The optional sky behind the header (Settings > Look). */
+  protected readonly skyOn = computed(() => this.preferences.prefs().skyHeader);
 
   /** "Good morning, Sam" when there's a name; nothing extra when there isn't. */
   protected readonly greeting = computed(() => {

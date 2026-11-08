@@ -82,7 +82,7 @@ describe('PreferenceSettings', () => {
 
   it('turns on larger text and more contrast, and remembers them', async () => {
     const { fixture, root } = await setup();
-    const [large, contrast] = root.querySelectorAll<HTMLInputElement>('input[role="switch"]');
+    const [, large, contrast] = root.querySelectorAll<HTMLInputElement>('input[role="switch"]');
     expect(large.checked).toBe(false);
 
     large.click();
@@ -97,6 +97,18 @@ describe('PreferenceSettings', () => {
     large.click();
     await fixture.whenStable();
     expect(document.documentElement.dataset['text']).toBeUndefined();
+  });
+
+  it('turns on the sky for Today, and remembers it', async () => {
+    const { fixture, prefs, root } = await setup();
+    const [sky] = root.querySelectorAll<HTMLInputElement>('input[role="switch"]');
+    expect(sky.closest('label')?.textContent).toContain('Sky that follows the day');
+    expect(sky.checked).toBe(false);
+
+    sky.click();
+    await fixture.whenStable();
+    expect(prefs.prefs().skyHeader).toBe(true);
+    expect(JSON.parse(localStorage.getItem('andthen.prefs')!).skyHeader).toBe(true);
   });
 
   it('changes the first day of the week', async () => {

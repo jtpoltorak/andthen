@@ -2,6 +2,7 @@ import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { HABIT_REPOSITORY, InMemoryHabitRepository } from '../data/habit-repository';
 import { HabitStore } from '../data/habit-store';
+import { PreferencesStore } from '../data/preferences';
 import { Today } from './today';
 
 const buttonsByText = (root: HTMLElement, text: string) =>
@@ -332,5 +333,18 @@ describe('Today', () => {
     expect(root.querySelector('.milestone-card')).toBeNull();
     expect(localStorage.getItem('andthen.milestonesSeen')).toContain('checkins-1');
     localStorage.removeItem('andthen.milestonesSeen');
+  });
+
+  it('shows the sky behind the header only when it is turned on', async () => {
+    const { fixture, root } = await setup();
+    expect(root.querySelector('app-sky')).toBeNull();
+    const prefs = TestBed.inject(PreferencesStore);
+    prefs.setSkyHeader(true);
+    await fixture.whenStable();
+    const sky = root.querySelector('header app-sky');
+    expect(sky?.getAttribute('aria-hidden')).toBe('true');
+    expect(sky?.className).toMatch(/sky-(dawn|day|dusk|night)/);
+    prefs.setSkyHeader(false);
+    localStorage.removeItem('andthen.prefs');
   });
 });

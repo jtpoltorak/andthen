@@ -22,6 +22,18 @@
   --dashed: #9aa197;
   --dashed-soft: #b9beb3;
   --knob: #ffffff;
+  /* Sky behind Today's header (Settings > Sky that follows the day). */
+  --sky-dawn-top: #fbe0bd;
+  --sky-dawn-mid: #f8eddc;
+  --sky-day-top: #d3e7ee;
+  --sky-day-mid: #e5efec;
+  --sky-dusk-top: #f3cfc3;
+  --sky-dusk-mid: #f3e1d8;
+  --sky-night-top: #d4d9ec;
+  --sky-night-mid: #e4e6ee;
+  --sky-cloud: #ffffff;
+  --sky-moon: #fffaf0;
+  --sky-star: #ffffff;
   --radius-card: 22px;
   --radius-control: 14px;
   --font: 'Manrope', system-ui, -apple-system, 'Segoe UI', sans-serif;
@@ -55,6 +67,17 @@
   --dashed: #6d7771;
   --dashed-soft: #56605a;
   --knob: #f1f4f1;
+  --sky-dawn-top: #3b2f22;
+  --sky-dawn-mid: #252820;
+  --sky-day-top: #1a313a;
+  --sky-day-mid: #172420;
+  --sky-dusk-top: #3a2530;
+  --sky-dusk-mid: #22201f;
+  --sky-night-top: #151c35;
+  --sky-night-mid: #141a22;
+  --sky-cloud: #2c3d44;
+  --sky-moon: #efe6cc;
+  --sky-star: #e8ecf6;
   color-scheme: dark;
 }
 
@@ -80,6 +103,17 @@
     --dashed: #6d7771;
     --dashed-soft: #56605a;
     --knob: #f1f4f1;
+    --sky-dawn-top: #3b2f22;
+    --sky-dawn-mid: #252820;
+    --sky-day-top: #1a313a;
+    --sky-day-mid: #172420;
+    --sky-dusk-top: #3a2530;
+    --sky-dusk-mid: #22201f;
+    --sky-night-top: #151c35;
+    --sky-night-mid: #141a22;
+    --sky-cloud: #2c3d44;
+    --sky-moon: #efe6cc;
+    --sky-star: #e8ecf6;
     color-scheme: dark;
   }
 }

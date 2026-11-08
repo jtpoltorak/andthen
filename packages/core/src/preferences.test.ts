@@ -5,6 +5,7 @@ import {
   cleanName,
   greeting,
   parsePreferences,
+  skyPhase,
   weekdayLabels,
 } from './preferences';
 
@@ -26,6 +27,7 @@ describe('parsePreferences', () => {
         weekStartsOn: 0,
         largeText: true,
         moreContrast: true,
+        skyHeader: true,
       }),
     ).toEqual({
       name: 'Sam',
@@ -34,13 +36,15 @@ describe('parsePreferences', () => {
       weekStartsOn: 0,
       largeText: true,
       moreContrast: true,
+      skyHeader: true,
     });
   });
 
   it('only turns on larger text and more contrast for a real true', () => {
-    const prefs = parsePreferences({ largeText: 'yes', moreContrast: 1 });
+    const prefs = parsePreferences({ largeText: 'yes', moreContrast: 1, skyHeader: 'on' });
     expect(prefs.largeText).toBe(false);
     expect(prefs.moreContrast).toBe(false);
+    expect(prefs.skyHeader).toBe(false);
   });
 
   it('returns a fresh copy of the defaults', () => {
@@ -74,5 +78,22 @@ describe('weekdayLabels', () => {
   it('puts M, W and F under the right columns', () => {
     expect(weekdayLabels(1)).toEqual(['M', 'T', 'W', 'T', 'F', 'S', 'S']);
     expect(weekdayLabels(0)).toEqual(['S', 'M', 'T', 'W', 'T', 'F', 'S']);
+  });
+});
+
+describe('skyPhase', () => {
+  it('follows the hours of the day', () => {
+    expect([0, 4, 5, 8, 9, 16, 17, 19, 20, 23].map(skyPhase)).toEqual([
+      'night',
+      'night',
+      'dawn',
+      'dawn',
+      'day',
+      'day',
+      'dusk',
+      'dusk',
+      'night',
+      'night',
+    ]);
   });
 });

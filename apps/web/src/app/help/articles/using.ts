@@ -408,6 +408,12 @@ export class ShareHelp {}
           or Dark.
         </li>
         <li>
+          <strong>Sky that follows the day</strong>: an optional soft sky behind the top of Today. A
+          sunrise in the morning, daylight with a cloud, a warm dusk, then a moon and stars at
+          night. It changes on its own as the hours pass, in light and dark. Off unless you turn it
+          on.
+        </li>
+        <li>
           <strong>Accent color</strong>: Teal, Blue, Plum, Clay or Slate. It changes buttons,
           checkmarks and highlights, in both light and dark. The amber for "Did 2 min" stays the
           same, so it always stands out.

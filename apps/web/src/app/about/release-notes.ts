@@ -21,6 +21,16 @@ export interface Release {
 
 export const RELEASES: readonly Release[] = [
   {
+    version: '1.29.0',
+    date: '2026-11-08',
+    title: 'A sky that follows the day.',
+    notes: [
+      'A new option under Settings → Look: a soft sky behind the top of Today.',
+      'It shows a sunrise in the morning, daylight with a cloud, a warm dusk, then a moon and stars at night, and changes on its own as the hours pass.',
+      'It works in light and dark, and it’s off unless you turn it on.',
+    ],
+  },
+  {
     version: '1.28.0',
     date: '2026-11-08',
     title: 'Gentle milestones.',

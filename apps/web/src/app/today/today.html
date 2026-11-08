@@ -1,6 +1,9 @@
 <main class="today">
   <div class="today-col">
-    <header>
+    <header [class.with-sky]="skyOn()">
+      @if (skyOn()) {
+        <app-sky />
+      }
       <div class="date">{{ dateLabel() }}</div>
       <div class="title-row">
         <h1>Today</h1>
