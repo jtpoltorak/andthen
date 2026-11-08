@@ -64,3 +64,78 @@ h1 {
 .status:empty {
   display: none;
 }
+
+.card-story {
+  max-width: 330px;
+  aspect-ratio: 9 / 16;
+}
+.options {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.formats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  border: none;
+}
+.format {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 56px;
+  padding: 8px 14px;
+  border: 1.5px solid var(--input-border);
+  border-radius: var(--radius-control);
+  background: var(--surface);
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+}
+.format input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+.format:has(input:focus-visible) {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}
+.format-on {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+  color: var(--accent-ink);
+}
+.format-ratio {
+  font-weight: 600;
+  color: var(--muted);
+}
+.format-shape {
+  flex-shrink: 0;
+  border: 2px solid currentColor;
+  border-radius: 4px;
+}
+.format-post {
+  width: 20px;
+  height: 25px;
+}
+.format-story {
+  width: 16px;
+  height: 28px;
+}
+.switch-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 32px;
+  font-size: 15px;
+  font-weight: 600;
+}
+.switch-row input {
+  width: 20px;
+  height: 20px;
+  accent-color: var(--accent);
+}

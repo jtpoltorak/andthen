@@ -35,4 +35,20 @@ describe('WeeklyRecap', () => {
     const buttons = [...root.querySelectorAll('button')].map((b) => b.textContent?.trim());
     expect(buttons).toContain('Save image');
   });
+
+  it('switches to a 9:16 story size and can hide names', async () => {
+    const { fixture, root } = await setup();
+    const canvas = () => root.querySelector('canvas')!;
+    expect(canvas().getAttribute('height')).toBe('1350');
+    const story = root.querySelector<HTMLInputElement>('input[value="story"]')!;
+    story.click();
+    await fixture.whenStable();
+    expect(canvas().getAttribute('width')).toBe('1080');
+    expect(canvas().getAttribute('height')).toBe('1920');
+    const names = root.querySelector<HTMLInputElement>('.switch-row input')!;
+    expect(names.checked).toBe(true);
+    names.click();
+    await fixture.whenStable();
+    expect(names.checked).toBe(false);
+  });
 });

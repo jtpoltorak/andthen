@@ -24,8 +24,8 @@ import { HabitStore } from '../data/habit-store';
 import { PreferencesStore } from '../data/preferences';
 import { ReflectionPrompt } from '../reflection/reflection-prompt';
 import {
-  CARD_HEIGHT,
-  CARD_WIDTH,
+  CARD_SIZES,
+  type CardFormat,
   type RecapData,
   drawRecapCard,
   readRecapColors,
@@ -51,8 +51,16 @@ export class WeeklyRecap {
   private readonly week = inject(ReflectionPrompt).week;
   private readonly canvas = viewChild<ElementRef<HTMLCanvasElement>>('card');
 
-  protected readonly width = CARD_WIDTH;
-  protected readonly height = CARD_HEIGHT;
+  /** Post (4:5) or Story (9:16). */
+  protected readonly format = signal<CardFormat>('post');
+  protected readonly size = computed(() => CARD_SIZES[this.format()]);
+  /** Habit and routine names are personal: they can be left off a public post. */
+  protected readonly showNames = signal(true);
+  protected readonly showWentWell = signal(true);
+  /** Whether the week has a "what went well" to offer. */
+  protected readonly hasWentWell = computed(
+    () => !!reflectionFor(this.store.reflections(), this.week().from)?.wentWell,
+  );
   protected readonly status = signal('');
   /** The phone's share sheet, where the browser can share image files. */
   protected readonly canShare = signal(false);
@@ -61,6 +69,7 @@ export class WeeklyRecap {
     const today = this.store.today();
     const week = this.week();
     const startsOn = this.preferences.prefs().weekStartsOn;
+    const names = this.showNames();
     const index = indexCheckIns(this.store.checkIns());
     const last = week.to < today ? week.to : today;
     const summary = summarize(this.store.checkIns(), week.from, last);
@@ -76,7 +85,14 @@ export class WeeklyRecap {
       for (let d = week.from; d <= week.to; d = addDays(d, 1)) {
         days.push(dayStatus(entry.habit, entry.routine, index, d, today, startsOn));
       }
-      return { name: entry.habit.name, days };
+      return names ? { name: entry.habit.name, days } : { days };
+    });
+    const garden = this.store.garden();
+    const plants = this.store.activeRoutines().flatMap((r) => {
+      const g = garden.get(r.id);
+      if (!g) return [];
+      const label = names ? r.name || r.anchor : g.stage.name;
+      return [{ stage: g.stage.stage, resting: g.resting, label }];
     });
     const data: RecapData = {
       range: `${shortDate(week.from)} – ${shortDate(week.to)}`,
@@ -86,12 +102,13 @@ export class WeeklyRecap {
       mini: summary.mini,
       skips: summary.skips,
       habits,
+      plants,
       dayLabels: Array.from({ length: 7 }, (_, i) =>
         fromDayKey(addDays(week.from, i)).toLocaleDateString(undefined, { weekday: 'narrow' }),
       ),
     };
     const wentWell = reflectionFor(this.store.reflections(), week.from)?.wentWell;
-    if (wentWell) data.wentWell = wentWell;
+    if (wentWell && this.showWentWell()) data.wentWell = wentWell;
     return data;
   });
 
@@ -104,20 +121,26 @@ export class WeeklyRecap {
   constructor() {
     effect(() => {
       const data = this.data();
+      const format = this.format();
       this.preferences.prefs(); // Redraw when the theme or accent changes.
       const el = this.canvas()?.nativeElement;
-      if (el) void this.draw(el, data);
+      if (!el) return;
+      // Resize first (it clears the canvas), then draw.
+      const { width, height } = CARD_SIZES[format];
+      el.width = width;
+      el.height = height;
+      void this.draw(el, data, format);
     });
   }
 
-  private async draw(el: HTMLCanvasElement, data: RecapData): Promise<void> {
+  private async draw(el: HTMLCanvasElement, data: RecapData, format: CardFormat): Promise<void> {
     const ctx = el.getContext('2d');
     if (!ctx) return;
     // Draw once right away, and again when the app font is ready, so text never shows late.
-    drawRecapCard(ctx, data, readRecapColors());
+    drawRecapCard(ctx, data, readRecapColors(), format);
     try {
       await document.fonts?.load(`800 40px Manrope`);
-      drawRecapCard(ctx, data, readRecapColors());
+      drawRecapCard(ctx, data, readRecapColors(), format);
     } catch {
       // The system font is fine.
     }
@@ -131,7 +154,8 @@ export class WeeklyRecap {
   }
 
   private fileName(): string {
-    return `andthen-week-${this.week().from}.png`;
+    const suffix = this.format() === 'story' ? '-story' : '';
+    return `andthen-week-${this.week().from}${suffix}.png`;
   }
 
   protected async share(): Promise<void> {

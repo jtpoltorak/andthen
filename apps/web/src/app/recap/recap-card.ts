@@ -1,4 +1,5 @@
-import type { DayStatus } from '@andthen/core';
+import type { DayStatus, GardenStage } from '@andthen/core';
+import { drawPlant } from '../shared/plant-art';
 
 /** What the weekly recap card shows. Built by the page, drawn by `drawRecapCard`. */
 export interface RecapData {
@@ -9,7 +10,10 @@ export interface RecapData {
   full: number;
   mini: number;
   skips: number;
-  habits: { name: string; days: DayStatus[] }[];
+  /** Each habit's week. `name` is left out when the person hides habit names. */
+  habits: { name?: string; days: DayStatus[] }[];
+  /** The garden: one plant per routine, labelled with its name or, when names are hidden, its stage. */
+  plants?: { stage: GardenStage; resting: boolean; label: string }[];
   /** One-letter weekday labels over the dots, in week order. */
   dayLabels: string[];
   /** "What went well" from the week's reflection, if any. */
@@ -33,14 +37,25 @@ export interface RecapColors {
   dashed: string;
 }
 
-/** Card size in pixels: 4:5, a good fit for phone screens and photo sharing. */
-export const CARD_WIDTH = 1080;
-export const CARD_HEIGHT = 1350;
+/** Post is 4:5, for a feed post or a message. Story is 9:16, full screen on Instagram and the like. */
+export type CardFormat = 'post' | 'story';
+
+export const CARD_SIZES: Record<CardFormat, { width: number; height: number }> = {
+  post: { width: 1080, height: 1350 },
+  story: { width: 1080, height: 1920 },
+};
 /** At most this many habits get a row; the rest are counted underneath. */
 export const MAX_HABIT_ROWS = 6;
+const ROW_H = 96;
+const MORE_H = 60;
+const GARDEN_H = 300;
+const WENT_WELL_H = 160;
+/** Stories put the profile bar on top and the reply box at the bottom: keep content clear of both. */
+const STORY_SAFE = 250;
 
 const FONT = "Manrope, system-ui, -apple-system, 'Segoe UI', sans-serif";
 const PAD = 84;
+const BAND_H = 420;
 
 /** Reads the card colors from CSS custom properties on the page. */
 export function readRecapColors(root: Element = document.documentElement): RecapColors {
@@ -68,64 +83,88 @@ export function drawRecapCard(
   ctx: CanvasRenderingContext2D,
   data: RecapData,
   c: RecapColors,
+  format: CardFormat = 'post',
 ): void {
-  const W = CARD_WIDTH;
-  const H = CARD_HEIGHT;
+  const { width: W, height: H } = CARD_SIZES[format];
+  const story = format === 'story';
+  const bandTop = story ? STORY_SAFE : 36;
+  const footerY = story ? H - STORY_SAFE - 40 : H - 150;
   ctx.clearRect(0, 0, W, H);
   ctx.fillStyle = c.bg;
   ctx.fillRect(0, 0, W, H);
 
   // A soft accent band across the top.
   ctx.fillStyle = c.accentSoft;
-  roundRect(ctx, 36, 36, W - 72, 420, 48);
+  roundRect(ctx, 36, bandTop, W - 72, BAND_H, 48);
   ctx.fill();
 
   ctx.textBaseline = 'alphabetic';
+  ctx.textAlign = 'left';
   ctx.fillStyle = c.accentInk;
   ctx.font = `800 34px ${FONT}`;
-  ctx.fillText('MY WEEK', PAD, 132);
+  ctx.fillText('MY WEEK', PAD, bandTop + 96);
   ctx.fillStyle = c.muted;
   ctx.font = `600 34px ${FONT}`;
-  ctx.fillText(data.range, PAD, 182);
+  ctx.fillText(data.range, PAD, bandTop + 146);
 
   ctx.fillStyle = c.ink;
   ctx.font = `800 88px ${FONT}`;
-  ctx.fillText(`Showed up ${data.daysShowedUp}`, PAD, 292);
+  ctx.fillText(`Showed up ${data.daysShowedUp}`, PAD, bandTop + 256);
   ctx.font = `700 46px ${FONT}`;
   ctx.fillStyle = c.muted;
-  ctx.fillText(`of ${data.daysSoFar} ${data.daysSoFar === 1 ? 'day' : 'days'}`, PAD, 352);
+  ctx.fillText(`of ${data.daysSoFar} ${data.daysSoFar === 1 ? 'day' : 'days'}`, PAD, bandTop + 316);
 
   // Chips: done, 2 min, skipped.
   let x = PAD;
-  const chipY = 384;
+  const chipY = bandTop + 348;
   x = chip(ctx, x, chipY, `${data.full} done`, c.accent, c.onAccent) + 14;
   x = chip(ctx, x, chipY, `${data.mini} as 2 min`, c.amber, '#3d2b04') + 14;
   chip(ctx, x, chipY, `${data.skips} skipped`, c.surface, c.muted);
 
-  // Habit rows with seven dots each.
-  let y = 560;
-  const rows = data.habits.slice(0, MAX_HABIT_ROWS);
+  // On a post, a few plants from the garden sit in the band's top corner.
+  const plants = data.plants ?? [];
+  if (!story) {
+    const shown = plants.slice(0, 3);
+    const size = 150;
+    shown.forEach((p, i) => {
+      const px = W - PAD + 20 - (shown.length - i) * size;
+      drawPlant(ctx, p.stage, px, bandTop + 4, size, p.resting);
+    });
+  }
+
+  // Habit rows with seven dots each. Without names, the dots sit in the middle.
+  let y = bandTop + BAND_H + 104;
+  const rows = data.habits.slice(0, fitRows(data, story, footerY - 30 - y));
+  const named = rows.some((h) => h.name);
   const dotGap = 54;
-  const dotsLeft = W - PAD - dotGap * 6 - 16;
+  const dotsLeft = named ? W - PAD - dotGap * 6 - 16 : W / 2 - dotGap * 3 - 16;
   if (rows.length) {
     ctx.fillStyle = c.muted;
     ctx.font = `700 26px ${FONT}`;
     ctx.textAlign = 'center';
-    data.dayLabels.forEach((label, i) => ctx.fillText(label, dotsLeft + 16 + i * dotGap, 512));
+    data.dayLabels.forEach((label, i) => ctx.fillText(label, dotsLeft + 16 + i * dotGap, y - 48));
     ctx.textAlign = 'left';
   }
   for (const habit of rows) {
-    ctx.fillStyle = c.ink;
-    ctx.font = `700 38px ${FONT}`;
-    ctx.fillText(ellipsize(ctx, habit.name, dotsLeft - PAD - 28), PAD, y + 13);
+    if (habit.name) {
+      ctx.fillStyle = c.ink;
+      ctx.font = `700 38px ${FONT}`;
+      ctx.fillText(ellipsize(ctx, habit.name, dotsLeft - PAD - 28), PAD, y + 13);
+    }
     habit.days.forEach((status, i) => dot(ctx, dotsLeft + 16 + i * dotGap, y, status, c));
-    y += 96;
+    y += ROW_H;
   }
   if (data.habits.length > rows.length) {
     ctx.fillStyle = c.muted;
     ctx.font = `600 32px ${FONT}`;
-    ctx.fillText(`+ ${data.habits.length - rows.length} more`, PAD, y);
-    y += 60;
+    const more = `+ ${data.habits.length - rows.length} more`;
+    if (named) ctx.fillText(more, PAD, y);
+    else {
+      ctx.textAlign = 'center';
+      ctx.fillText(more, W / 2, y);
+      ctx.textAlign = 'left';
+    }
+    y += MORE_H;
   }
   if (!rows.length) {
     ctx.fillStyle = c.muted;
@@ -134,7 +173,28 @@ export function drawRecapCard(
     y += 60;
   }
 
-  // What went well, if the reflection has it.
+  // On a story, the whole garden gets a row of its own.
+  if (story && plants.length) {
+    const shown = plants.slice(0, 4);
+    y += 10;
+    ctx.fillStyle = c.accentInk;
+    ctx.font = `800 30px ${FONT}`;
+    ctx.fillText('MY GARDEN', PAD, y);
+    const slot = (W - PAD * 2) / shown.length;
+    const size = Math.min(170, slot - 20);
+    ctx.textAlign = 'center';
+    shown.forEach((p, i) => {
+      const cx = PAD + slot * i + slot / 2;
+      drawPlant(ctx, p.stage, cx - size / 2, y + 20, size, p.resting);
+      ctx.fillStyle = c.ink;
+      ctx.font = `700 30px ${FONT}`;
+      ctx.fillText(ellipsize(ctx, p.label, slot - 16), cx, y + size + 62);
+    });
+    ctx.textAlign = 'left';
+    y += size + 120;
+  }
+
+  // What went well, if the reflection has it and there's room.
   if (data.wentWell) {
     y += 10;
     ctx.fillStyle = c.accentInk;
@@ -150,20 +210,33 @@ export function drawRecapCard(
   ctx.strokeStyle = c.line;
   ctx.lineWidth = 2;
   ctx.beginPath();
-  ctx.moveTo(PAD, H - 150);
-  ctx.lineTo(W - PAD, H - 150);
+  ctx.moveTo(PAD, footerY);
+  ctx.lineTo(W - PAD, footerY);
   ctx.stroke();
   ctx.fillStyle = c.accent;
   ctx.beginPath();
-  ctx.arc(PAD + 14, H - 84, 14, 0, Math.PI * 2);
+  ctx.arc(PAD + 14, footerY + 66, 14, 0, Math.PI * 2);
   ctx.fill();
   ctx.fillStyle = c.ink;
   ctx.font = `800 40px ${FONT}`;
-  ctx.fillText('AndThen', PAD + 44, H - 70);
+  ctx.fillText('AndThen', PAD + 44, footerY + 80);
   ctx.fillStyle = c.muted;
   ctx.font = `600 30px ${FONT}`;
   const site = 'andthenhabits.com';
-  ctx.fillText(site, W - PAD - ctx.measureText(site).width, H - 72);
+  ctx.fillText(site, W - PAD - ctx.measureText(site).width, footerY + 78);
+}
+
+/**
+ * How many habit rows fit in `space` pixels, leaving room for the story's garden and
+ * "what went well". Habits that don't fit are counted as "+ N more".
+ */
+export function fitRows(data: RecapData, story: boolean, space: number): number {
+  let reserve = data.wentWell ? WENT_WELL_H : 0;
+  if (story && data.plants?.length) reserve += GARDEN_H;
+  let rows = Math.min(data.habits.length, MAX_HABIT_ROWS);
+  const need = (n: number) => n * ROW_H + (data.habits.length > n ? MORE_H : 0) + reserve;
+  while (rows > 1 && need(rows) > space) rows--;
+  return rows;
 }
 
 function chip(
