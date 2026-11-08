@@ -556,6 +556,19 @@ export class RemindersHelp {}
         <strong>A quieter stretch</strong>. A quieter stretch is normal, and the 2-minute version is
         the easiest way back.
       </p>
+      <h2>Milestones</h2>
+      <p>
+        Milestones are quiet markers for how much you've shown up, ever: your first check-in, then
+        25, 100, 250, 500 and 1,000 check-ins, and 7, 30, 100 and 365 days with at least one habit
+        done. Done and 2-minute check-ins both count; skips don't.
+      </p>
+      <p>
+        When you reach one, a small card says so at the top of <a routerLink="/today">Today</a>. Tap
+        <strong>Thanks</strong> to put it away. It only shows for a few days, so coming back after a
+        break never greets you with a pile of them. The Milestones card here lists every one you've
+        reached, with the day you reached it, and the next one coming up. They only ever count up: a
+        missed day never takes one away.
+      </p>
       <h2>Your year</h2>
       <p>
         Tap <strong>See your year</strong> under This week for the last 12 months as little

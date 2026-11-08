@@ -508,3 +508,42 @@ details summary {
   line-height: 1.5;
   color: var(--muted);
 }
+
+/* Gentle milestones */
+
+.milestones {
+  gap: 10px;
+}
+
+.next-milestone {
+  font-size: 15px;
+  line-height: 1.5;
+}
+
+.milestone-list {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.milestone-list li {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 9px 0;
+  border-top: 1px solid var(--line);
+}
+
+.milestone-name {
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.milestone-date {
+  flex-shrink: 0;
+  font-size: 13px;
+  color: var(--muted);
+}

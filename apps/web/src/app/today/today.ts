@@ -32,6 +32,7 @@ import { DayRing } from './day-ring';
 import { WeekPanel } from './week-panel';
 import { RoutineIcon } from '../shared/routine-icon';
 import { Plant } from '../shared/plant';
+import { MilestonesStore } from '../milestones/milestones-store';
 import { routineTransitionName } from '../shared/view-transitions';
 
 /** Long enough for the longest celebration animation in today.css to finish. */
@@ -126,6 +127,8 @@ export class Today {
     this.focusCard(routineId);
   }
   protected readonly reflection = inject(ReflectionPrompt);
+  /** Gentle milestones: a quiet card, once, when one is reached. */
+  protected readonly milestones = inject(MilestonesStore);
   private readonly preferences = inject(PreferencesStore);
 
   /** "Good morning, Sam" when there's a name; nothing extra when there isn't. */

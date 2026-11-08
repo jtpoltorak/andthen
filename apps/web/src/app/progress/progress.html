@@ -67,6 +67,29 @@
     </section>
   }
 
+  @if (milestones().reached.length || garden().length) {
+    <section class="card milestones" aria-labelledby="milestones-title">
+      <h2 id="milestones-title" class="eyebrow">Milestones</h2>
+      @if (milestones().next; as next) {
+        <p class="next-milestone">
+          Next: <strong>{{ next.milestone.title }}</strong
+          >, {{ next.remaining }} to go
+        </p>
+      }
+      @if (milestones().reached.length) {
+        <ul class="milestone-list">
+          @for (r of milestones().reached; track r.milestone.id) {
+            <li>
+              <span class="milestone-name">{{ r.milestone.title }}</span>
+              <span class="milestone-date">{{ shortDate(r.on) }}</span>
+            </li>
+          }
+        </ul>
+      }
+      <p class="garden-note">They only ever count up. Missed days never take one away.</p>
+    </section>
+  }
+
   @if (sections().length || retiredSections().length) {
     <div class="legend" aria-hidden="true">
       <span><i class="dot dot-full"></i>Done</span>
