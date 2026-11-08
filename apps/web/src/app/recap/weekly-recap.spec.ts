@@ -15,6 +15,9 @@ describe('WeeklyRecap', () => {
     });
     const store = TestBed.inject(HabitStore);
     await store.load();
+    // A Wednesday, so the card shows this week whichever day weeks start on. On the first
+    // day of a week the card shows the week before, which wouldn't have today's check-in.
+    store.today.set('2026-11-04');
     const routine = await store.createChain({
       anchor: 'After I pour my coffee',
       habitName: 'Drink water',
