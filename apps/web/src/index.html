@@ -21,6 +21,16 @@
         }
         if (prefs.largeText === true) document.documentElement.dataset.text = 'large';
         if (prefs.moreContrast === true) document.documentElement.dataset.contrast = 'more';
+        // The easy-reading font only downloads for people who chose it (EASY_FONT_URL in preferences.ts).
+        if (prefs.easyFont === true) {
+          document.documentElement.dataset.font = 'easy';
+          var font = document.createElement('link');
+          font.id = 'easy-font';
+          font.rel = 'stylesheet';
+          font.href =
+            'https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible+Next:wght@400;500;600;700;800&display=swap';
+          document.head.appendChild(font);
+        }
       } catch (e) {}
     </script>
     <link rel="preconnect" href="https://fonts.googleapis.com" />

@@ -114,6 +114,21 @@ const WEEK_OPTIONS: { value: WeekStart; label: string }[] = [
           (change)="prefs.setMoreContrast($any($event.target).checked)"
         />
       </label>
+      <label class="switch-row">
+        <span class="switch-text">
+          <span class="switch-label">Easy-reading font</span>
+          <span class="switch-hint"
+            >Atkinson Hyperlegible, made for low vision. Letters like I, l and 1 are easy to tell
+            apart.</span
+          >
+        </span>
+        <input
+          type="checkbox"
+          role="switch"
+          [checked]="prefs.prefs().easyFont"
+          (change)="prefs.setEasyFont($any($event.target).checked)"
+        />
+      </label>
     </fieldset>
 
     <fieldset>

@@ -22,6 +22,10 @@ export const ACCENT_SWATCHES: Record<Accent, string> = {
 /** The dark theme's page color, for the title bar in dark mode (matches --bg in styles.css). */
 export const DARK_TITLE_BAR = '#121815';
 
+/** The easy-reading font's stylesheet. Loaded only once someone turns it on (also in index.html). */
+export const EASY_FONT_URL =
+  'https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible+Next:wght@400;500;600;700;800&display=swap';
+
 /** Also read by the small script in index.html, so the right theme shows before Angular boots. */
 export const PREFERENCES_KEY = 'andthen.prefs';
 
@@ -58,6 +62,23 @@ export class PreferencesStore {
       else delete root.dataset['text'];
       if (moreContrast) root.dataset['contrast'] = 'more';
       else delete root.dataset['contrast'];
+    });
+    // The easy-reading font: `data-font` on <html> swaps --font, and its stylesheet loads once.
+    effect(() => {
+      const { easyFont } = this.prefs();
+      const root = this.document.documentElement;
+      if (!easyFont) {
+        delete root.dataset['font'];
+        return;
+      }
+      root.dataset['font'] = 'easy';
+      if (!this.document.getElementById('easy-font')) {
+        const link = this.document.createElement('link');
+        link.id = 'easy-font';
+        link.rel = 'stylesheet';
+        link.href = EASY_FONT_URL;
+        this.document.head.appendChild(link);
+      }
     });
     // The browser and installed-app title bar follow along: the accent in light mode,
     // the page's own dark color in dark mode, so a bright bar never sits over a dark app.
@@ -97,6 +118,10 @@ export class PreferencesStore {
 
   setMoreContrast(moreContrast: boolean): void {
     this.update({ moreContrast });
+  }
+
+  setEasyFont(easyFont: boolean): void {
+    this.update({ easyFont });
   }
 
   setSkyHeader(skyHeader: boolean): void {
