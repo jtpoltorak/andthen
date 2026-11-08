@@ -432,6 +432,12 @@ export class ShareHelp {}
           Handy in bright sunlight.
         </li>
         <li>
+          <strong>Easy-reading font</strong>: switches the whole app to Atkinson Hyperlegible Next,
+          a free typeface from the Braille Institute designed for low vision. Letters that look
+          alike in many fonts, such as capital I, lowercase l and the number 1, or O and 0, each get
+          their own clear shape. It downloads the first time you turn it on.
+        </li>
+        <li>
           <strong>Weeks start on</strong>: Monday or Sunday. It changes "This week" and the grid on
           Progress.
         </li>

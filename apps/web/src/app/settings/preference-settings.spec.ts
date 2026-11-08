@@ -9,6 +9,8 @@ describe('PreferenceSettings', () => {
     delete document.documentElement.dataset['accent'];
     delete document.documentElement.dataset['text'];
     delete document.documentElement.dataset['contrast'];
+    delete document.documentElement.dataset['font'];
+    document.getElementById('easy-font')?.remove();
   });
 
   async function setup() {
@@ -97,6 +99,26 @@ describe('PreferenceSettings', () => {
     large.click();
     await fixture.whenStable();
     expect(document.documentElement.dataset['text']).toBeUndefined();
+  });
+
+  it('switches to the easy-reading font, loading it only when asked', async () => {
+    const { fixture, root } = await setup();
+    expect(document.getElementById('easy-font')).toBeNull();
+    const easy = [...root.querySelectorAll<HTMLInputElement>('input[role="switch"]')].find((s) =>
+      s.closest('label')?.textContent?.includes('Easy-reading font'),
+    )!;
+
+    easy.click();
+    await fixture.whenStable();
+    expect(document.documentElement.dataset['font']).toBe('easy');
+    expect(document.getElementById('easy-font')?.getAttribute('href')).toContain(
+      'Atkinson+Hyperlegible+Next',
+    );
+    expect(JSON.parse(localStorage.getItem('andthen.prefs')!).easyFont).toBe(true);
+
+    easy.click();
+    await fixture.whenStable();
+    expect(document.documentElement.dataset['font']).toBeUndefined();
   });
 
   it('turns on the sky for Today, and remembers it', async () => {

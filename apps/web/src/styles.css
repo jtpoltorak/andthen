@@ -45,6 +45,11 @@
   color-scheme: light;
 }
 
+/* The easy-reading font, chosen in Settings: made for low vision, with letters that are hard to mix up. */
+:root[data-font='easy'] {
+  --font: 'Atkinson Hyperlegible Next', system-ui, -apple-system, 'Segoe UI', sans-serif;
+}
+
 /* Dark colors: chosen in Settings, or following the device when the theme is "system". */
 :root[data-theme='dark'] {
   --bg: #121815;

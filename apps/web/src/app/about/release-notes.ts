@@ -21,6 +21,16 @@ export interface Release {
 
 export const RELEASES: readonly Release[] = [
   {
+    version: '1.33.0',
+    date: '2026-11-08',
+    title: 'An easy-reading font.',
+    notes: [
+      'A new option under Settings → Easier to read switches the app to Atkinson Hyperlegible Next, a typeface designed for low vision.',
+      'Letters that are easy to mix up, like I, l and 1, or O and 0, each get a clear shape of their own.',
+      'It works with Larger text and More contrast, and only downloads if you turn it on.',
+    ],
+  },
+  {
     version: '1.32.0',
     date: '2026-11-08',
     title: 'Dots you can tell apart by shape.',

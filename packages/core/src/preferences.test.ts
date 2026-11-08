@@ -28,6 +28,7 @@ describe('parsePreferences', () => {
         largeText: true,
         moreContrast: true,
         skyHeader: true,
+        easyFont: true,
       }),
     ).toEqual({
       name: 'Sam',
@@ -37,6 +38,7 @@ describe('parsePreferences', () => {
       largeText: true,
       moreContrast: true,
       skyHeader: true,
+      easyFont: true,
     });
   });
 
@@ -45,6 +47,7 @@ describe('parsePreferences', () => {
     expect(prefs.largeText).toBe(false);
     expect(prefs.moreContrast).toBe(false);
     expect(prefs.skyHeader).toBe(false);
+    expect(parsePreferences({ easyFont: 'yes' }).easyFont).toBe(false);
   });
 
   it('returns a fresh copy of the defaults', () => {

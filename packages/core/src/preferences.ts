@@ -26,6 +26,8 @@ export interface Preferences {
   moreContrast: boolean;
   /** Today's header picks up the sky: sunrise, daylight, dusk or night. Off by default. */
   skyHeader: boolean;
+  /** Atkinson Hyperlegible Next instead of Manrope: made for low vision. Off by default. */
+  easyFont: boolean;
 }
 
 export const DEFAULT_PREFERENCES: Preferences = {
@@ -36,6 +38,7 @@ export const DEFAULT_PREFERENCES: Preferences = {
   largeText: false,
   moreContrast: false,
   skyHeader: false,
+  easyFont: false,
 };
 
 /** Trims a name, folds inner runs of spaces, and caps its length. */
@@ -58,6 +61,7 @@ export function parsePreferences(raw: unknown): Preferences {
     largeText: r['largeText'] === true,
     moreContrast: r['moreContrast'] === true,
     skyHeader: r['skyHeader'] === true,
+    easyFont: r['easyFont'] === true,
   };
 }
 
