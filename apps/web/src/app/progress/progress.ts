@@ -1,3 +1,4 @@
+import { DayGlance } from './day-glance';
 import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { NgTemplateOutlet } from '@angular/common';
 import { RouterLink } from '@angular/router';
@@ -131,7 +132,7 @@ const plural = (n: number, word: string) => `${n} ${word}${n === 1 ? '' : 's'}`;
 /** Progress: a weekly recap, then an 8-week dot grid and a forgiving chain count per habit. */
 @Component({
   selector: 'app-progress',
-  imports: [RouterLink, NgTemplateOutlet, HelpLink, EmptyState, RoutineIcon, Plant],
+  imports: [RouterLink, NgTemplateOutlet, HelpLink, EmptyState, RoutineIcon, Plant, DayGlance],
   templateUrl: './progress.html',
   styleUrl: './progress.css',
   changeDetection: ChangeDetectionStrategy.OnPush,

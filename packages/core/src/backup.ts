@@ -1,3 +1,5 @@
+import { minutesOf } from './dates';
+import { timeOfMinutes } from './glance';
 import { cleanCheckInNote, isMood } from './journal';
 import {
   isRoutineIcon,
@@ -211,6 +213,9 @@ function readCheckIn(raw: unknown, i: number): CheckIn {
   if (isMood(raw['mood'])) checkIn.mood = raw['mood'];
   const note = cleanCheckInNote(text(raw, 'note', where, false));
   if (note) checkIn.note = note;
+  // When it happened, for day at a glance. Older files don't have it; a bad one is dropped.
+  const at = minutesOf(typeof raw['at'] === 'string' ? raw['at'] : undefined);
+  if (at !== undefined) checkIn.at = timeOfMinutes(at);
   return checkIn;
 }
 

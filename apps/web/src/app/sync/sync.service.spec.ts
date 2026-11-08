@@ -197,7 +197,14 @@ describe('SyncService', () => {
     await laptop.store.checkIn(habitId, 'mini');
     await laptop.sync.syncNow();
     await phone.sync.syncNow();
-    expect(phone.store.checkIns()).toEqual([{ habitId, date: phone.store.today(), kind: 'mini' }]);
+    expect(phone.store.checkIns()).toEqual([
+      {
+        habitId,
+        date: phone.store.today(),
+        kind: 'mini',
+        at: expect.stringMatching(/^\d\d:\d\d$/),
+      },
+    ]);
 
     // So does un-checking it.
     await phone.store.undoCheckIn(habitId);
