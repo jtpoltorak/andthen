@@ -4,6 +4,7 @@ import { decodeSharedRoutine } from '@andthen/core';
 import { HABIT_REPOSITORY, InMemoryHabitRepository } from '../data/habit-repository';
 import { HabitStore } from '../data/habit-store';
 import { ChainEditor } from './chain-editor';
+import { DRAW_MS } from '../shared/draw-chain';
 
 const button = (root: HTMLElement, label: string) =>
   [...root.querySelectorAll('button')].find(
@@ -39,6 +40,22 @@ describe('ChainEditor', () => {
     const names = () => [...root.querySelectorAll('.habit-name')].map((n) => n.textContent?.trim());
     return { fixture, root, store, routine, names };
   }
+
+  it('draws a new chain once, then not again', async () => {
+    const { fixture, root, store, routine } = await setup();
+    expect(root.querySelector('.chain')?.classList).toContain('drawing');
+    expect(store.justCreated()).toBeUndefined();
+
+    await new Promise((done) => setTimeout(done, DRAW_MS + 50));
+    await fixture.whenStable();
+    expect(root.querySelector('.chain')?.classList).not.toContain('drawing');
+
+    // Opening it again later doesn't draw it again.
+    const again = TestBed.createComponent(ChainEditor);
+    again.componentRef.setInput('id', routine.id);
+    await again.whenStable();
+    expect((again.nativeElement as HTMLElement).querySelector('.chain.drawing')).toBeNull();
+  });
 
   it('copies a share link that sets up the same chain', async () => {
     const { fixture, root } = await setup();

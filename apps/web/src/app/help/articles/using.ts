@@ -171,6 +171,11 @@ export class TodayHelp {}
         A routine is an anchor plus a short chain of habits. Edit one by tapping it in
         <a routerLink="/routines">Routines</a>, or <strong>Edit</strong> on Today.
       </p>
+      <p>
+        When you make a new routine, its chain draws itself once: the anchor first, then a line down
+        to your first habit, the way the routine itself goes. (If your device is set to reduce
+        motion, it simply appears.)
+      </p>
       <h2>The anchor</h2>
       <p>
         Tap <strong>Edit</strong> next to the anchor at the top to change what the chain starts

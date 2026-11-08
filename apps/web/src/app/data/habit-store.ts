@@ -88,6 +88,12 @@ export class HabitStore {
     );
   });
 
+  /**
+   * The routine that was just made, until the first screen showing it claims it
+   * to draw its chain once (see shared/draw-chain.ts).
+   */
+  readonly justCreated = signal<string | undefined>(undefined);
+
   /** Loads everything once; later calls reuse the same promise. */
   load(): Promise<void> {
     this.loading ??= this.repo.loadAll().then((snap) => {
@@ -145,6 +151,7 @@ export class HabitStore {
     await this.repo.putRoutine(routine);
     this.routines.update((list) => [...list, routine]);
     await this.addLink(routine.id, input.habitName, input.twoMinuteVersion);
+    this.justCreated.set(routine.id);
     return routine;
   }
 
@@ -181,6 +188,7 @@ export class HabitStore {
     await this.repo.putHabits(habits);
     this.routines.update((list) => [...list, routine]);
     this.habits.update((list) => [...list, ...habits]);
+    this.justCreated.set(routine.id);
     return routine;
   }
 
