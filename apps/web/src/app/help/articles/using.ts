@@ -513,9 +513,20 @@ export class RemindersHelp {}
       <h2>Share your week</h2>
       <p>
         <strong>Share your week</strong> turns the week into a picture: days you showed up, each
-        habit's seven dots, and "what went well" if you reflected. Tap <strong>Share</strong> to
-        send it from your phone, or <strong>Save image</strong> to keep it. It's drawn on your
-        device in your theme and accent color, and nothing is uploaded.
+        habit's seven dots, your garden, and "what went well" if you reflected. Pick a size first:
+        <strong>Story</strong> (9:16) fills the screen in Instagram, Facebook or WhatsApp stories,
+        with everything kept clear of their buttons, and <strong>Post</strong> (4:5) fits a feed or
+        a message.
+      </p>
+      <p>
+        Posting somewhere public? Switch off <strong>Show habit and routine names</strong> and the
+        card shows just your dots and plants, with stage names in place of routine names. You can
+        leave out what went well the same way.
+      </p>
+      <p>
+        Tap <strong>Share</strong> to open your phone's share sheet and pick an app, or
+        <strong>Save image</strong> to keep it. It's drawn on your device in your theme and accent
+        color, and nothing is uploaded.
       </p>
       <h2>The dot grid</h2>
       <p>

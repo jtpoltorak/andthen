@@ -2,17 +2,64 @@
   <a class="back-link" routerLink="/progress">‹ Progress</a>
   <h1>Your week, as a card</h1>
   <p class="intro">
-    Save it, or send it to someone who's cheering you on. It's made on this device; nothing is
+    Post it, or send it to someone who's cheering you on. It's made on this device; nothing is
     uploaded.
   </p>
+
+  <div class="options">
+    <fieldset class="formats">
+      <legend class="visually-hidden">Card size</legend>
+      <label class="format" [class.format-on]="format() === 'post'">
+        <input
+          type="radio"
+          name="format"
+          value="post"
+          [checked]="format() === 'post'"
+          (change)="format.set('post')"
+        />
+        <span class="format-shape format-post" aria-hidden="true"></span>
+        <span>Post <span class="format-ratio">4:5</span></span>
+      </label>
+      <label class="format" [class.format-on]="format() === 'story'">
+        <input
+          type="radio"
+          name="format"
+          value="story"
+          [checked]="format() === 'story'"
+          (change)="format.set('story')"
+        />
+        <span class="format-shape format-story" aria-hidden="true"></span>
+        <span>Story <span class="format-ratio">9:16</span></span>
+      </label>
+    </fieldset>
+    <label class="switch-row">
+      <input
+        type="checkbox"
+        [checked]="showNames()"
+        (change)="showNames.set($any($event.target).checked)"
+      />
+      Show habit and routine names
+    </label>
+    @if (hasWentWell()) {
+      <label class="switch-row">
+        <input
+          type="checkbox"
+          [checked]="showWentWell()"
+          (change)="showWentWell.set($any($event.target).checked)"
+        />
+        Show what went well
+      </label>
+    }
+  </div>
 
   <canvas
     #card
     class="card-preview"
     role="img"
+    [class.card-story]="format() === 'story'"
     [attr.aria-label]="summaryText()"
-    [width]="width"
-    [height]="height"
+    [width]="size().width"
+    [height]="size().height"
   ></canvas>
 
   <div class="actions">
@@ -24,5 +71,8 @@
     }
   </div>
   <p class="status" role="status" aria-live="polite">{{ status() }}</p>
-  <p class="hint">The card follows your theme and accent color. Change them in Settings → You.</p>
+  <p class="hint">
+    Story fits Instagram, Facebook and WhatsApp stories; Post fits a feed or a message. The card
+    follows your theme and accent color. Change them in Settings → You.
+  </p>
 </main>

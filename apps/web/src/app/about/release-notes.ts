@@ -21,6 +21,16 @@ export interface Release {
 
 export const RELEASES: readonly Release[] = [
   {
+    version: '1.26.0',
+    date: '2026-11-08',
+    title: 'Your week, ready to post.',
+    notes: [
+      'Share your week now comes in two sizes: Story, for Instagram, Facebook and WhatsApp stories, and Post, for a feed or a message.',
+      'Your garden is on the card too: a few plants on a post, and the whole garden on a story.',
+      'Posting somewhere public? Switch off habit and routine names, or what went well, and the card leaves them out.',
+    ],
+  },
+  {
     version: '1.25.0',
     date: '2026-11-07',
     title: 'A little garden.',

@@ -221,7 +221,7 @@ export const HELP_ARTICLES = [
     summary:
       'Your garden, the weekly recap, the dot grid, the forgiving chain, and the trend line.',
     keywords:
-      'progress dots grid chain streak recap week stats trend line steadier garden plant grow seed sprout bloom',
+      'progress dots grid chain streak recap week stats trend line steadier garden plant grow seed sprout bloom share instagram story post social',
     minutes: 3,
     related: ['never-miss-twice', 'reflection'],
   },
