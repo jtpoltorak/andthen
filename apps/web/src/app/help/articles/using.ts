@@ -542,10 +542,15 @@ export class RemindersHelp {}
       <h2>The dot grid</h2>
       <p>
         Each habit gets a column of dots per week, one dot per day, with the days of the week down
-        the side. The legend above the grid shows each kind: <strong>Done</strong> (teal),
-        <strong>2 min</strong> (amber), <strong>Skipped</strong>, <strong>No check-in</strong>, and
-        <strong>Rest day</strong> for habits with a schedule. The rest of this week shows as faint
-        rings, waiting to fill in.
+        the side. The legend above the grid shows each kind: <strong>Done</strong> (a solid teal
+        dot), <strong>2 min</strong> (a half-filled amber dot), <strong>Skipped</strong> (a dashed
+        ring), <strong>No check-in</strong> (a plain grey dot), and <strong>Rest day</strong> for
+        habits with a schedule. The rest of this week shows as faint rings, waiting to fill in.
+      </p>
+      <p>
+        The shapes tell the kinds apart as well as the colors do, so the grid reads clearly with any
+        kind of color vision. The same shapes are used in This week, the weekly recap, Run and your
+        share card.
       </p>
       <p>
         A new habit's grid starts the week you added it and grows a column each week, up to the last

@@ -228,8 +228,9 @@ export class FeelFinished {}
         once a week, because each repetition strengthens the link between the cue and the action.
       </p>
       <p>
-        That's why a 2-minute day still counts in AndThen. It shows as an amber ring on Today and an
-        amber dot on Progress, and it keeps your chain going exactly like a full day does.
+        That's why a 2-minute day still counts in AndThen. It shows as an amber ring on Today and a
+        half-filled amber dot on Progress, and it keeps your chain going exactly like a full day
+        does.
       </p>
       <h2>What counts as showing up</h2>
       <ul>

@@ -90,8 +90,10 @@ interface WeekDay {
     .dot-full {
       background: var(--accent);
     }
+    /* 2 min: half filled with a ring, so it reads apart from Done without relying on color. */
     .dot-mini {
-      background: var(--amber);
+      background: linear-gradient(to top, var(--amber) 50%, transparent 50%);
+      box-shadow: inset 0 0 0 2px var(--amber);
     }
     .dot-skip {
       border: 2px dashed var(--dashed);
