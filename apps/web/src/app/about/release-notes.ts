@@ -21,6 +21,16 @@ export interface Release {
 
 export const RELEASES: readonly Release[] = [
   {
+    version: '1.27.0',
+    date: '2026-11-08',
+    title: 'Your year at a glance.',
+    notes: [
+      'A new year view shows the last 12 months as little calendars, each day shaded by how much of it you did.',
+      'Look at all your routines together or one at a time, with the days you showed up, your check-ins and your best month.',
+      'Skips, rest days and pauses are never shaded as misses. Find it under See your year on Progress.',
+    ],
+  },
+  {
     version: '1.26.0',
     date: '2026-11-08',
     title: 'Your week, ready to post.',
