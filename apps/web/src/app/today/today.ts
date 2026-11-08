@@ -33,6 +33,7 @@ import { WeekPanel } from './week-panel';
 import { RoutineIcon } from '../shared/routine-icon';
 import { Plant } from '../shared/plant';
 import { Sky } from './sky';
+import { drawNewChain } from '../shared/draw-chain';
 import { MilestonesStore } from '../milestones/milestones-store';
 import { routineTransitionName } from '../shared/view-transitions';
 
@@ -132,6 +133,9 @@ export class Today {
   /** Gentle milestones: a quiet card, once, when one is reached. */
   protected readonly milestones = inject(MilestonesStore);
   private readonly preferences = inject(PreferencesStore);
+
+  /** A routine that was just made draws its chain once. */
+  protected readonly drawing = drawNewChain();
 
   /** The optional sky behind the header (Settings > Look). */
   protected readonly skyOn = computed(() => this.preferences.prefs().skyHeader);

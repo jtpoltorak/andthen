@@ -781,3 +781,42 @@ h1 {
   font-size: 14px;
   font-weight: 700;
 }
+
+/* The anchor draws itself: a routine that was just made draws its chain once,
+   from the anchor down to the first habit (shared/draw-chain.ts). */
+@media (prefers-reduced-motion: no-preference) {
+  .drawing .anchor-row .rail > :first-child {
+    animation: draw-pop 420ms cubic-bezier(0.3, 1.5, 0.5, 1) both;
+  }
+  .drawing .anchor-row .line {
+    transform-origin: top;
+    animation: draw-line 650ms 320ms ease-in-out both;
+  }
+  .drawing .links > li:first-child .ring {
+    animation: draw-pop 420ms 900ms cubic-bezier(0.3, 1.5, 0.5, 1) both;
+  }
+  .drawing .links > li:first-child .link-body {
+    animation: draw-fade 450ms 950ms ease-out both;
+  }
+}
+@keyframes draw-pop {
+  from {
+    transform: scale(0.4);
+    opacity: 0;
+  }
+}
+@keyframes draw-line {
+  from {
+    transform: scaleY(0);
+    background: var(--accent);
+  }
+  80% {
+    background: var(--accent);
+  }
+}
+@keyframes draw-fade {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+}

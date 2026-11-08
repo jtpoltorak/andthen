@@ -63,6 +63,7 @@ const DAY_TOGGLES = [
 import { HabitStore } from '../data/habit-store';
 import { Autofocus, byId, focusAfterRender } from '../shared/focus';
 import { HelpLink } from '../help/help-link';
+import { drawNewChain } from '../shared/draw-chain';
 
 /** What is open for editing: the anchor, one habit, or nothing. */
 type Editing = { kind: 'anchor' } | { kind: 'habit'; id: string } | undefined;
@@ -92,6 +93,8 @@ export class ChainEditor {
     return r && !r.archivedOn ? r : undefined;
   });
   protected readonly habits = computed(() => this.store.habitsOf(this.id()));
+  /** A routine that was just made draws its chain once. */
+  protected readonly drawing = drawNewChain();
 
   protected readonly editing = signal<Editing>(undefined);
   protected readonly confirmingRemoveRoutine = signal(false);

@@ -59,6 +59,7 @@
           <section
             class="card"
             tabindex="-1"
+            [class.drawing]="chain.routine.id === drawing()"
             [id]="'card-' + chain.routine.id"
             [style.view-transition-name]="transitionName(chain.routine.id)"
             [attr.aria-label]="chain.routine.anchor"

@@ -21,6 +21,16 @@ export interface Release {
 
 export const RELEASES: readonly Release[] = [
   {
+    version: '1.31.0',
+    date: '2026-11-08',
+    title: 'The anchor draws itself.',
+    notes: [
+      'When you make a new routine, its chain draws itself once: the anchor, then a line down to your first habit.',
+      'It shows the idea at the heart of AndThen, after this comes that, right from day one.',
+      'If your device is set to reduce motion, the chain simply appears.',
+    ],
+  },
+  {
     version: '1.30.0',
     date: '2026-11-08',
     title: 'Your day at a glance.',

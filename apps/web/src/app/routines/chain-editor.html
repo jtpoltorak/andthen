@@ -7,7 +7,7 @@
       <app-help-link slug="routines" />
     </div>
 
-    <ol class="chain" aria-label="Chain">
+    <ol class="chain" aria-label="Chain" [class.drawing]="r.id === drawing()">
       <!-- The anchor: the thing the person already does. -->
       <li class="chain-row">
         <div class="rail" aria-hidden="true">
