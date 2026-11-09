@@ -2,10 +2,9 @@ import { EnvironmentInjector, Injector } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { IDBKeyRange, indexedDB } from 'fake-indexeddb';
 import { isNewer, type Routine, type SyncChange, type SyncRequest } from '@andthen/core';
-import { AndThenDb } from '../data/dexie-habit-repository';
+import { AndThenDb, SyncingHabitRepository, type SyncEngine } from '@andthen/data';
 import { HABIT_REPOSITORY } from '../data/habit-repository';
 import { HabitStore } from '../data/habit-store';
-import { SyncingHabitRepository } from '../data/syncing-habit-repository';
 import { SyncApi } from './sync-api';
 import { SyncService } from './sync.service';
 
@@ -327,7 +326,9 @@ describe('SyncService', () => {
     expect(sync.email()).toBe('sam@example.com');
     expect(server.calls.slice(calls)).toEqual(['/v1/sync']);
 
-    const soon = vi.spyOn(sync, 'syncSoon');
+    // The edit reaches the shared engine (packages/data), which queues a sync.
+    const engine = (sync as unknown as { engine: SyncEngine }).engine;
+    const soon = vi.spyOn(engine, 'syncSoon');
     await injector
       .get(HabitStore)
       .createChain({ anchor: 'X', habitName: 'Y', twoMinuteVersion: 'Z' });

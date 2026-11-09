@@ -21,6 +21,15 @@ export interface Release {
 
 export const RELEASES: readonly Release[] = [
   {
+    version: '1.33.1',
+    date: '2026-11-09',
+    title: 'Groundwork for the browser extension.',
+    notes: [
+      'Behind the scenes, the parts that save your habits and keep sync running now live in one shared place, ready for the AndThen browser extension.',
+      'Nothing changes in the app itself, and your data stays exactly where it is.',
+    ],
+  },
+  {
     version: '1.33.0',
     date: '2026-11-08',
     title: 'An easy-reading font.',

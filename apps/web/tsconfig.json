@@ -15,6 +15,9 @@
     "paths": {
       "@andthen/core": [
         "../../packages/core/src/index.ts"
+      ],
+      "@andthen/data": [
+        "../../packages/data/src/index.ts"
       ]
     }
   },

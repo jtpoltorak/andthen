@@ -7,7 +7,7 @@ import {
 } from '@angular/router';
 import { provideServiceWorker } from '@angular/service-worker';
 import { routes } from './app.routes';
-import { SyncingHabitRepository } from './data/syncing-habit-repository';
+import { SyncingHabitRepository } from '@andthen/data';
 import { HABIT_REPOSITORY } from './data/habit-repository';
 import { onViewTransitionCreated } from './shared/view-transitions';
 

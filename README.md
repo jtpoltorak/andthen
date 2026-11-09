@@ -9,11 +9,12 @@ AndThen is a simple, low-friction habit app built around **routine chains**: pic
 | Path | What it is |
 | --- | --- |
 | `packages/core` | Framework-free TypeScript: the data model, chain logic, and "never miss twice" rules. Shared by every future client (web, Android, browser extension). |
+| `packages/data` | Framework-free storage and sync: the IndexedDB repositories (Dexie), the sync API client, and `SyncEngine`. Shared by the web app and the browser extension (whose background worker has no Angular). |
 | `apps/web` | The Angular web app (standalone components, signals). Installable as a PWA and works offline. |
 
 Data stays on the device in IndexedDB (via [Dexie](https://dexie.org)). No account is needed. Screens talk to a `HabitRepository` interface; the one in use (`SyncingHabitRepository`) also keeps an outbox of changes while sync is on.
 
-**Sync across devices** is optional and free. Sign in with an emailed code in Settings, and `apps/web/src/app/sync/sync.service.ts` keeps the device in step with `apps/api` in the background: on open, on return to the app, when back online, a few seconds after an edit, and every five minutes. When two devices edit the same thing, the later edit wins.
+**Sync across devices** is optional and free. Sign in with an emailed code in Settings, and `SyncEngine` (`packages/data/src/sync-engine.ts`, wrapped for Angular by `apps/web/src/app/sync/sync.service.ts`) keeps the device in step with `apps/api` in the background: on open, on return to the app, when back online, a few seconds after an edit, and every five minutes. When two devices edit the same thing, the later edit wins.
 
 Habits can run every day, on chosen days (like weekdays), or N times a week. Off days are rest days: they never count as a miss, so streaks, the "don't miss twice" nudge, Progress, reminders and backups all follow the schedule (`packages/core/src/schedule.ts`).
 

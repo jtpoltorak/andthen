@@ -5,6 +5,7 @@ FROM node:22-slim AS build
 WORKDIR /app
 COPY package.json package-lock.json ./
 COPY packages/core/package.json packages/core/
+COPY packages/data/package.json packages/data/
 COPY apps/web/package.json apps/web/
 COPY apps/api/package.json apps/api/
 RUN npm ci --no-audit --no-fund
