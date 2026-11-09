@@ -94,7 +94,7 @@ describe('Popup', () => {
     TestBed.resetTestingModule();
 
     const { root } = await setup();
-    expect(buttonsByText(root, 'Sync with your phone')).toHaveLength(1);
+    expect(buttonsByText(root, 'Turn on sync')).toHaveLength(1);
   });
 
   it('links to the full app', async () => {

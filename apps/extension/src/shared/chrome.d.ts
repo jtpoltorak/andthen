@@ -16,7 +16,20 @@ declare namespace chrome {
     const onInstalled: ExtEvent<() => void>;
     const onStartup: ExtEvent<() => void>;
     const onMessage: ExtEvent<(message: unknown, sender: unknown) => void>;
+    function getManifest(): {
+      browser_specific_settings?: {
+        gecko?: { data_collection_permissions?: { required?: string[]; optional?: string[] } };
+      };
+    };
   }
+
+  /** Only data_collection is used: Firefox's consent for sending data off the device. */
+  const permissions:
+    | {
+        request(p: { data_collection?: string[] }): Promise<boolean>;
+        getAll(): Promise<{ data_collection?: string[] }>;
+      }
+    | undefined;
 
   namespace storage {
     interface StorageArea {

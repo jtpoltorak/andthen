@@ -61,6 +61,7 @@ describe('help filter', () => {
     expect(filterArticles('reminders').map((a) => a.slug)).toContain('no-reminders');
     expect(filterArticles('iphone install').map((a) => a.slug)).toEqual(['install']);
     expect(filterArticles('dont miss').map((a) => a.slug)).toContain('nudges');
+    expect(filterArticles('firefox add-on').map((a) => a.slug)).toEqual(['browser-extension']);
     expect(filterArticles('zebra')).toEqual([]);
   });
 

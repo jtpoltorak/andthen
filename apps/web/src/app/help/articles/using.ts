@@ -742,6 +742,96 @@ export class NudgesHelp {}
 })
 export class InstallHelp {}
 
+/**
+ * Where to get the extension. Each link stays empty until that store has approved it;
+ * until then the article says "coming soon" for that browser.
+ */
+export const EXTENSION_STORES: readonly { browser: string; store: string; url?: string }[] = [
+  { browser: 'Chrome', store: 'Chrome Web Store' },
+  { browser: 'Edge', store: 'Edge Add-ons' },
+  { browser: 'Firefox', store: 'Firefox Add-ons' },
+];
+
+@Component({
+  imports: [HelpArticle, RouterLink],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  selector: 'app-help-browser-extension',
+  template: `
+    <app-help-article slug="browser-extension">
+      <p class="lede">
+        A small companion for your computer: today's routine in your browser's toolbar, so you can
+        check off a habit without opening a tab.
+      </p>
+      <h2>Get it</h2>
+      <ul>
+        @for (s of stores; track s.browser) {
+          <li>
+            <strong>{{ s.browser }}</strong
+            >:
+            @if (s.url) {
+              <a [href]="s.url" target="_blank" rel="noopener">{{ s.store }}</a>
+            } @else {
+              {{ s.store }} (coming soon)
+            }
+          </li>
+        }
+      </ul>
+      <p>
+        Brave, Opera, Vivaldi and other Chromium browsers can install it from the Chrome Web Store.
+        After installing, pin the AndThen icon from the puzzle-piece menu so it stays in view.
+      </p>
+      <h2>What it does</h2>
+      <ul>
+        <li>
+          <strong>Click the icon</strong> to see today, with the next habit up front. Answer with
+          Done, Did 2 min or Skip, just like on Today, and undo a tap for a few seconds afterwards.
+        </li>
+        <li>
+          <strong>A small number on the icon</strong> shows how many habits are left today. It goes
+          away once everything's answered.
+        </li>
+        <li>
+          <strong>Reminders</strong> at each routine's usual time, if something's still left. Turn
+          them on with the gear in the extension's footer. They work whenever the browser is open,
+          with no AndThen tab needed.
+        </li>
+        <li>
+          <strong>The side panel</strong> (the sidebar in Firefox) keeps today open beside the page
+          you're on, with this week's dots and a tiny journal for each habit you've answered. Open
+          it with the panel button in the footer.
+        </li>
+      </ul>
+      <p>
+        Editing routines, Progress, the weekly reflection and Help open andthenhabits.com in a tab.
+      </p>
+      <h2>Your habits in the extension</h2>
+      <p>
+        Browsers keep an extension's storage separate from every website's, so the extension starts
+        with its own copy of your habits. To have the same routines in both, sign in to
+        <a routerLink="/help/sync">sync</a> from the extension's welcome screen or its footer, with
+        the same email you use here. You don't need an account to use it on its own.
+      </p>
+      <p>
+        Once signed in, the extension shows up in your list of signed-in devices as
+        <strong>AndThen extension in Chrome</strong> (or your browser), and you can sign it out from
+        there like any other device.
+      </p>
+      <h2>Removing it</h2>
+      <p>
+        Removing the extension deletes its copy of your habits from that browser. If sync is on,
+        your account and your other devices keep theirs.
+      </p>
+      <p>
+        The extension can't see the pages you visit. What it keeps, and why it asks for each
+        permission: <a routerLink="/privacy">Privacy</a>.
+      </p>
+    </app-help-article>
+  `,
+})
+export class BrowserExtensionHelp {
+  protected readonly stores = EXTENSION_STORES;
+}
+
 @Component({
   imports: [HelpArticle, RouterLink],
   changeDetection: ChangeDetectionStrategy.OnPush,

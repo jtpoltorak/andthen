@@ -55,6 +55,35 @@ import { BackButton } from '../shared/back-button';
         look at it except to fix a problem you've asked us about.
       </p>
 
+      <h2>The browser extension</h2>
+      <p>
+        The AndThen extension for Chrome, Edge and Firefox works the same way. Without sync, your
+        habits and its settings stay in the browser's storage for that extension, on your computer.
+        With sync, it sends and keeps the same things listed above; its device name looks like
+        "AndThen extension in Chrome".
+      </p>
+      <p>It asks the browser for only what it needs:</p>
+      <ul>
+        <li><strong>Storage</strong>, to keep your habits and its settings;</li>
+        <li>
+          <strong>Alarms</strong>, to check once a minute whether a reminder is due and to update
+          the count on its icon, and to sync every 15 minutes once you've turned sync on;
+        </li>
+        <li>
+          <strong>Notifications</strong>, to show reminders, which are off until you turn them on;
+        </li>
+        <li><strong>Side panel</strong> (Chrome and Edge), to open AndThen beside the page;</li>
+        <li>
+          access to <strong>api.andthenhabits.com</strong> only, our sync server, used once you sign
+          in.
+        </li>
+      </ul>
+      <p>
+        It can't read or change the pages you visit and doesn't see your browsing history. Its font
+        is built in, so it loads nothing from Google or anyone else. Removing the extension deletes
+        what it stored in that browser.
+      </p>
+
       <h2>Who helps run it</h2>
       <ul>
         <li>
@@ -118,7 +147,7 @@ import { BackButton } from '../shared/back-button';
       <h2>Questions</h2>
       <p>Email <a href="mailto:hello@andthenhabits.com">hello&#64;andthenhabits.com</a>.</p>
       <p>See also the <a routerLink="/terms">Terms of Use</a>.</p>
-      <p class="muted">Effective November 4, 2026.</p>
+      <p class="muted">Effective November 9, 2026.</p>
       <app-copyright />
     </main>
   `,

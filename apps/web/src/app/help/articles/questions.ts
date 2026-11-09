@@ -26,6 +26,10 @@ import { HelpArticle } from '../help-article';
         andthenhabits.com deletes it. Keep a <a routerLink="/help/backup">backup</a>, or turn on
         <a routerLink="/help/sync">sync</a>.
       </p>
+      <p>
+        The <a routerLink="/help/browser-extension">browser extension</a> keeps its own copy, in the
+        extension's storage. Sync keeps the two the same.
+      </p>
       <p>The full details: <a routerLink="/privacy">Privacy</a>.</p>
     </app-help-article>
   `,

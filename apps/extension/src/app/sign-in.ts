@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, inject, output, signal } from '@ang
 import { readJson, writeJson } from '@web/data/local-store';
 import { signInErrorMessage } from '@web/sync/sync-api';
 import { SyncService } from '@web/sync/sync.service';
+import { askForSyncConsent } from '../shared/data-consent';
 import { WEB_APP_URL } from './links';
 
 /** Where a sign-in in progress waits while the popup is closed (to read the email). */
@@ -196,6 +197,13 @@ export class SignIn {
     if (!this.email().trim() || this.busy()) return;
     this.busy.set(true);
     this.error.set('');
+    // Firefox asks before your email goes to the sync server. It must come first: the
+    // prompt only shows straight after a click.
+    if (!(await askForSyncConsent())) {
+      this.error.set('Sync sends your email to AndThen to sign you in. Allow it to continue.');
+      this.busy.set(false);
+      return;
+    }
     try {
       await this.sync.sendCode(this.email());
       writeJson(PENDING_KEY, { email: this.email().trim(), sentAt: Date.now() });

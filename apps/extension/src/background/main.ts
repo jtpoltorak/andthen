@@ -16,6 +16,7 @@ import {
   saveSentToday,
 } from '../shared/ext-settings';
 import { notificationId, routineFromNotification, todayStatus } from './today-status';
+import { hasSyncConsent } from '../shared/data-consent';
 
 /** Firefox's `browser` where there is one (its promise-based API), otherwise Chrome's `chrome`. */
 const ext = extensionApi()!;
@@ -73,6 +74,8 @@ async function showReminder(id: string, title: string, message: string): Promise
 
 /** Syncs if sync is on. Starting the engine the first time also syncs. */
 async function sync(): Promise<void> {
+  // In Firefox, someone can take back sync's data consent in the add-on settings.
+  if (!(await hasSyncConsent())) return;
   if (!engineStarted) {
     engineStarted = true;
     await engine.start();

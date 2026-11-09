@@ -24,6 +24,7 @@ import { HabitStore } from '@web/data/habit-store';
 import { PreferencesStore } from '@web/data/preferences';
 import { readJson } from '@web/data/local-store';
 import { SyncService } from '@web/sync/sync.service';
+import { hasSyncConsent } from '../shared/data-consent';
 import { CheckInJournal } from '@web/today/check-in-journal';
 import { DayRing } from '@web/today/day-ring';
 import { WeekPanel } from '@web/today/week-panel';
@@ -141,7 +142,8 @@ export class Popup {
   constructor() {
     void this.store.load().then(() => this.loaded.set(true));
     // With sync on, every open catches up with the other devices (and the store reloads).
-    void this.sync.start();
+    // (Unless the person took back Firefox's data consent for sync since signing in.)
+    void hasSyncConsent().then((ok) => (ok ? this.sync.start() : undefined));
     // The background worker counts "N times a week" habits by the same week as the app.
     void saveExtSettings({ weekStartsOn: this.preferences.prefs().weekStartsOn });
     // When sync brings changes from other devices, the badge and any other open page catch up.

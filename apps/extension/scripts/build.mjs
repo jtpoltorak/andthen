@@ -38,8 +38,12 @@ const FIREFOX = {
     gecko: {
       id: 'extension@andthenhabits.com',
       strict_min_version: '140.0',
-      // AndThen collects nothing: habits stay in the browser unless you turn on sync.
-      data_collection_permissions: { required: ['none'] },
+      // Nothing leaves the browser unless you turn on sync. Sync sends your email and
+      // sign-in code, so those are optional, asked for at sign-in (src/shared/data-consent.ts).
+      data_collection_permissions: {
+        required: ['none'],
+        optional: ['personallyIdentifyingInfo', 'authenticationInfo'],
+      },
     },
     // Firefox for Android learned data_collection_permissions in 142.
     gecko_android: { strict_min_version: '142.0' },
