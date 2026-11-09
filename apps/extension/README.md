@@ -39,9 +39,18 @@ After a rebuild, press the reload arrow on the extension's card (Chrome, Edge) o
   and catches up each time it opens. Sign-in is the 6-digit code only; the step is kept in
   localStorage for the 10 minutes a code lasts, because the popup closes while you read
   your email.
-- **Permissions**: just one host, `https://api.andthenhabits.com/*`, so the popup can reach
-  the sync server. With it, the browser doesn't apply CORS to those requests, so the API
-  needs no change. No other permissions, and no access to the pages you visit.
+- **Background worker** (`src/background/`): plain TypeScript bundled by esbuild into
+  `background.js` (a service worker in Chrome and Edge, an event page in Firefox). Alarms
+  wake it once a minute to update the badge and send reminders (`today-status.ts`, using
+  the core reminder rules), and every 15 minutes to sync with `SyncEngine`. The popup tells
+  it when habits change, so the badge catches up straight away.
+- **Settings** shared by the popup and the worker (reminders, badge, week start) live in
+  `chrome.storage.local` (`src/shared/ext-settings.ts`), since the worker can't read the
+  popup's localStorage. The extension APIs are typed by hand in `src/shared/chrome.d.ts`.
+- **Permissions**: `alarms`, `notifications` and `storage`, plus one host,
+  `https://api.andthenhabits.com/*`, so it can reach the sync server. With that host the
+  browser doesn't apply CORS to those requests, so the API needs no change. No access to the
+  pages you visit.
 - **No remote code.** Manrope ships inside the extension and the popup has no inline scripts.
 
 ## Version

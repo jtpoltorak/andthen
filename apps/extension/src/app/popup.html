@@ -13,6 +13,8 @@
     <ext-sign-in (signedIn)="show('today')" (cancelled)="show('today')" />
   } @else if (panel() === 'sync') {
     <ext-sync-status (closed)="show('today')" />
+  } @else if (panel() === 'settings') {
+    <ext-settings-panel (closed)="show('today')" />
   } @else if (!loaded()) {
     <p class="quiet">Loading…</p>
   } @else if (!store.hasRoutines() && (choosingStarter() || sync.enabled())) {
@@ -184,4 +186,27 @@
   } @else if (store.hasRoutines() && panel() === 'today') {
     <button type="button" class="sync-btn" (click)="show('sign-in')">Sync with your phone</button>
   }
+  <button
+    type="button"
+    class="icon-btn"
+    (click)="show(panel() === 'settings' ? 'today' : 'settings')"
+    [attr.aria-pressed]="panel() === 'settings'"
+    aria-label="Settings"
+    title="Settings"
+  >
+    <svg
+      width="18"
+      height="18"
+      viewBox="0 0 18 18"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="1.6"
+      aria-hidden="true"
+    >
+      <circle cx="9" cy="9" r="2.5" />
+      <path
+        d="M9 1.8v2M9 14.2v2M1.8 9h2M14.2 9h2M3.9 3.9l1.4 1.4M12.7 12.7l1.4 1.4M3.9 14.1l1.4-1.4M12.7 5.3l1.4-1.4"
+      />
+    </svg>
+  </button>
 </footer>
