@@ -9,13 +9,21 @@
 </header>
 
 <main class="body">
-  @if (!loaded()) {
+  @if (panel() === 'sign-in') {
+    <ext-sign-in (signedIn)="show('today')" (cancelled)="show('today')" />
+  } @else if (panel() === 'sync') {
+    <ext-sync-status (closed)="show('today')" />
+  } @else if (!loaded()) {
     <p class="quiet">Loading…</p>
-  } @else if (!store.hasRoutines()) {
+  } @else if (!store.hasRoutines() && (choosingStarter() || sync.enabled())) {
     <section class="empty" aria-labelledby="empty-title">
       <h2 id="empty-title" class="empty-title">Start with a routine</h2>
       <p class="quiet">
-        Pick one to begin. You can change it any time. Your habits stay in this browser.
+        @if (sync.enabled()) {
+          Your account has no routines yet. Pick one to begin, or make your own in the app.
+        } @else {
+          Pick one to begin. You can change it any time in the app.
+        }
       </p>
       <ul class="starters">
         @for (template of starters; track template.id) {
@@ -29,6 +37,32 @@
           </li>
         }
       </ul>
+      @if (!sync.enabled()) {
+        <button type="button" class="link-btn" (click)="choosingStarter.set(false)">Back</button>
+      }
+    </section>
+  } @else if (!store.hasRoutines()) {
+    <section class="empty" aria-labelledby="welcome-title">
+      <h2 id="welcome-title" class="empty-title">Welcome to AndThen</h2>
+      <p class="quiet">Small habits, linked to what you already do.</p>
+      <div class="card choice">
+        <h3 class="choice-title">I already use AndThen</h3>
+        <p class="quiet small">
+          Sign in with your email to bring your routines here. They stay in step with your other
+          devices.
+        </p>
+        <button type="button" class="btn done wide" (click)="show('sign-in')">Sign in</button>
+      </div>
+      <div class="card choice">
+        <h3 class="choice-title">I'm new</h3>
+        <p class="quiet small">Start with a routine in under a minute.</p>
+        <button type="button" class="btn mini wide" (click)="choosingStarter.set(true)">
+          Pick a starter routine
+        </button>
+      </div>
+      <p class="quiet small">
+        No account needed to start. Your habits stay in this browser unless you turn on sync.
+      </p>
     </section>
   } @else {
     @for (group of groups(); track group.part) {
@@ -135,4 +169,19 @@
   <a [href]="webAppUrl" target="_blank" rel="noopener"
     >Open AndThen<span aria-hidden="true"> ↗</span></a
   >
+  @if (sync.enabled()) {
+    <button
+      type="button"
+      class="sync-btn"
+      (click)="show('sync')"
+      [attr.aria-pressed]="panel() === 'sync'"
+    >
+      <span class="sync-dot" [class]="'sync-dot ' + sync.phase()" aria-hidden="true"></span>
+      {{
+        sync.phase() === 'syncing' ? 'Syncing…' : sync.phase() === 'idle' ? 'Synced' : 'Sync paused'
+      }}
+    </button>
+  } @else if (store.hasRoutines() && panel() === 'today') {
+    <button type="button" class="sync-btn" (click)="show('sign-in')">Sync with your phone</button>
+  }
 </footer>

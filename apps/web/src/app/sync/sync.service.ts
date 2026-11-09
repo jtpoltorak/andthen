@@ -1,4 +1,4 @@
-import { Injectable, computed, inject, signal } from '@angular/core';
+import { Injectable, InjectionToken, computed, inject, signal } from '@angular/core';
 import type { BackupFile } from '@andthen/core';
 import {
   SyncEngine,
@@ -9,6 +9,12 @@ import {
 } from '@andthen/data';
 import { HabitStore } from '../data/habit-store';
 import { SyncApi } from './sync-api';
+
+/**
+ * How this device appears in the account's list of signed-in devices. Unset, it's a
+ * guess from the browser, such as "Chrome on Mac". The browser extension sets its own.
+ */
+export const SYNC_DEVICE_NAME = new InjectionToken<string>('SyncDeviceName');
 
 export { EDIT_DELAY_MS, POLL_MS, PUSH_BATCH, type SyncPhase } from '@andthen/data';
 
@@ -27,6 +33,7 @@ export class SyncService {
     repo: inject(SyncingHabitRepository, { optional: true }),
     api: inject(SyncApi),
     onRemoteApplied: () => this.store.reload(),
+    deviceName: inject(SYNC_DEVICE_NAME, { optional: true }) ?? undefined,
   });
 
   readonly phase = signal<SyncPhase>('off');

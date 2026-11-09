@@ -19,15 +19,22 @@ import {
 } from '@andthen/core';
 import { HabitStore } from '@web/data/habit-store';
 import { PreferencesStore } from '@web/data/preferences';
+import { readJson } from '@web/data/local-store';
+import { SyncService } from '@web/sync/sync.service';
 import { DayRing } from '@web/today/day-ring';
+import { WEB_APP_URL } from './links';
+import { PENDING_KEY, SignIn } from './sign-in';
+import { SyncStatus } from './sync-status';
 
 /** How long "Saved … Undo" stays after an answer. */
 export const UNDO_MS = 6000;
 
 const lowerFirst = (text: string) => (text ? text.charAt(0).toLowerCase() + text.slice(1) : '');
 
-/** The full app, for everything the popup leaves out (editing, Progress, Help). */
-export const WEB_APP_URL = 'https://andthenhabits.com';
+export { WEB_APP_URL };
+
+/** What the popup's body shows. */
+export type Panel = 'today' | 'sign-in' | 'sync';
 
 const PART_LABELS: Record<PartOfDay, string> = {
   morning: 'Morning',
@@ -42,7 +49,7 @@ const PART_LABELS: Record<PartOfDay, string> = {
  */
 @Component({
   selector: 'ext-popup',
-  imports: [DayRing],
+  imports: [DayRing, SignIn, SyncStatus],
   templateUrl: './popup.html',
   styleUrl: './popup.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -51,6 +58,12 @@ export class Popup {
   protected readonly store = inject(HabitStore);
   // Applies the theme, accent and text options to the popup, as in the app.
   private readonly preferences = inject(PreferencesStore);
+  protected readonly sync = inject(SyncService);
+
+  /** Opens on sign-in when one was left half done (the popup closed to read the email). */
+  protected readonly panel = signal<Panel>(readJson(PENDING_KEY) ? 'sign-in' : 'today');
+  /** On first run, after "I'm new": the starter routines. */
+  protected readonly choosingStarter = signal(false);
 
   protected readonly webAppUrl = WEB_APP_URL;
   protected readonly lowerFirst = lowerFirst;
@@ -93,11 +106,14 @@ export class Popup {
 
   constructor() {
     void this.store.load().then(() => this.loaded.set(true));
+    // With sync on, every open catches up with the other devices (and the store reloads).
+    void this.sync.start();
     // "Today" rolls over at midnight if the popup stays open (it can, docked in some browsers).
     const onVisible = () => this.store.refreshDay();
     document.addEventListener('visibilitychange', onVisible);
     inject(DestroyRef).onDestroy(() => {
       document.removeEventListener('visibilitychange', onVisible);
+      this.sync.stop();
       clearTimeout(this.undoTimer);
     });
   }
@@ -127,5 +143,10 @@ export class Popup {
 
   protected async start(template: RoutineTemplate): Promise<void> {
     await this.store.createFromTemplate(template);
+    this.choosingStarter.set(false);
+  }
+
+  protected show(panel: Panel): void {
+    this.panel.set(panel);
   }
 }

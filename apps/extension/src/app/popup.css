@@ -273,3 +273,59 @@
 .foot a:hover {
   text-decoration: underline;
 }
+
+/* First run: two ways in. */
+.choice {
+  display: grid;
+  gap: 6px;
+}
+.choice-title {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 700;
+}
+.small {
+  font-size: 12px;
+}
+.btn.wide {
+  width: 100%;
+  margin-top: 4px;
+}
+.link-btn {
+  justify-self: start;
+  border: 0;
+  background: none;
+  padding: 4px 2px;
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+/* Footer: sync status, or an offer to turn it on. */
+.sync-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border: 0;
+  background: none;
+  padding: 4px 0;
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 600;
+}
+.sync-btn:hover {
+  color: var(--accent-ink);
+}
+.sync-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--accent);
+}
+.sync-dot.syncing {
+  background: var(--amber);
+}
+.sync-dot.offline,
+.sync-dot.error {
+  background: var(--dashed);
+}

@@ -70,15 +70,31 @@ describe('Popup', () => {
     );
   });
 
-  it('offers starter routines when there are none, and starts one in a tap', async () => {
+  it('welcomes a new person with two ways in, and starts a routine in two taps', async () => {
     const { fixture, store, root } = await setup({ empty: true });
+    expect(root.textContent).toContain('Welcome to AndThen');
+    expect(buttonsByText(root, 'Sign in')).toHaveLength(1);
+
+    buttonsByText(root, 'Pick a starter routine')[0].click();
+    await fixture.whenStable();
     expect(root.textContent).toContain('Start with a routine');
-    const morning = buttonsByText(root, 'Morning reset')[0];
-    morning.click();
+    buttonsByText(root, 'Morning reset')[0].click();
     await fixture.whenStable();
     expect(store.hasRoutines()).toBe(true);
     expect(root.textContent).toContain('After I wake up');
     expect(buttonsByText(root, 'Done')).toHaveLength(1);
+  });
+
+  it('opens sign-in from the welcome screen, and offers sync once there are routines', async () => {
+    const empty = await setup({ empty: true });
+    buttonsByText(empty.root, 'Sign in')[0].click();
+    await empty.fixture.whenStable();
+    expect(empty.root.textContent).toContain('Sign in to sync');
+    expect(empty.root.querySelector('#ext-email')).not.toBeNull();
+    TestBed.resetTestingModule();
+
+    const { root } = await setup();
+    expect(buttonsByText(root, 'Sync with your phone')).toHaveLength(1);
   });
 
   it('links to the full app', async () => {
