@@ -1,0 +1,138 @@
+<header class="head">
+  <div>
+    <p class="date">{{ dateLabel() }}</p>
+    <h1 class="title">Today</h1>
+  </div>
+  @if (statuses().length > 0) {
+    <app-day-ring [statuses]="statuses()" />
+  }
+</header>
+
+<main class="body">
+  @if (!loaded()) {
+    <p class="quiet">Loading…</p>
+  } @else if (!store.hasRoutines()) {
+    <section class="empty" aria-labelledby="empty-title">
+      <h2 id="empty-title" class="empty-title">Start with a routine</h2>
+      <p class="quiet">
+        Pick one to begin. You can change it any time. Your habits stay in this browser.
+      </p>
+      <ul class="starters">
+        @for (template of starters; track template.id) {
+          <li>
+            <button type="button" class="starter" (click)="start(template)">
+              <span class="starter-name">{{ template.name }}</span>
+              <span class="starter-blurb"
+                >{{ template.anchor }} · {{ template.habits.length }} habits</span
+              >
+            </button>
+          </li>
+        }
+      </ul>
+    </section>
+  } @else {
+    @for (group of groups(); track group.part) {
+      @if (groups().length > 1) {
+        <h2 class="group">{{ partLabels[group.part] }}</h2>
+      }
+      @for (chain of group.chains; track chain.routine.id) {
+        @let open = activeId() === chain.routine.id && !chain.complete && !chain.paused;
+        @let next = nextLink(chain);
+        @if (open && next) {
+          <article class="card open" [attr.aria-label]="chain.routine.anchor">
+            <button
+              type="button"
+              class="anchor"
+              (click)="toggle(chain)"
+              [attr.aria-expanded]="true"
+            >
+              <span class="anchor-dot" aria-hidden="true"></span>
+              <span class="anchor-text">{{ chain.routine.anchor }}</span>
+              <span class="pill">{{ chain.doneCount }} of {{ chain.total }}</span>
+            </button>
+            <div class="chain-line" aria-hidden="true"></div>
+            <div class="habit-row">
+              <span
+                class="ring"
+                [class.ring-nudge]="next.nudge === 'dont-miss-twice'"
+                aria-hidden="true"
+              ></span>
+              <div class="habit-text">
+                <h3 class="habit">{{ next.habit.name }}</h3>
+                <p class="tiny">Tiny version: {{ lowerFirst(next.habit.twoMinuteVersion) }}</p>
+                @if (next.nudge === 'dont-miss-twice') {
+                  <p class="nudge">Don't miss twice. The 2-minute version counts.</p>
+                } @else if (next.nudge === 'welcome-back') {
+                  <p class="nudge">Welcome back. 2 minutes counts.</p>
+                }
+              </div>
+            </div>
+            <div class="actions">
+              <button type="button" class="btn done" (click)="answer(next, 'full')">
+                Done<span class="visually-hidden"> {{ next.habit.name }}</span>
+              </button>
+              <button type="button" class="btn mini" (click)="answer(next, 'mini')">
+                Did 2 min<span class="visually-hidden"> of {{ next.habit.name }}</span>
+              </button>
+              <button type="button" class="btn skip" (click)="answer(next, 'skip')">
+                Skip<span class="visually-hidden"> {{ next.habit.name }}</span>
+              </button>
+            </div>
+          </article>
+        } @else {
+          <button
+            type="button"
+            class="card row"
+            (click)="toggle(chain)"
+            [attr.aria-expanded]="false"
+            [disabled]="chain.complete || !!chain.paused || chain.total === 0"
+          >
+            @if (chain.complete) {
+              <span class="check" aria-hidden="true">
+                <svg
+                  viewBox="0 0 12 12"
+                  width="12"
+                  height="12"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <path d="M2.5 6.2 5 8.5l4.5-5" />
+                </svg>
+              </span>
+            }
+            <span class="row-text">{{ chain.routine.anchor }}</span>
+            @if (chain.paused) {
+              <span class="quiet">Paused</span>
+            } @else if (chain.complete) {
+              <span class="quiet">Done</span>
+            } @else if (chain.total === 0) {
+              <span class="quiet">Rest day</span>
+            } @else {
+              <span class="pill">{{ chain.doneCount }} of {{ chain.total }}</span>
+            }
+          </button>
+        }
+      }
+    }
+
+    @if (allDone()) {
+      <p class="all-done">That's everything for today. Nice work.</p>
+    } @else {
+      <p class="quiet note">Missed a day? No streak to lose. Just don't miss twice.</p>
+    }
+  }
+</main>
+
+@if (lastAnswer(); as last) {
+  <div class="toast" role="status">
+    <span>Saved {{ last.name }}</span>
+    <button type="button" class="undo" (click)="undo()">Undo</button>
+  </div>
+}
+
+<footer class="foot">
+  <a [href]="webAppUrl" target="_blank" rel="noopener"
+    >Open AndThen<span aria-hidden="true"> ↗</span></a
+  >
+</footer>

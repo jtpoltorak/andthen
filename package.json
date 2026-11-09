@@ -11,12 +11,14 @@
   "scripts": {
     "start": "npm run start -w @andthen/web",
     "build": "npm run build -w @andthen/web",
-    "test": "npm test -w @andthen/core && npm test -w @andthen/data && npm test -w @andthen/api && npm test -w @andthen/web -- --watch=false",
+    "test": "npm test -w @andthen/core && npm test -w @andthen/data && npm test -w @andthen/api && npm test -w @andthen/web -- --watch=false && npm test -w @andthen/extension -- --watch=false",
     "test:core": "npm test -w @andthen/core",
     "test:data": "npm test -w @andthen/data",
     "typecheck": "npm run typecheck -w @andthen/core && npm run typecheck -w @andthen/data && npm run typecheck -w @andthen/api",
     "test:api": "npm test -w @andthen/api",
     "build:api": "npm run build -w @andthen/api",
+    "build:extension": "npm run build -w @andthen/extension",
+    "test:extension": "npm test -w @andthen/extension -- --watch=false",
     "start:api": "npm run dev -w @andthen/api",
     "changelog": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/changelog.mjs",
     "changelog:check": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/changelog.mjs --check"

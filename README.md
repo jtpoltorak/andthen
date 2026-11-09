@@ -10,6 +10,7 @@ AndThen is a simple, low-friction habit app built around **routine chains**: pic
 | --- | --- |
 | `packages/core` | Framework-free TypeScript: the data model, chain logic, and "never miss twice" rules. Shared by every future client (web, Android, browser extension). |
 | `packages/data` | Framework-free storage and sync: the IndexedDB repositories (Dexie), the sync API client, and `SyncEngine`. Shared by the web app and the browser extension (whose background worker has no Angular). |
+| `apps/extension` | The browser extension for Chrome, Edge and Firefox: Today in a toolbar popup. Angular, reusing the web app's store and components. See [its README](apps/extension/README.md). |
 | `apps/web` | The Angular web app (standalone components, signals). Installable as a PWA and works offline. |
 
 Data stays on the device in IndexedDB (via [Dexie](https://dexie.org)). No account is needed. Screens talk to a `HabitRepository` interface; the one in use (`SyncingHabitRepository`) also keeps an outbox of changes while sync is on.
