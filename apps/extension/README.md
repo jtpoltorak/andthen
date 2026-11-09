@@ -24,6 +24,26 @@ This writes one folder per browser:
 After a rebuild, press the reload arrow on the extension's card (Chrome, Edge) or **Reload**
 (Firefox). Pin the icon from the puzzle-piece menu so it stays in the toolbar.
 
+## Package it for the stores
+
+```sh
+npm run package:extension    # from the repo root: builds, then zips
+```
+
+This writes `andthen-chrome|edge|firefox-<version>.zip` to `dist/packages`, plus
+`andthen-source-<version>.zip` (every file git tracks) for Firefox's source-code review.
+The store listing, images and privacy answers are in [store/](store/LISTING.md), and the
+upload steps in [docs/EXTENSION_STORES.md](../../docs/EXTENSION_STORES.md).
+
+### Rebuilding the Firefox add-on from source (for reviewers)
+
+1. Install Node.js 22 or later (it comes with npm).
+2. Unzip the source and open a terminal in its root folder.
+3. Run `npm ci`, then `npm run build:extension`.
+4. The add-on is in `apps/extension/dist/firefox`. `background.js` is bundled by esbuild from
+   `src/background/main.ts`; the popup is an Angular build of `src/app` (which also uses
+   `apps/web/src/app` and `packages/`).
+
 ## How it's put together
 
 - **Popup** (`src/app/popup.*`): a small Angular app. It reuses the web app's `HabitStore`,
@@ -56,6 +76,10 @@ After a rebuild, press the reload arrow on the extension's card (Chrome, Edge) o
   `https://api.andthenhabits.com/*`, so it can reach the sync server. With that host the
   browser doesn't apply CORS to those requests, so the API needs no change. No access to the
   pages you visit.
+- **Firefox data consent**: Firefox asks before an extension sends data anywhere. Nothing
+  leaves the browser without sync, so the manifest declares `required: none`, and sync's
+  email and sign-in code as optional. The sign-in screen asks for them first
+  (`src/shared/data-consent.ts`), and the popup and worker don't sync if they're taken back.
 - **No remote code.** Manrope ships inside the extension and the popup has no inline scripts.
 
 ## Version

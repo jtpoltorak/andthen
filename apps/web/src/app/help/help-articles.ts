@@ -260,7 +260,16 @@ export const HELP_ARTICLES = [
     summary: 'Put it on your home screen or desktop.',
     keywords: 'install home screen pwa app iphone android desktop offline',
     minutes: 2,
-    related: ['reminders', 'updates'],
+    related: ['browser-extension', 'reminders', 'updates'],
+  },
+  {
+    slug: 'browser-extension',
+    part: 'using',
+    title: 'The browser extension',
+    summary: "Today's routine in your toolbar, for Chrome, Edge and Firefox.",
+    keywords: 'extension add-on addon plugin chrome edge firefox toolbar badge side panel sidebar',
+    minutes: 3,
+    related: ['sync', 'reminders'],
   },
   {
     slug: 'backup',

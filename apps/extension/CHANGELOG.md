@@ -1,5 +1,13 @@
 # AndThen extension: what's new
 
+## 1.0.0 (for the stores)
+
+Ready for the Chrome Web Store, Edge Add-ons and Firefox Add-ons.
+
+- In Firefox, signing in first asks your OK to send your email to AndThen's sync server, as Firefox now requires. Without sync, nothing leaves your browser.
+- If you take that OK back in Firefox's add-on settings, the extension stops syncing.
+- The popup's footer fits on one line again, now with "Turn on sync" in place of "Sync with your phone".
+
 ## 0.4.0 (not yet in the stores)
 
 A side panel, for keeping today open beside the page you're on.

@@ -33,6 +33,7 @@ export const HELP_COMPONENTS: Record<HelpSlug, Type<unknown>> = {
   reflection: using.ReflectionHelp,
   nudges: using.NudgesHelp,
   install: using.InstallHelp,
+  'browser-extension': using.BrowserExtensionHelp,
   backup: using.BackupHelp,
   sync: using.SyncHelp,
   'start-over': using.StartOverHelp,

@@ -260,13 +260,18 @@
 .foot {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 8px;
   padding: 10px 16px 14px;
   border-top: 1px solid var(--line);
   font-size: 13px;
 }
 .foot > a {
   margin-right: auto;
+}
+/* One line each: the footer is 360px wide in the popup. */
+.foot a,
+.sync-btn {
+  white-space: nowrap;
 }
 .foot a {
   color: var(--accent-ink);

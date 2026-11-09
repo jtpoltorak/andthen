@@ -2,6 +2,7 @@ import { TestBed } from '@angular/core/testing';
 import { signal } from '@angular/core';
 import { ApiError } from '@web/sync/sync-api';
 import { SyncService } from '@web/sync/sync.service';
+import { fakeBrowser } from '../shared/fake-browser.testing';
 import { PENDING_KEY, PENDING_MS, SignIn } from './sign-in';
 
 const buttonsByText = (root: HTMLElement, text: string) =>
@@ -33,6 +34,21 @@ describe('SignIn', () => {
     await fixture.whenStable();
     return { fixture, root: fixture.nativeElement as HTMLElement, signedIn };
   }
+
+  it("doesn't send the email if Firefox's data consent is refused", async () => {
+    fakeBrowser({ firefox: true, allow: false });
+    try {
+      const { fixture, root } = await setup();
+      type(root, '#ext-email', 'sam@example.com');
+      await fixture.whenStable();
+      buttonsByText(root, 'Email me a code')[0].click();
+      await fixture.whenStable();
+      expect(sync.sendCode).not.toHaveBeenCalled();
+      expect(root.querySelector('[role="alert"]')?.textContent).toContain('Allow it to continue');
+    } finally {
+      delete (globalThis as { browser?: unknown }).browser;
+    }
+  });
 
   it('emails a code, then signs in with it', async () => {
     const { fixture, root, signedIn } = await setup();

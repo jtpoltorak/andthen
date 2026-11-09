@@ -21,6 +21,16 @@ export interface Release {
 
 export const RELEASES: readonly Release[] = [
   {
+    version: '1.34.0',
+    date: '2026-11-09',
+    title: 'Getting ready for the browser extension.',
+    notes: [
+      "A new help article, The browser extension, covers AndThen for Chrome, Edge and Firefox: today in your toolbar, a count of what's left on the icon, reminders and a side panel.",
+      "Privacy now has a section on the extension: what it keeps, and why it asks for each permission. It can't see the pages you visit.",
+      "The extension will be in each browser's store soon. The help article will link to it there.",
+    ],
+  },
+  {
     version: '1.33.1',
     date: '2026-11-09',
     title: 'Groundwork for the browser extension.',
