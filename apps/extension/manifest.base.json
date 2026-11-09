@@ -1,5 +1,5 @@
 {
-  "$comment": "The shared manifest. scripts/build.mjs adds the version and each browser's differences.",
+  "$comment": "The shared manifest. scripts/build.mjs adds the version and each browser's differences. The only host is the sync server, used once you sign in.",
   "manifest_version": 3,
   "name": "AndThen",
   "short_name": "AndThen",
@@ -19,5 +19,6 @@
       "32": "icons/icon-32.png"
     }
   },
-  "permissions": []
+  "permissions": [],
+  "host_permissions": ["https://api.andthenhabits.com/*"]
 }

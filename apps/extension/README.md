@@ -35,8 +35,14 @@ After a rebuild, press the reload arrow on the extension's card (Chrome, Edge) o
 - **Manifests**: `manifest.base.json` holds what every browser shares.
   `scripts/build.mjs` adds the version (from this package.json) and each browser's
   differences, such as Firefox's add-on id.
-- **No remote code.** Manrope ships inside the extension, the popup has no inline scripts,
-  and the manifest asks for no permissions.
+- **Sync**: the popup uses the web app's `SyncService` (so `SyncEngine` from `packages/data`)
+  and catches up each time it opens. Sign-in is the 6-digit code only; the step is kept in
+  localStorage for the 10 minutes a code lasts, because the popup closes while you read
+  your email.
+- **Permissions**: just one host, `https://api.andthenhabits.com/*`, so the popup can reach
+  the sync server. With it, the browser doesn't apply CORS to those requests, so the API
+  needs no change. No other permissions, and no access to the pages you visit.
+- **No remote code.** Manrope ships inside the extension and the popup has no inline scripts.
 
 ## Version
 
