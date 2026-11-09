@@ -1,5 +1,4 @@
 import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
-import { RouterLink } from '@angular/router';
 import { addDays, fromDayKey, summarize, weekStart } from '@andthen/core';
 import { HabitStore } from '../data/habit-store';
 import { PreferencesStore } from '../data/preferences';
@@ -15,10 +14,10 @@ interface WeekDay {
 /**
  * "This week", beside Today on wide screens: days showed up, the week's totals, and a
  * dot per day. Hidden on phones by Today's own layout, where Progress has the same.
+ * Also in the browser extension's side panel. No router here, so it stays light there.
  */
 @Component({
   selector: 'app-week-panel',
-  imports: [RouterLink],
   template: `
     <section class="panel" aria-labelledby="week-panel-title">
       <h2 id="week-panel-title" class="eyebrow">This week</h2>
@@ -40,10 +39,9 @@ interface WeekDay {
         <span class="chip chip-mini">{{ week().mini }} as 2 min</span>
         <span class="chip chip-skip">{{ week().skips }} skipped</span>
       </div>
-      <div class="links">
-        <a routerLink="/progress">See Progress</a>
-        <a routerLink="/reflect">Reflect on your week</a>
-      </div>
+      <!-- Links in from the page using it: Today links within the app, the browser
+           extension's side panel out to it. -->
+      <div class="links"><ng-content /></div>
     </section>
   `,
   styles: `
@@ -140,7 +138,7 @@ interface WeekDay {
       flex-direction: column;
       align-items: flex-start;
     }
-    .links a {
+    .links ::ng-deep a {
       display: inline-flex;
       align-items: center;
       min-height: 36px;

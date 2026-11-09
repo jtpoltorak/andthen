@@ -1,5 +1,15 @@
 # AndThen extension: what's new
 
+## 0.4.0 (not yet in the stores)
+
+A side panel, for keeping today open beside the page you're on.
+
+- The new button in the popup's footer opens AndThen in the side panel (Chrome and Edge) or the sidebar (Firefox). It stays open while you browse.
+- The panel adds this week's dots and totals, with links to Progress and the weekly reflection.
+- Under "Today's notes", jot how a habit felt for each one you've answered today.
+- The popup, the panel and the badge stay in step: check in from one and the others follow.
+- In the panel, today rolls over by itself at midnight.
+
 ## 0.3.0 (not yet in the stores)
 
 A badge and reminders.

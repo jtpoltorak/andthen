@@ -103,4 +103,29 @@ describe('Popup', () => {
     expect(link?.href).toBe(WEB_APP_URL + '/');
     expect(link?.target).toBe('_blank');
   });
+
+  it('has no side panel button where the browser has none', async () => {
+    const { root } = await setup();
+    expect(root.querySelector('[aria-label="Open in the side panel"]')).toBeNull();
+    expect(root.textContent).not.toContain('This week');
+  });
+
+  describe('in the side panel', () => {
+    beforeEach(() => (document.documentElement.dataset['mode'] = 'panel'));
+    afterEach(() => delete document.documentElement.dataset['mode']);
+
+    it('adds this week and a note for each habit answered today', async () => {
+      const { fixture, root } = await setup();
+      expect(fixture.nativeElement.classList).toContain('in-panel');
+      expect(root.textContent).toContain('This week');
+      expect(root.textContent).not.toContain("Today's notes");
+
+      buttonsByText(root, 'Done')[0].click();
+      await fixture.whenStable();
+      expect(root.textContent).toContain("Today's notes");
+      expect(root.querySelector('.journal-habit')?.textContent).toContain('Drink water');
+      const progress = [...root.querySelectorAll<HTMLAnchorElement>('.week a')].map((a) => a.href);
+      expect(progress).toContain(WEB_APP_URL + '/progress');
+    });
+  });
 });

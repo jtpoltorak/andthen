@@ -32,6 +32,11 @@ After a rebuild, press the reload arrow on the extension's card (Chrome, Edge) o
 - **Storage**: the same `SyncingHabitRepository` from `packages/data`. Browsers keep an
   extension's storage separate from every website's, so the extension has its own copy of
   your habits. Sync is what will keep it in step with the app.
+- **Side panel** (`sidepanel.html`): the same page as the popup, with
+  `<html data-mode="panel">` added by `scripts/build.mjs`. In that mode the popup fills the
+  panel and adds the web app's week panel and a journal for today's check-ins. Chrome and
+  Edge use `side_panel` (and the `sidePanel` permission); Firefox uses `sidebar_action`.
+  Open pages tell each other about changes with a runtime message, `andthen:changed`.
 - **Manifests**: `manifest.base.json` holds what every browser shares.
   `scripts/build.mjs` adds the version (from this package.json) and each browser's
   differences, such as Firefox's add-on id.
@@ -47,7 +52,7 @@ After a rebuild, press the reload arrow on the extension's card (Chrome, Edge) o
 - **Settings** shared by the popup and the worker (reminders, badge, week start) live in
   `chrome.storage.local` (`src/shared/ext-settings.ts`), since the worker can't read the
   popup's localStorage. The extension APIs are typed by hand in `src/shared/chrome.d.ts`.
-- **Permissions**: `alarms`, `notifications` and `storage`, plus one host,
+- **Permissions**: `alarms`, `notifications` and `storage` (plus `sidePanel` in Chrome and Edge), plus one host,
   `https://api.andthenhabits.com/*`, so it can reach the sync server. With that host the
   browser doesn't apply CORS to those requests, so the API needs no change. No access to the
   pages you visit.

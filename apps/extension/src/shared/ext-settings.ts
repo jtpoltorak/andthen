@@ -99,3 +99,17 @@ export function notifyHabitsChanged(): void {
     ?.runtime.sendMessage({ type: 'andthen:changed' })
     .catch(() => undefined);
 }
+
+/**
+ * Calls `reload` when another extension page (the popup, the side panel or the
+ * background worker) changed the habits. Returns a function that stops listening.
+ */
+export function onHabitsChanged(reload: () => void): () => void {
+  const api = extensionApi();
+  if (!api) return () => undefined;
+  const listener = (message: unknown) => {
+    if ((message as { type?: string } | null)?.type === 'andthen:changed') reload();
+  };
+  api.runtime.onMessage.addListener(listener);
+  return () => api.runtime.onMessage.removeListener(listener);
+}

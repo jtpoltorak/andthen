@@ -157,6 +157,31 @@
     } @else {
       <p class="quiet note">Missed a day? No streak to lose. Just don't miss twice.</p>
     }
+
+    @if (inPanel) {
+      <app-week-panel class="week">
+        <a [href]="webAppUrl + '/progress'" target="_blank" rel="noopener">See Progress ↗</a>
+        <a [href]="webAppUrl + '/reflect'" target="_blank" rel="noopener">Reflect on your week ↗</a>
+      </app-week-panel>
+
+      @if (answeredToday().length > 0) {
+        <section class="journal" aria-labelledby="journal-title">
+          <h2 id="journal-title" class="group">Today's notes</h2>
+          @for (habit of answeredToday(); track habit.id) {
+            <div class="card journal-item">
+              <h3 class="journal-habit">{{ habit.name }}</h3>
+              <app-check-in-journal
+                [habitId]="habit.id"
+                [habitName]="habit.name"
+                [open]="habit.id === journaling()"
+                (opened)="journaling.set(habit.id)"
+                (closed)="journaling.set(undefined)"
+              />
+            </div>
+          }
+        </section>
+      }
+    }
   }
 </main>
 
@@ -185,6 +210,28 @@
     </button>
   } @else if (store.hasRoutines() && panel() === 'today') {
     <button type="button" class="sync-btn" (click)="show('sign-in')">Sync with your phone</button>
+  }
+  @if (canOpenPanel) {
+    <button
+      type="button"
+      class="icon-btn"
+      (click)="openPanel()"
+      aria-label="Open in the side panel"
+      title="Open in the side panel"
+    >
+      <svg
+        width="18"
+        height="18"
+        viewBox="0 0 18 18"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1.6"
+        aria-hidden="true"
+      >
+        <rect x="2" y="3" width="14" height="12" rx="2" />
+        <path d="M11 3v12" />
+      </svg>
+    </button>
   }
   <button
     type="button"
