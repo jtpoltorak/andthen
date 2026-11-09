@@ -1,0 +1,23 @@
+{
+  "$comment": "The shared manifest. scripts/build.mjs adds the version and each browser's differences.",
+  "manifest_version": 3,
+  "name": "AndThen",
+  "short_name": "AndThen",
+  "description": "Small habits, linked to what you already do. Check off today's routine from your toolbar.",
+  "homepage_url": "https://andthenhabits.com",
+  "icons": {
+    "16": "icons/icon-16.png",
+    "32": "icons/icon-32.png",
+    "48": "icons/icon-48.png",
+    "128": "icons/icon-128.png"
+  },
+  "action": {
+    "default_title": "AndThen",
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "icons/icon-16.png",
+      "32": "icons/icon-32.png"
+    }
+  },
+  "permissions": []
+}

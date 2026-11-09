@@ -1,0 +1,20 @@
+/*
+ * The popup reuses the web app's colors and building blocks (apps/web/src/styles.css,
+ * loaded first). Manrope ships inside the extension, so nothing loads from the web.
+ */
+@import '@fontsource-variable/manrope';
+
+:root {
+  --font: 'Manrope Variable', 'Manrope', system-ui, -apple-system, 'Segoe UI', sans-serif;
+}
+
+/* Browsers size a popup to its content, up to about 800 × 600. */
+html,
+body {
+  min-height: 0;
+}
+body {
+  width: 360px;
+  font-size: 14px;
+  line-height: 1.4;
+}
