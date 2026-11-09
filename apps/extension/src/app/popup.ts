@@ -3,6 +3,7 @@ import {
   Component,
   DestroyRef,
   computed,
+  effect,
   inject,
   signal,
 } from '@angular/core';
@@ -25,6 +26,8 @@ import { DayRing } from '@web/today/day-ring';
 import { WEB_APP_URL } from './links';
 import { PENDING_KEY, SignIn } from './sign-in';
 import { SyncStatus } from './sync-status';
+import { SettingsPanel } from './settings-panel';
+import { notifyHabitsChanged, saveExtSettings } from '../shared/ext-settings';
 
 /** How long "Saved … Undo" stays after an answer. */
 export const UNDO_MS = 6000;
@@ -34,7 +37,7 @@ const lowerFirst = (text: string) => (text ? text.charAt(0).toLowerCase() + text
 export { WEB_APP_URL };
 
 /** What the popup's body shows. */
-export type Panel = 'today' | 'sign-in' | 'sync';
+export type Panel = 'today' | 'sign-in' | 'sync' | 'settings';
 
 const PART_LABELS: Record<PartOfDay, string> = {
   morning: 'Morning',
@@ -49,7 +52,7 @@ const PART_LABELS: Record<PartOfDay, string> = {
  */
 @Component({
   selector: 'ext-popup',
-  imports: [DayRing, SignIn, SyncStatus],
+  imports: [DayRing, SignIn, SyncStatus, SettingsPanel],
   templateUrl: './popup.html',
   styleUrl: './popup.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -108,6 +111,15 @@ export class Popup {
     void this.store.load().then(() => this.loaded.set(true));
     // With sync on, every open catches up with the other devices (and the store reloads).
     void this.sync.start();
+    // The background worker counts "N times a week" habits by the same week as the app.
+    void saveExtSettings({ weekStartsOn: this.preferences.prefs().weekStartsOn });
+    // Any change to the habits (a check-in here, or sync bringing others') updates the badge.
+    effect(() => {
+      this.store.checkIns();
+      this.store.habits();
+      this.store.routines();
+      if (this.loaded()) notifyHabitsChanged();
+    });
     // "Today" rolls over at midnight if the popup stays open (it can, docked in some browsers).
     const onVisible = () => this.store.refreshDay();
     document.addEventListener('visibilitychange', onVisible);

@@ -1,6 +1,6 @@
 {
   "name": "@andthen/extension",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "private": true,
   "license": "UNLICENSED",
   "description": "The AndThen browser extension for Chrome, Edge and Firefox: Today in the toolbar.",
@@ -23,6 +23,7 @@
     "@angular/build": "^22.2.5",
     "@angular/cli": "^22.2.5",
     "@angular/compiler-cli": "^22.2.0",
+    "esbuild": "^0.28.2",
     "fake-indexeddb": "^6.2.7",
     "jsdom": "^30.0.0",
     "typescript": "~6.0.2",

@@ -1,5 +1,16 @@
 # AndThen extension: what's new
 
+## 0.3.0 (not yet in the stores)
+
+A badge and reminders.
+
+- The AndThen icon shows how many habits are left today, and clears once everything's answered. Hover over it to read the count.
+- Reminders at each routine's usual time (or 5 or 15 minutes before), if something's still left. They work with no AndThen tab open, whenever the browser is running.
+- If you missed a habit last time, its reminder offers the 2-minute version, so you don't miss twice.
+- In Chrome and Edge, a reminder has Done and Did 2 min buttons, so you can check in without opening anything.
+- A new Settings screen (the gear in the footer) turns reminders and the badge on or off.
+- With sync on, the extension also catches up every 15 minutes, so the badge counts check-ins from your other devices.
+
 ## 0.2.0 (not yet in the stores)
 
 Your routines, in step with your other devices.
