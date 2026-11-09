@@ -18,3 +18,8 @@ body {
   font-size: 14px;
   line-height: 1.4;
 }
+
+/* In the side panel the browser decides the width. */
+:root[data-mode='panel'] body {
+  width: auto;
+}

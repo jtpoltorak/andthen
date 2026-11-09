@@ -348,3 +348,30 @@
   background: var(--accent-soft);
   color: var(--accent-ink);
 }
+
+/* The side panel: the browser sets the size, so fill it, with the footer at the bottom. */
+:host(.in-panel) {
+  height: 100vh;
+  max-height: none;
+}
+:host(.in-panel) .body {
+  flex: 1;
+  align-content: start;
+}
+.week {
+  display: block;
+  margin-top: 8px;
+}
+.journal {
+  display: grid;
+  gap: 8px;
+}
+.journal-item {
+  display: grid;
+  gap: 6px;
+}
+.journal-habit {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 700;
+}

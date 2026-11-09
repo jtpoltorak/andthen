@@ -63,4 +63,18 @@ declare namespace chrome {
     /** Chrome and Edge only. Firefox has no notification buttons. */
     const onButtonClicked: ExtEvent<(id: string, buttonIndex: number) => void> | undefined;
   }
+
+  namespace windows {
+    function getCurrent(): Promise<{ id?: number }>;
+  }
+
+  /** Chrome and Edge's side panel. */
+  namespace sidePanel {
+    function open(options: { windowId: number }): Promise<void>;
+  }
+
+  /** Firefox's sidebar, its version of the side panel. */
+  namespace sidebarAction {
+    function open(): Promise<void>;
+  }
 }
