@@ -4,153 +4,171 @@
     <app-help-link slug="progress" />
   </div>
 
-  <section class="card recap" aria-labelledby="recap-title">
-    <h2 id="recap-title" class="eyebrow">This week</h2>
-    <p class="recap-big">
-      Showed up {{ week().daysShowedUp }} of {{ week().daysSoFar }}
-      {{ week().daysSoFar === 1 ? 'day' : 'days' }}
-    </p>
-    <div class="chips">
-      <span class="chip chip-full">{{ week().full }} done</span>
-      <span class="chip chip-mini">{{ week().mini }} as 2 min</span>
-      <span class="chip chip-skip">{{ week().skips }} skipped</span>
-    </div>
-    <p class="recap-note">
-      @if (week().mini > 0) {
-        Every 2-minute version counts. That's how habits survive busy days.
-      } @else if (week().daysShowedUp === 0) {
-        A fresh week. One small check-in gets it started.
-      } @else {
-        Small and steady beats big and rare.
-      }
-    </p>
-    <div class="recap-links">
-      <a class="reflect-link" routerLink="/reflect">Reflect on your week</a>
-      <a class="reflect-link" routerLink="/recap">Share your week</a>
-      <a class="reflect-link" routerLink="/year">See your year</a>
-    </div>
-  </section>
+  <div class="view-switch" role="group" aria-label="Progress view">
+    <button
+      type="button"
+      [attr.aria-pressed]="view() === 'overview'"
+      (click)="showView('overview')"
+    >
+      Overview
+    </button>
+    <button type="button" [attr.aria-pressed]="view() === 'grid'" (click)="showView('grid')">
+      Grid
+    </button>
+  </div>
 
-  @if (garden().length) {
-    <section class="card garden" aria-labelledby="garden-title">
-      <h2 id="garden-title" class="eyebrow">Your garden</h2>
-      <ul class="plots">
-        @for (plot of garden(); track plot.routine.id) {
-          <li class="plot" [class.plot-resting]="plot.growth.resting">
-            <app-plant
-              [stage]="plot.growth.stage.stage"
-              [resting]="plot.growth.resting"
-              [size]="84"
-            />
-            <span class="plot-name">{{ plot.routine.name || plot.routine.anchor }}</span>
-            <span class="plot-stage">
-              {{ plot.growth.stage.name }} · {{ plot.growth.growth }}
-              <span class="visually-hidden">check-ins</span>
-            </span>
-            @if (!plot.growth.resting) {
-              <span class="plot-bar" aria-hidden="true"
-                ><span class="plot-fill" [style.width.%]="plot.percent"></span
-              ></span>
-            }
-            <span class="plot-note">{{ plot.note }}</span>
-          </li>
-        }
-      </ul>
-      <p class="garden-note">
-        @if (week().full + week().mini > 0) {
-          This week your garden grew {{ week().full + week().mini }}
-          {{ week().full + week().mini === 1 ? 'time' : 'times' }}.
+  @if (view() === 'grid') {
+    <app-habit-grid />
+  } @else {
+    <section class="card recap" aria-labelledby="recap-title">
+      <h2 id="recap-title" class="eyebrow">This week</h2>
+      <p class="recap-big">
+        Showed up {{ week().daysShowedUp }} of {{ week().daysSoFar }}
+        {{ week().daysSoFar === 1 ? 'day' : 'days' }}
+      </p>
+      <div class="chips">
+        <span class="chip chip-full">{{ week().full }} done</span>
+        <span class="chip chip-mini">{{ week().mini }} as 2 min</span>
+        <span class="chip chip-skip">{{ week().skips }} skipped</span>
+      </div>
+      <p class="recap-note">
+        @if (week().mini > 0) {
+          Every 2-minute version counts. That's how habits survive busy days.
+        } @else if (week().daysShowedUp === 0) {
+          A fresh week. One small check-in gets it started.
         } @else {
-          Every Done and 2 min helps a plant grow. Missed days never take growth away.
+          Small and steady beats big and rare.
         }
       </p>
+      <div class="recap-links">
+        <a class="reflect-link" routerLink="/reflect">Reflect on your week</a>
+        <a class="reflect-link" routerLink="/recap">Share your week</a>
+        <a class="reflect-link" routerLink="/year">See your year</a>
+      </div>
     </section>
-  }
 
-  @if (milestones().reached.length || garden().length) {
-    <section class="card milestones" aria-labelledby="milestones-title">
-      <h2 id="milestones-title" class="eyebrow">Milestones</h2>
-      @if (milestones().next; as next) {
-        <p class="next-milestone">
-          Next: <strong>{{ next.milestone.title }}</strong
-          >, {{ next.remaining }} to go
-        </p>
-      }
-      @if (milestones().reached.length) {
-        <ul class="milestone-list">
-          @for (r of milestones().reached; track r.milestone.id) {
-            <li>
-              <span class="milestone-name">{{ r.milestone.title }}</span>
-              <span class="milestone-date">{{ shortDate(r.on) }}</span>
+    @if (garden().length) {
+      <section class="card garden" aria-labelledby="garden-title">
+        <h2 id="garden-title" class="eyebrow">Your garden</h2>
+        <ul class="plots">
+          @for (plot of garden(); track plot.routine.id) {
+            <li class="plot" [class.plot-resting]="plot.growth.resting">
+              <app-plant
+                [stage]="plot.growth.stage.stage"
+                [resting]="plot.growth.resting"
+                [size]="84"
+              />
+              <span class="plot-name">{{ plot.routine.name || plot.routine.anchor }}</span>
+              <span class="plot-stage">
+                {{ plot.growth.stage.name }} · {{ plot.growth.growth }}
+                <span class="visually-hidden">check-ins</span>
+              </span>
+              @if (!plot.growth.resting) {
+                <span class="plot-bar" aria-hidden="true"
+                  ><span class="plot-fill" [style.width.%]="plot.percent"></span
+                ></span>
+              }
+              <span class="plot-note">{{ plot.note }}</span>
             </li>
           }
         </ul>
-      }
-      <p class="garden-note">They only ever count up. Missed days never take one away.</p>
-    </section>
-  }
-
-  <app-day-glance />
-
-  @if (sections().length || retiredSections().length) {
-    <div class="legend" aria-hidden="true">
-      <span><i class="dot dot-full"></i>Done</span>
-      <span><i class="dot dot-mini"></i>2 min</span>
-      <span><i class="dot dot-skip"></i>Skipped</span>
-      <span><i class="dot dot-missed"></i>No check-in</span>
-      @if (hasSchedules()) {
-        <span><i class="dot dot-rest"></i>Rest day</span>
-      }
-      @if (hasJournal()) {
-        <span><i class="dot dot-full dot-noted"></i>With a note</span>
-      }
-    </div>
-  }
-
-  @for (section of sections(); track section.routine.id) {
-    <ng-container *ngTemplateOutlet="routineCard; context: { $implicit: section }"></ng-container>
-  } @empty {
-    <app-empty-state art="dots" heading="Your dots will show up here">
-      <p>
-        Each check-in becomes a dot: solid teal for Done, half-filled amber for 2 minutes. Start a
-        routine and watch them fill in.
-      </p>
-      <a class="empty-action" routerLink="/routines/new">Start a routine</a>
-    </app-empty-state>
-  }
-
-  @if (retiredSections().length) {
-    <details class="retired">
-      <summary>Retired routines ({{ retiredSections().length }})</summary>
-      <p class="retired-note">Removed routines keep their history here.</p>
-      @for (section of retiredSections(); track section.routine.id) {
-        <ng-container
-          *ngTemplateOutlet="routineCard; context: { $implicit: section }"
-        ></ng-container>
-      }
-    </details>
-  }
-
-  @if (reflections().length) {
-    <details class="retired">
-      <summary>Past reflections ({{ reflections().length }})</summary>
-      @for (r of reflections(); track r.week) {
-        <div class="reflection">
-          <h3 class="reflection-week">Week of {{ shortDate(r.week) }}</h3>
-          @if (r.wentWell) {
-            <p><span class="reflection-label">Went well:</span> {{ r.wentWell }}</p>
+        <p class="garden-note">
+          @if (week().full + week().mini > 0) {
+            This week your garden grew {{ week().full + week().mini }}
+            {{ week().full + week().mini === 1 ? 'time' : 'times' }}.
+          } @else {
+            Every Done and 2 min helps a plant grow. Missed days never take growth away.
           }
-          @if (r.tweak) {
-            <p><span class="reflection-label">Tweak:</span> {{ r.tweak }}</p>
-          }
-        </div>
-      }
-    </details>
-  }
+        </p>
+      </section>
+    }
 
-  <p class="footnote">
-    A chain only breaks if you miss two days in a row. Skips and a single missed day keep it going.
-  </p>
+    @if (milestones().reached.length || garden().length) {
+      <section class="card milestones" aria-labelledby="milestones-title">
+        <h2 id="milestones-title" class="eyebrow">Milestones</h2>
+        @if (milestones().next; as next) {
+          <p class="next-milestone">
+            Next: <strong>{{ next.milestone.title }}</strong
+            >, {{ next.remaining }} to go
+          </p>
+        }
+        @if (milestones().reached.length) {
+          <ul class="milestone-list">
+            @for (r of milestones().reached; track r.milestone.id) {
+              <li>
+                <span class="milestone-name">{{ r.milestone.title }}</span>
+                <span class="milestone-date">{{ shortDate(r.on) }}</span>
+              </li>
+            }
+          </ul>
+        }
+        <p class="garden-note">They only ever count up. Missed days never take one away.</p>
+      </section>
+    }
+
+    <app-day-glance />
+
+    @if (sections().length || retiredSections().length) {
+      <div class="legend" aria-hidden="true">
+        <span><i class="dot dot-full"></i>Done</span>
+        <span><i class="dot dot-mini"></i>2 min</span>
+        <span><i class="dot dot-skip"></i>Skipped</span>
+        <span><i class="dot dot-missed"></i>No check-in</span>
+        @if (hasSchedules()) {
+          <span><i class="dot dot-rest"></i>Rest day</span>
+        }
+        @if (hasJournal()) {
+          <span><i class="dot dot-full dot-noted"></i>With a note</span>
+        }
+      </div>
+    }
+
+    @for (section of sections(); track section.routine.id) {
+      <ng-container *ngTemplateOutlet="routineCard; context: { $implicit: section }"></ng-container>
+    } @empty {
+      <app-empty-state art="dots" heading="Your dots will show up here">
+        <p>
+          Each check-in becomes a dot: solid teal for Done, half-filled amber for 2 minutes. Start a
+          routine and watch them fill in.
+        </p>
+        <a class="empty-action" routerLink="/routines/new">Start a routine</a>
+      </app-empty-state>
+    }
+
+    @if (retiredSections().length) {
+      <details class="retired">
+        <summary>Retired routines ({{ retiredSections().length }})</summary>
+        <p class="retired-note">Removed routines keep their history here.</p>
+        @for (section of retiredSections(); track section.routine.id) {
+          <ng-container
+            *ngTemplateOutlet="routineCard; context: { $implicit: section }"
+          ></ng-container>
+        }
+      </details>
+    }
+
+    @if (reflections().length) {
+      <details class="retired">
+        <summary>Past reflections ({{ reflections().length }})</summary>
+        @for (r of reflections(); track r.week) {
+          <div class="reflection">
+            <h3 class="reflection-week">Week of {{ shortDate(r.week) }}</h3>
+            @if (r.wentWell) {
+              <p><span class="reflection-label">Went well:</span> {{ r.wentWell }}</p>
+            }
+            @if (r.tweak) {
+              <p><span class="reflection-label">Tweak:</span> {{ r.tweak }}</p>
+            }
+          </div>
+        }
+      </details>
+    }
+
+    <p class="footnote">
+      A chain only breaks if you miss two days in a row. Skips and a single missed day keep it
+      going.
+    </p>
+  }
 </main>
 
 <ng-template #routineCard let-section>

@@ -219,9 +219,9 @@ export const HELP_ARTICLES = [
     part: 'using',
     title: 'Reading your Progress',
     summary:
-      'Your garden, the weekly recap, the dot grid, the forgiving chain, and the trend line.',
+      'Your garden, the weekly recap, the dot grid, the grid view (and fixing a day you forgot), the forgiving chain, and the trend line.',
     keywords:
-      'progress dots grid chain streak recap week stats trend line steadier garden plant grow seed sprout bloom share instagram story post social year calendar month heatmap milestone achievement badge celebrate',
+      'progress dots grid table rows columns spreadsheet edit fix forgot yesterday past day backfill chain streak recap week stats trend line steadier garden plant grow seed sprout bloom share instagram story post social year calendar month heatmap milestone achievement badge celebrate',
     minutes: 3,
     related: ['never-miss-twice', 'reflection'],
   },

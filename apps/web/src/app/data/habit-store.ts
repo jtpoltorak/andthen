@@ -11,6 +11,7 @@ import {
   type RoutineTemplate,
   addPause,
   buildDay,
+  canEditDay,
   endPause,
   cleanNote,
   createBackup,
@@ -355,6 +356,34 @@ export class HabitStore {
 
   async undoCheckIn(habitId: string): Promise<void> {
     const date = this.today();
+    await this.repo.deleteCheckIn(habitId, date);
+    this.checkIns.update((list) => removeCheckIn(list, habitId, date));
+  }
+
+  /**
+   * Sets a habit's check-in on a recent day, from the grid view. Only today and the
+   * 6 days before it can change (see canEditDay). Changing the kind keeps any journal
+   * entry and time already on that day; a new check-in for today notes the time.
+   */
+  async setCheckInOn(habitId: string, date: DayKey, kind: CheckInKind): Promise<void> {
+    const today = this.today();
+    if (!canEditDay(date, today)) return;
+    const current = this.checkIns().find((c) => c.habitId === habitId && c.date === date);
+    const next: CheckIn = current
+      ? { ...current, kind }
+      : date === today
+        ? { habitId, date, kind, at: checkInTime(new Date()) }
+        : { habitId, date, kind };
+    await this.repo.putCheckIn(next);
+    this.checkIns.update((list) => [
+      ...list.filter((c) => !(c.habitId === habitId && c.date === date)),
+      next,
+    ]);
+  }
+
+  /** Clears a habit's check-in on a recent day, from the grid view. Older days stay as they are. */
+  async clearCheckInOn(habitId: string, date: DayKey): Promise<void> {
+    if (!canEditDay(date, this.today())) return;
     await this.repo.deleteCheckIn(habitId, date);
     this.checkIns.update((list) => removeCheckIn(list, habitId, date));
   }

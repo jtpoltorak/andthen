@@ -21,6 +21,16 @@ export interface Release {
 
 export const RELEASES: readonly Release[] = [
   {
+    version: '1.35.0',
+    date: '2026-11-10',
+    title: 'See your habits as a grid.',
+    notes: [
+      'Progress has a new Grid view: each habit is a row and each day a square, grouped by routine. Switch between Overview and Grid at the top, and AndThen remembers which you like.',
+      'Forgot to check in? Tap a day in the last week to mark it Done, 2 min or Skip, or clear it. Older days are view-only, so your garden and milestones stay honest.',
+      "Phones show 7 days at a time, with arrows to look back. 30 days gives you a glance, and on a laptop it shows each habit's chain and how much of each day got done.",
+    ],
+  },
+  {
     version: '1.34.1',
     date: '2026-11-10',
     title: 'AndThen for Chrome is here.',
