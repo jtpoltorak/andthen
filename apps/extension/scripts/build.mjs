@@ -6,6 +6,7 @@
 // about:debugging → "Load Temporary Add-on" (Firefox).
 import { execFileSync } from 'node:child_process';
 import { buildSync } from 'esbuild';
+import { createRequire } from 'node:module';
 import { cpSync, existsSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -73,7 +74,10 @@ export function manifestFor(target, base = readJson(join(root, 'manifest.base.js
 function build() {
   const skipNg = process.argv.includes('--skip-ng');
   if (!skipNg) {
-    execFileSync('npx', ['ng', 'build'], { cwd: root, stdio: 'inherit' });
+    // Runs the Angular CLI with this same Node, not through `npx`: on Windows npx is
+    // npx.cmd, which execFileSync can't start.
+    const ng = createRequire(import.meta.url).resolve('@angular/cli/bin/ng.js');
+    execFileSync(process.execPath, [ng, 'build'], { cwd: root, stdio: 'inherit' });
   }
   const popup = join(dist, 'popup', 'browser');
   if (!existsSync(join(popup, 'popup.html'))) {
