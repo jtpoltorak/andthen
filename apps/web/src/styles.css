@@ -44,6 +44,8 @@
   --zoom: calc(var(--text-zoom) * var(--screen-zoom));
   /* The widest the tabbed pages get on laptops and monitors (Shell). */
   --page-max: 1400px;
+  /* Help's reading column on laptops and monitors, padding included. */
+  --help-text-max: 960px;
   /* The left rail on laptops, shared by the app (Shell) and Help (HelpShell) so they line up. */
   --rail-width: 260px;
   --rail-padding: 24px 14px;
@@ -468,12 +470,12 @@ input[role='switch']:focus-visible {
   font-size: 14px;
 }
 
-/* Help on laptops: a wider, roomier reading column beside the topic sidebar (HelpShell). */
+/* Help on laptops: a roomy reading column beside the topic sidebar (HelpShell). Help sits in the
+   same frame as the app's tabs (--page-max), and every Help page starts at the same left edge. */
 @media (min-width: 900px) {
   app-help-shell .reading {
     width: 100%;
-    max-width: 720px;
-    margin: 0 auto;
+    max-width: var(--help-text-max);
     padding: 40px 40px 64px;
     font-size: 16px;
   }
@@ -484,6 +486,24 @@ input[role='switch']:focus-visible {
     margin-top: 20px;
     font-size: 20px;
     scroll-margin-top: 24px;
+  }
+}
+/* Wide screens: the Help home spreads its topic lists across the frame, below an intro that
+   keeps the article column's width. */
+@media (min-width: 1240px) {
+  app-help-home .reading {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+    align-items: start;
+    gap: 12px 24px;
+    max-width: none;
+  }
+  app-help-home .reading > :not(section) {
+    grid-column: 1 / -1;
+    max-width: calc(var(--help-text-max) - 80px);
+  }
+  app-help-home .reading > section {
+    margin-top: 12px;
   }
 }
 

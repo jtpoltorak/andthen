@@ -21,6 +21,14 @@ export interface Release {
 
 export const RELEASES: readonly Release[] = [
   {
+    version: '1.36.1',
+    date: '2026-11-10',
+    notes: [
+      'Help now uses the same width as the rest of the app on a computer, with a wider reading column, and every Help page starts at the same spot.',
+      'On a wide screen, All help topics lays its three topic lists side by side.',
+    ],
+  },
+  {
     version: '1.36.0',
     date: '2026-11-10',
     title: 'More room on laptops and big monitors.',
