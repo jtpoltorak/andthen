@@ -76,6 +76,36 @@ describe('HabitStore', () => {
     expect((await repo.loadAll()).checkIns).toEqual([]);
   });
 
+  it('changes and clears recent days from the grid, keeping journal notes, but not older days', async () => {
+    const routine = await store.createChain({
+      anchor: 'After lunch',
+      habitName: 'Walk',
+      twoMinuteVersion: 'Put on my shoes',
+    });
+    const walk = store.habitsOf(routine.id)[0].id;
+    const today = store.today();
+    const yesterday = addDays(today, -1);
+    const tooOld = addDays(today, -7);
+
+    await store.setCheckInOn(walk, yesterday, 'mini');
+    await repo.putCheckIn({ habitId: walk, date: yesterday, kind: 'mini', note: 'Short one' });
+    await store.reload();
+    await store.setCheckInOn(walk, yesterday, 'full');
+    expect(store.checkIns()).toEqual([
+      { habitId: walk, date: yesterday, kind: 'full', note: 'Short one' },
+    ]);
+
+    await store.setCheckInOn(walk, today, 'skip');
+    expect(store.checkIns().find((c) => c.date === today)?.at).toMatch(/^\d\d:\d\d$/);
+
+    await store.setCheckInOn(walk, tooOld, 'full');
+    expect(store.checkIns().some((c) => c.date === tooOld)).toBe(false);
+
+    await store.clearCheckInOn(walk, yesterday);
+    expect(store.checkIns().map((c) => c.date)).toEqual([today]);
+    expect((await repo.loadAll()).checkIns.map((c) => c.date)).toEqual([today]);
+  });
+
   describe('editing a chain', () => {
     async function chain() {
       const routine = await store.createChain({

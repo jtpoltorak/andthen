@@ -1,0 +1,521 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* Range and 7 / 30 days */
+
+.hg-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+.hg-range {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+.hg-range-label {
+  padding: 0 4px;
+  font-size: 15px;
+  font-weight: 800;
+}
+.hg-arrow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border: 0;
+  border-radius: 10px;
+  background: transparent;
+  color: var(--ink);
+  cursor: pointer;
+}
+.hg-arrow svg {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.hg-arrow:disabled {
+  color: var(--disabled);
+  cursor: default;
+}
+.hg-spans {
+  display: flex;
+  gap: 4px;
+}
+.hg-chip {
+  height: 36px;
+  padding: 0 12px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--muted);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+}
+.hg-chip[aria-pressed='true'] {
+  border-color: transparent;
+  background: var(--accent-soft);
+  color: var(--accent-ink);
+}
+
+/* The card and its rows */
+
+.card {
+  padding: 10px 12px 8px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  background: var(--surface);
+}
+.hg-wide {
+  padding: 18px 22px 14px;
+}
+.hg-scroll {
+  overflow-x: auto;
+}
+.hg-wide .hg-scroll > * {
+  min-width: max-content;
+}
+.hg-row {
+  display: grid;
+  align-items: center;
+  column-gap: 3px;
+}
+.hg-wide .hg-row,
+.hg-compact .hg-row {
+  column-gap: 0;
+}
+.hg-compact .hg-row {
+  column-gap: 1.5px;
+}
+.hg-head {
+  align-items: end;
+  padding-bottom: 4px;
+}
+.hg-eyebrow {
+  margin: 0;
+  padding-bottom: 6px;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.hg-stat-head {
+  padding-left: 16px;
+}
+.hg-day {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1px;
+  padding: 5px 0;
+  border-radius: 10px;
+  color: var(--muted);
+}
+.hg-wide .hg-day {
+  border-radius: 8px 8px 0 0;
+}
+.hg-day.hg-today {
+  background: var(--accent-soft);
+  color: var(--accent-ink);
+}
+.hg-letter {
+  font-size: 11px;
+  font-weight: 700;
+}
+.hg-num {
+  font-size: 14px;
+  font-weight: 800;
+}
+.hg-thirty .hg-num {
+  font-size: 11px;
+}
+.hg-compact .hg-day {
+  padding: 2px 0;
+  overflow: visible;
+  white-space: nowrap;
+}
+.hg-compact .hg-today {
+  background: none;
+}
+.hg-band {
+  background: color-mix(in srgb, var(--accent) 7%, transparent);
+}
+
+.hg-anchor {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 10px 0 2px;
+  color: var(--accent-ink);
+  font-size: 13px;
+  font-weight: 800;
+}
+.hg-anchor-dot {
+  flex: none;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--accent);
+}
+.hg-habit {
+  border-top: 1px solid var(--line);
+}
+.hg-name {
+  min-width: 0;
+  padding: 4px 6px 4px 0;
+}
+.hg-wide .hg-name {
+  padding-left: 15px;
+}
+.hg-habit-name {
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.25;
+  overflow-wrap: anywhere;
+}
+
+.hg-cell {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 44px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+}
+button.hg-cell {
+  cursor: pointer;
+}
+.hg-wide .hg-cell {
+  height: 38px;
+}
+.hg-compact .hg-cell {
+  height: 26px;
+}
+.hg-cell:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: -2px;
+  border-radius: 8px;
+}
+
+/* The marks: the same shapes as the dot grid, as rounded squares. */
+
+.hg-mark {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  width: 26px;
+  height: 26px;
+  border-radius: 8px;
+}
+.hg-thirty .hg-mark {
+  width: 18px;
+  height: 18px;
+  border-radius: 5px;
+}
+.hg-compact .hg-mark {
+  width: 100%;
+  height: 18px;
+  border-radius: 3px;
+}
+.hg-mark svg {
+  width: 14px;
+  height: 14px;
+  fill: none;
+  stroke: var(--on-accent);
+  stroke-width: 2.4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.hg-thirty .hg-mark svg {
+  width: 11px;
+  height: 11px;
+}
+.hg-full {
+  background: var(--accent);
+}
+.hg-mini {
+  background: linear-gradient(to top, var(--amber) 50%, transparent 50%);
+  box-shadow: inset 0 0 0 2px var(--amber);
+}
+.hg-skip {
+  border: 1.5px dashed var(--dashed);
+}
+.hg-missed {
+  background: var(--line);
+}
+.hg-open {
+  box-shadow: inset 0 0 0 2px var(--accent);
+}
+.hg-rest::after {
+  content: '';
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--dashed-soft);
+}
+.hg-compact .hg-rest::after,
+.hg-thirty .hg-rest::after {
+  width: 4px;
+  height: 4px;
+}
+.hg-noted::before {
+  content: '';
+  position: absolute;
+  top: -3px;
+  right: -3px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--ink);
+  box-shadow: 0 0 0 2px var(--surface);
+}
+.hg-compact .hg-noted::before {
+  display: none;
+}
+.hg-picked {
+  outline: 2px solid var(--ink);
+  outline-offset: 2px;
+}
+.hg-locked .hg-mark {
+  opacity: 0.85;
+}
+
+/* Laptop: chain and count, and how much of each day got done */
+
+.hg-stats {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  padding-left: 16px;
+  white-space: nowrap;
+}
+.hg-chain {
+  color: var(--muted);
+  font-size: 13.5px;
+  font-weight: 800;
+}
+.hg-chain-on {
+  color: var(--accent-ink);
+}
+.hg-count {
+  color: var(--muted);
+  font-size: 12.5px;
+  font-weight: 600;
+}
+.hg-totals {
+  align-items: end;
+  height: 46px;
+  margin-top: 4px;
+  border-top: 1px solid var(--border);
+}
+.hg-showed {
+  padding-bottom: 6px;
+}
+.hg-totals-name {
+  padding: 0 0 8px 15px;
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 800;
+}
+.hg-bar-cell {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  height: 100%;
+  padding-bottom: 8px;
+  box-sizing: border-box;
+}
+.hg-bar {
+  width: 12px;
+  border-radius: 3px;
+  background: color-mix(in srgb, var(--accent) 45%, var(--surface));
+}
+.hg-bar-today {
+  background: var(--accent);
+}
+
+.hg-caption {
+  margin: 0 4px;
+  color: var(--muted);
+  font-size: 13.5px;
+  line-height: 1.5;
+}
+.hg-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 14px;
+  padding: 0 4px;
+  color: var(--muted);
+  font-size: 12.5px;
+  font-weight: 600;
+}
+.hg-legend span {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.hg-legend .hg-mark {
+  width: 12px;
+  height: 12px;
+  border-radius: 4px;
+}
+.hg-legend .hg-mini {
+  box-shadow: inset 0 0 0 1.5px var(--amber);
+}
+.hg-legend .hg-rest::after {
+  width: 4px;
+  height: 4px;
+}
+.hg-legend .hg-noted::before {
+  width: 6px;
+  height: 6px;
+  box-shadow: 0 0 0 1.5px var(--bg);
+}
+
+/* The editor: a sheet from the bottom on a phone, a small card on a laptop. */
+
+.hg-editor {
+  width: 100%;
+  max-width: 100%;
+  margin: auto 0 0;
+  padding: 0;
+  border: 0;
+  border-radius: 24px 24px 0 0;
+  background: var(--surface);
+  color: var(--ink);
+  box-shadow: 0 -8px 30px rgb(0 0 0 / 18%);
+}
+.hg-editor::backdrop {
+  background: rgb(10 16 13 / 42%);
+}
+@media (min-width: 700px) {
+  .hg-editor {
+    width: 380px;
+    margin: auto;
+    border-radius: 22px;
+    box-shadow: 0 12px 32px rgb(0 0 0 / 20%);
+  }
+}
+.hg-sheet {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 18px 20px 26px;
+}
+.hg-sheet-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
+}
+.hg-sheet-name {
+  margin: 2px 0 2px;
+  font-size: 22px;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+}
+.hg-sheet .hg-eyebrow {
+  padding: 0;
+}
+.hg-sheet-sub,
+.hg-sheet-foot {
+  margin: 0;
+  color: var(--muted);
+  font-size: 13.5px;
+  line-height: 1.45;
+}
+.hg-sheet-note {
+  margin: 0;
+  font-size: 14px;
+  font-style: italic;
+}
+.hg-close {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  width: 40px;
+  height: 40px;
+  border: 0;
+  border-radius: 10px;
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+}
+.hg-close svg {
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+}
+.hg-choices {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+.hg-choice {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1px;
+  min-height: 56px;
+  padding: 4px;
+  border: 0;
+  border-radius: var(--radius-control);
+  font: inherit;
+  font-size: 15px;
+  font-weight: 800;
+  cursor: pointer;
+}
+.hg-choice[aria-pressed='true'] {
+  box-shadow:
+    0 0 0 2px var(--surface),
+    0 0 0 4px var(--ink);
+}
+.hg-choice-full {
+  background: var(--accent);
+  color: var(--on-accent);
+}
+.hg-choice-mini {
+  background: var(--amber-soft);
+  color: var(--amber-soft-ink);
+}
+.hg-choice-skip {
+  border: 1.5px solid var(--input-border);
+  background: transparent;
+  color: var(--ink);
+}
+.hg-choice-sub {
+  font-size: 11.5px;
+  font-weight: 600;
+  text-align: center;
+}
+.hg-clear {
+  align-self: flex-start;
+  min-height: 40px;
+  padding: 0 4px;
+  border: 0;
+  background: transparent;
+  color: var(--accent-ink);
+  font: inherit;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+}

@@ -562,6 +562,30 @@ export class RemindersHelp {}
         A new habit's grid starts the week you added it and grows a column each week, up to the last
         8 weeks. Days before a habit existed are left blank.
       </p>
+      <h2>The grid view</h2>
+      <p>
+        Tap <strong>Grid</strong> at the top of Progress to see every habit as a row and every day
+        as a square, grouped under each routine's anchor in chain order. The squares use the same
+        marks as the dot grid. Tap <strong>Overview</strong> to go back; AndThen remembers which one
+        you used last on this device.
+      </p>
+      <p>
+        On a phone you'll see 7 days. Use the arrows to look at earlier weeks. Choose
+        <strong>30 days</strong> for a quick look at the month, and tap any day there to open its
+        week. On a laptop, 30 days also shows each habit's chain, how many asked-for days you did,
+        and a row of bars for how much of each day got done.
+      </p>
+      <h2>Fixing a day you forgot</h2>
+      <p>
+        Did a habit but forgot to check in? Tap that day in the grid and choose
+        <strong>Done</strong>, <strong>Did 2 min</strong> or <strong>Skip</strong>, or
+        <strong>Clear this day</strong> to remove the check-in. Your chain, garden and weekly recap
+        update straight away, and any note you wrote stays.
+      </p>
+      <p>
+        You can change today and the 6 days before it. Older days are view-only, so your garden,
+        milestones and reflections keep meaning what they meant at the time.
+      </p>
       <h2>The forgiving chain</h2>
       <p>
         Each habit's chain counts how many days it has kept going. Unlike a strict streak, it

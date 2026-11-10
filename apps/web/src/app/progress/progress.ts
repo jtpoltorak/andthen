@@ -1,5 +1,7 @@
 import { DayGlance } from './day-glance';
-import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
+import { HabitGrid } from './habit-grid';
+import { readJson, writeJson } from '../data/local-store';
+import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { NgTemplateOutlet } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import {
@@ -127,18 +129,40 @@ const TREND_WORDS: Record<TrendDirection, string> = {
   down: 'A quieter stretch. The 2-minute version counts.',
 };
 
+/** Which way Progress is shown, Overview or Grid. Per device, remembered between visits. */
+export const PROGRESS_VIEW_KEY = 'andthen.progressView';
+export type ProgressView = 'overview' | 'grid';
+
 const plural = (n: number, word: string) => `${n} ${word}${n === 1 ? '' : 's'}`;
 
 /** Progress: a weekly recap, then an 8-week dot grid and a forgiving chain count per habit. */
 @Component({
   selector: 'app-progress',
-  imports: [RouterLink, NgTemplateOutlet, HelpLink, EmptyState, RoutineIcon, Plant, DayGlance],
+  imports: [
+    RouterLink,
+    NgTemplateOutlet,
+    HelpLink,
+    EmptyState,
+    RoutineIcon,
+    Plant,
+    DayGlance,
+    HabitGrid,
+  ],
   templateUrl: './progress.html',
   styleUrl: './progress.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class Progress {
   private readonly store = inject(HabitStore);
+
+  protected readonly view = signal<ProgressView>(
+    readJson(PROGRESS_VIEW_KEY) === 'grid' ? 'grid' : 'overview',
+  );
+
+  protected showView(view: ProgressView): void {
+    this.view.set(view);
+    writeJson(PROGRESS_VIEW_KEY, view);
+  }
 
   private readonly preferences = inject(PreferencesStore);
   private readonly weekStartsOn = computed(() => this.preferences.prefs().weekStartsOn);

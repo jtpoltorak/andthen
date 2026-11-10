@@ -174,6 +174,9 @@ import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
       .page:has(app-today) {
         max-width: 960px;
       }
+      .page:has(app-habit-grid) {
+        max-width: 1120px;
+      }
       .tab {
         flex-direction: row;
         justify-content: flex-start;
