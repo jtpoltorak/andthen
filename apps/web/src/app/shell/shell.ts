@@ -76,7 +76,12 @@ import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
         </svg>
         Progress
       </a>
-      <a class="tab" routerLink="/settings" routerLinkActive="active" ariaCurrentWhenActive="page">
+      <a
+        class="tab rail-split"
+        routerLink="/settings"
+        routerLinkActive="active"
+        ariaCurrentWhenActive="page"
+      >
         <svg
           width="22"
           height="22"
@@ -95,8 +100,8 @@ import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
         </svg>
         Settings
       </a>
-      <!-- Shown only in the wide layout, pinned to the bottom of the side rail. -->
-      <a class="tab rail-help" routerLink="/help">
+      <!-- Shown only in the wide layout, under Settings. -->
+      <a class="tab rail-split rail-help" routerLink="/help">
         <svg
           width="22"
           height="22"
@@ -218,7 +223,19 @@ import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
       }
       .rail-help {
         display: flex;
-        margin-top: auto;
+      }
+      /* Thin lines group the rail: the daily pages, then Settings, then Help. */
+      .rail-split {
+        position: relative;
+        margin-top: 17px;
+      }
+      .rail-split::before {
+        content: '';
+        position: absolute;
+        top: -9px;
+        left: 14px;
+        right: 14px;
+        border-top: 1px solid var(--border);
       }
     }
     /* Roomier laptops and monitors: a little more air beside the content. */

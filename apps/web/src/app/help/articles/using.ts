@@ -46,9 +46,9 @@ import { HelpArticle } from '../help-article';
       <h2>Finding your way around Help</h2>
       <p>
         Every screen has a <strong>?</strong> that opens its help. On a laptop or desktop,
-        <strong>Help</strong> also sits at the bottom of the menu on the left. There, Help lists
-        every topic down the left side, with a search box at the top, and longer articles have an
-        <strong>On this page</strong> list on the right to jump between sections.
+        <strong>Help</strong> also sits in the menu on the left, just under Settings. There, Help
+        lists every topic down the left side, with a search box at the top, and longer articles have
+        an <strong>On this page</strong> list on the right to jump between sections.
       </p>
     </app-help-article>
   `,
