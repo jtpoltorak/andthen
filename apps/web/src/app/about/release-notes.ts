@@ -21,6 +21,13 @@ export interface Release {
 
 export const RELEASES: readonly Release[] = [
   {
+    version: '1.35.1',
+    date: '2026-11-10',
+    notes: [
+      "The grid view now has vertical lines between days, with a darker line where each week starts, so it's easier to follow a day down the grid.",
+    ],
+  },
+  {
     version: '1.35.0',
     date: '2026-11-10',
     title: 'See your habits as a grid.',

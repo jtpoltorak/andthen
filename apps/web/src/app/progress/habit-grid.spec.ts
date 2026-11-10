@@ -103,6 +103,11 @@ describe('Progress grid view', () => {
       'hg-open',
     ]);
     expect(water.querySelectorAll('.hg-noted')).toHaveLength(1);
+    // A darker line marks where the week starts: Monday, Nov 9.
+    const weekLines = Array.from(water.querySelectorAll('.hg-cell')).map((c) =>
+      c.classList.contains('hg-week'),
+    );
+    expect(weekLines).toEqual([false, false, false, false, false, true, false]);
     expect(root.textContent).toContain('The last 7 days can be changed');
   });
 

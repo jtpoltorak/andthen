@@ -98,13 +98,15 @@ export class HabitGrid {
   });
 
   protected readonly columns = computed(() =>
-    this.days().map((date) => {
+    this.days().map((date, i) => {
       const d = fromDayKey(date);
       return {
         date,
         letter: d.toLocaleDateString(undefined, { weekday: 'narrow' }),
         num: d.getDate(),
         isToday: date === this.store.today(),
+        // A darker line where each week starts (not on the first column, which has its own edge).
+        weekStart: i > 0 && d.getDay() === this.weekStartsOn(),
         // On a phone, 30 numbers don't fit: show where each week starts.
         showNum: !this.compact() || d.getDay() === this.weekStartsOn(),
         band: this.span() === 30 && this.wide() && canEditDay(date, this.store.today()),

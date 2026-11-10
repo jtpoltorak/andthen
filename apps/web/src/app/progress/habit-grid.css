@@ -88,14 +88,22 @@
 .hg-row {
   display: grid;
   align-items: center;
-  column-gap: 3px;
-}
-.hg-wide .hg-row,
-.hg-compact .hg-row {
   column-gap: 0;
 }
 .hg-compact .hg-row {
   column-gap: 1.5px;
+}
+
+/* Vertical grid lines: a light one between days, a darker one where each week starts.
+   The 30-day glance on a phone is too tight for them. */
+.hg-card:not(.hg-compact) :is(.hg-day, .hg-habit .hg-cell, .hg-bar-cell) {
+  border-left: 1px solid color-mix(in srgb, var(--line) 55%, transparent);
+}
+.hg-card:not(.hg-compact) .hg-week {
+  border-left: 2px solid var(--dashed-soft);
+}
+.hg-card:not(.hg-compact) .hg-day {
+  border-radius: 0;
 }
 .hg-head {
   align-items: end;
