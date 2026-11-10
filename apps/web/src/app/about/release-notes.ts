@@ -21,6 +21,13 @@ export interface Release {
 
 export const RELEASES: readonly Release[] = [
   {
+    version: '1.36.2',
+    date: '2026-11-10',
+    notes: [
+      'On a computer, Help moves up to sit just under Settings in the menu on the left, with thin lines setting Settings and Help apart from your daily pages.',
+    ],
+  },
+  {
     version: '1.36.1',
     date: '2026-11-10',
     notes: [
