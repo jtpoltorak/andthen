@@ -747,7 +747,11 @@ export class InstallHelp {}
  * until then the article says "coming soon" for that browser.
  */
 export const EXTENSION_STORES: readonly { browser: string; store: string; url?: string }[] = [
-  { browser: 'Chrome', store: 'Chrome Web Store' },
+  {
+    browser: 'Chrome',
+    store: 'Chrome Web Store',
+    url: 'https://chromewebstore.google.com/detail/andthen/hfdjjodlohfjlpnfmfefdmidinbgoold',
+  },
   { browser: 'Edge', store: 'Edge Add-ons' },
   { browser: 'Firefox', store: 'Firefox Add-ons' },
 ];

@@ -21,6 +21,15 @@ export interface Release {
 
 export const RELEASES: readonly Release[] = [
   {
+    version: '1.34.1',
+    date: '2026-11-10',
+    title: 'AndThen for Chrome is here.',
+    notes: [
+      'The AndThen extension is now in the Chrome Web Store. Help → The browser extension links straight to it.',
+      'It also works in Brave, Opera, Vivaldi and other Chromium browsers. Edge and Firefox are coming soon.',
+    ],
+  },
+  {
     version: '1.34.0',
     date: '2026-11-09',
     title: 'Getting ready for the browser extension.',
