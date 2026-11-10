@@ -94,6 +94,21 @@ import { InstallSettings } from './install-settings';
       gap: 20px;
       padding: 28px 20px 24px;
     }
+    /* Wide screens: the sections flow into two columns (top to bottom, then across). */
+    @media (min-width: 1100px) {
+      .page {
+        display: block;
+        columns: 2;
+        column-gap: 24px;
+      }
+      .page > * {
+        break-inside: avoid;
+        margin-bottom: 20px;
+      }
+      .title-row {
+        column-span: all;
+      }
+    }
     h1 {
       font-size: 32px;
       font-weight: 800;

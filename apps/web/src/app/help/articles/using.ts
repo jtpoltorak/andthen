@@ -45,9 +45,10 @@ import { HelpArticle } from '../help-article';
       </p>
       <h2>Finding your way around Help</h2>
       <p>
-        Every screen has a <strong>?</strong> that opens its help. On a laptop or desktop, Help
-        lists every topic down the left side, with a search box at the top, and longer articles have
-        an <strong>On this page</strong> list on the right to jump between sections.
+        Every screen has a <strong>?</strong> that opens its help. On a laptop or desktop,
+        <strong>Help</strong> also sits at the bottom of the menu on the left. There, Help lists
+        every topic down the left side, with a search box at the top, and longer articles have an
+        <strong>On this page</strong> list on the right to jump between sections.
       </p>
     </app-help-article>
   `,
@@ -149,7 +150,10 @@ export class GettingStarted {}
         <li><strong>Resting today</strong>: routines with nothing scheduled today.</li>
         <li>
           <strong>On a computer</strong>: the tabs move to a rail on the left, and a
-          <strong>This week</strong> card sits beside your routines with a dot for each day.
+          <strong>This week</strong> card sits beside your routines with a dot for each day. Today,
+          Routines, Progress and Settings all share the same width, and Progress and Settings spread
+          their cards into two columns when there's room. On a big monitor everything is a notch
+          bigger, so it fills the screen.
         </li>
         <li>
           <strong>Weekly reflection</strong>: a card at the end of the week. See
@@ -425,7 +429,8 @@ export class ShareHelp {}
         </li>
         <li>
           <strong>Larger text</strong>: makes everything about 15% bigger, buttons and spacing too,
-          like zooming in. Screens reflow to fit, so nothing gets cut off.
+          like zooming in. Screens reflow to fit, so nothing gets cut off. On a big monitor it adds
+          to the step up AndThen already takes there.
         </li>
         <li>
           <strong>More contrast</strong>: darker gray text, lines and borders, in light and dark.

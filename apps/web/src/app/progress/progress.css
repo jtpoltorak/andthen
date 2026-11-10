@@ -5,6 +5,29 @@
   padding: 28px 20px 24px;
 }
 
+/* Wide screens: the overview's cards flow into two columns (top to bottom, then across).
+   The grid view keeps the full width. */
+@media (min-width: 1100px) {
+  .progress:not(:has(app-habit-grid)) {
+    display: block;
+    columns: 2;
+    column-gap: 16px;
+  }
+  .progress:not(:has(app-habit-grid)) > * {
+    break-inside: avoid;
+    margin: 0 0 16px;
+  }
+  /* Component hosts are inline by default, which would let their cards split across columns. */
+  .progress > :is(app-day-glance, app-empty-state) {
+    display: block;
+  }
+  /* The header, the week and the dot legend run across both columns. The legend starts the
+     per-habit cards, so they get their own two columns below it. */
+  .progress:not(:has(app-habit-grid)) > :is(.title-row, .view-switch, .recap, .legend) {
+    column-span: all;
+  }
+}
+
 h1 {
   margin: 0 0 4px;
   font-size: 32px;

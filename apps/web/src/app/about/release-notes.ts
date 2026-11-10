@@ -21,6 +21,17 @@ export interface Release {
 
 export const RELEASES: readonly Release[] = [
   {
+    version: '1.36.0',
+    date: '2026-11-10',
+    title: 'More room on laptops and big monitors.',
+    notes: [
+      "Today, Routines, Progress and Settings now share one width on a computer, so the page doesn't jump around as you switch tabs.",
+      'With room to spare, Progress and Settings spread their cards into two columns. Routines stays one list, in order.',
+      'On big monitors (1080p and up, 2K and 4K) everything is a notch bigger, so AndThen fills the screen instead of sitting small in the middle.',
+      'Help now has its own link at the bottom of the menu on the left.',
+    ],
+  },
+  {
     version: '1.35.1',
     date: '2026-11-10',
     notes: [

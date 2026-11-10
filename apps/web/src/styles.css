@@ -37,8 +37,13 @@
   --radius-card: 22px;
   --radius-control: 14px;
   --font: 'Manrope', system-ui, -apple-system, 'Segoe UI', sans-serif;
-  /* Larger text scales the whole page (see body), so spacing and tap targets grow with it. */
-  --zoom: 1;
+  /* The whole page is scaled by --zoom (see body), so spacing and tap targets grow with it. It
+     combines Larger text (Settings) with a step up on big monitors, where 100% looks small. */
+  --text-zoom: 1;
+  --screen-zoom: 1;
+  --zoom: calc(var(--text-zoom) * var(--screen-zoom));
+  /* The widest the tabbed pages get on laptops and monitors (Shell). */
+  --page-max: 1400px;
   /* The left rail on laptops, shared by the app (Shell) and Help (HelpShell) so they line up. */
   --rail-width: 260px;
   --rail-padding: 24px 14px;
@@ -244,7 +249,19 @@
 /* Larger text (Settings): the page is zoomed, like the browser's own zoom, so layouts reflow
    instead of overflowing. Full-height screens divide by --zoom to stay one screen tall. */
 :root[data-text='large'] {
-  --zoom: 1.15;
+  --text-zoom: 1.15;
+}
+/* Big monitors (roughly 1080p and up, and 2K/4K at their usual scaling): everything a notch bigger,
+   so the app fills the screen instead of sitting small in the middle of it. */
+@media (min-width: 1800px) {
+  :root {
+    --screen-zoom: 1.15;
+  }
+}
+@media (min-width: 2400px) {
+  :root {
+    --screen-zoom: 1.3;
+  }
 }
 
 html,
