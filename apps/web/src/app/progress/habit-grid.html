@@ -64,7 +64,12 @@
           }
         </span>
         @for (col of columns(); track col.date) {
-          <span class="hg-day" [class.hg-today]="col.isToday" [class.hg-band]="col.band">
+          <span
+            class="hg-day"
+            [class.hg-today]="col.isToday"
+            [class.hg-band]="col.band"
+            [class.hg-week]="col.weekStart"
+          >
             @if (!compact()) {
               <span class="hg-letter">{{ col.letter }}</span>
             }
@@ -94,6 +99,7 @@
                   type="button"
                   class="hg-cell"
                   [class.hg-band]="columns()[i].band"
+                  [class.hg-week]="columns()[i].weekStart"
                   [class.hg-locked]="!compact() && !cell.editable"
                   [attr.aria-label]="label(row, cell)"
                   (click)="tap(row.habit, group.routine, cell)"
@@ -113,7 +119,12 @@
                   </span>
                 </button>
               } @else {
-                <span class="hg-cell" role="img" [attr.aria-label]="label(row, cell)">
+                <span
+                  class="hg-cell"
+                  role="img"
+                  [class.hg-week]="columns()[i].weekStart"
+                  [attr.aria-label]="label(row, cell)"
+                >
                   <span [class]="'hg-mark hg-' + cell.status" [class.hg-noted]="cell.noted">
                     @if (cell.status === 'full') {
                       <svg viewBox="0 0 16 16" aria-hidden="true">
@@ -138,7 +149,12 @@
         <div class="hg-row hg-totals" [style.grid-template-columns]="gridColumns()">
           <span class="hg-totals-name">All habits</span>
           @for (bar of shares(); track $index) {
-            <span class="hg-bar-cell" aria-hidden="true" [class.hg-band]="bar.band">
+            <span
+              class="hg-bar-cell"
+              aria-hidden="true"
+              [class.hg-band]="bar.band"
+              [class.hg-week]="columns()[$index].weekStart"
+            >
               <span
                 class="hg-bar"
                 [class.hg-bar-today]="bar.today"

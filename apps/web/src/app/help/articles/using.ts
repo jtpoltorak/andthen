@@ -566,8 +566,9 @@ export class RemindersHelp {}
       <p>
         Tap <strong>Grid</strong> at the top of Progress to see every habit as a row and every day
         as a square, grouped under each routine's anchor in chain order. The squares use the same
-        marks as the dot grid. Tap <strong>Overview</strong> to go back; AndThen remembers which one
-        you used last on this device.
+        marks as the dot grid. Thin lines run between the days, with a darker line where each week
+        starts. Tap <strong>Overview</strong> to go back; AndThen remembers which one you used last
+        on this device.
       </p>
       <p>
         On a phone you'll see 7 days. Use the arrows to look at earlier weeks. Choose
