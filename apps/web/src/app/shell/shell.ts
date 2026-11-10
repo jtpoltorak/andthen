@@ -95,6 +95,25 @@ import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
         </svg>
         Settings
       </a>
+      <!-- Shown only in the wide layout, pinned to the bottom of the side rail. -->
+      <a class="tab rail-help" routerLink="/help">
+        <svg
+          width="22"
+          height="22"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          aria-hidden="true"
+        >
+          <circle cx="12" cy="12" r="9" />
+          <path d="M9.6 9.4a2.5 2.5 0 0 1 4.8.9c0 1.7-2.4 2.2-2.4 3.7" />
+          <path d="M12 17.2h.01" />
+        </svg>
+        Help
+      </a>
     </nav>
   `,
   styles: `
@@ -139,7 +158,8 @@ import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
       color: var(--accent-ink);
       font-weight: 700;
     }
-    .rail-brand {
+    .rail-brand,
+    .rail-help {
       display: none;
     }
 
@@ -164,6 +184,7 @@ import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
         border-inline: none;
         border-right: 1px solid var(--border);
       }
+      /* Forms and other inner pages (a routine's editor, the weekly reflection) keep a narrow column. */
       .page {
         grid-column: 2;
         grid-row: 1;
@@ -171,11 +192,10 @@ import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
         max-width: 600px;
         margin: 0 auto;
       }
-      .page:has(app-today) {
-        max-width: 960px;
-      }
-      .page:has(app-habit-grid) {
-        max-width: 1120px;
+      /* The four tabs share one frame, so the content doesn't jump around as you switch between them.
+         Each page fills it in its own way (Today's side panel, Progress and Settings in columns). */
+      .page:has(app-today, app-routines, app-progress, app-settings) {
+        max-width: var(--page-max);
       }
       .tab {
         flex-direction: row;
@@ -195,6 +215,16 @@ import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
       }
       .rail-brand {
         display: flex;
+      }
+      .rail-help {
+        display: flex;
+        margin-top: auto;
+      }
+    }
+    /* Roomier laptops and monitors: a little more air beside the content. */
+    @media (min-width: 1100px) {
+      .page {
+        padding-inline: 20px;
       }
     }
   `,
