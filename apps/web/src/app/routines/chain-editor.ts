@@ -15,8 +15,6 @@ import {
   MAX_TIMES_A_WEEK,
   WEEKDAYS,
   describeSchedule,
-  type RowBox,
-  dropIndex,
   PAUSE_LENGTHS,
   addDays,
   fromDayKey,
@@ -24,31 +22,11 @@ import {
   suggestTwoMinuteVersion,
   encodeSharedRoutine,
   toSharedRoutine,
-  ROUTINE_ICONS,
   type RoutineIcon as RoutineIconId,
 } from '@andthen/core';
-import { ROUTINE_ICON_NAMES, RoutineIcon } from '../shared/routine-icon';
+import { ROUTINE_ICON_GROUPS, ROUTINE_ICON_NAMES, RoutineIcon } from '../shared/routine-icon';
 
 type ScheduleKind = 'daily' | 'days' | 'weekly';
-
-/** A habit being dragged by its handle. Positions are in viewport pixels. */
-interface Drag {
-  id: string;
-  pointerId: number;
-  from: number;
-  to: number;
-  startY: number;
-  dy: number;
-  /** Height of the dragged row, which is how far the rows it passes slide over. */
-  height: number;
-  /** Where each habit row sat when the drag started. */
-  rows: RowBox[];
-  /**
-   * Screen pixels per CSS pixel inside the page: above 1 with Larger text, which zooms the
-   * page. Pointer positions are in screen pixels, but a translate is in the row's own.
-   */
-  scale: number;
-}
 
 /** Day toggles, Monday first. Values are `Date.getDay()` numbers. */
 const DAY_TOGGLES = [
@@ -64,6 +42,7 @@ import { HabitStore } from '../data/habit-store';
 import { Autofocus, byId, focusAfterRender } from '../shared/focus';
 import { HelpLink } from '../help/help-link';
 import { drawNewChain } from '../shared/draw-chain';
+import { ListDrag } from '../shared/list-drag';
 
 /** What is open for editing: the anchor, one habit, or nothing. */
 type Editing = { kind: 'anchor' } | { kind: 'habit'; id: string } | undefined;
@@ -193,7 +172,7 @@ export class ChainEditor {
     return e?.kind === 'habit' && e.id === habit.id;
   }
 
-  protected readonly icons = ROUTINE_ICONS;
+  protected readonly iconGroups = ROUTINE_ICON_GROUPS;
   protected readonly iconNames = ROUTINE_ICON_NAMES;
 
   /** Picking an icon saves straight away; there's nothing else to confirm. */
@@ -281,65 +260,28 @@ export class ChainEditor {
     focusAfterRender(this.injector, byId('add-habit'));
   }
 
-  protected readonly drag = signal<Drag | undefined>(undefined);
+  /** Drag a habit by its handle. The up and down buttons stay for keyboards. */
+  private readonly dragger = new ListDrag(
+    () => [...this.host.nativeElement.querySelectorAll<HTMLElement>('.habit-row')],
+    (id, by) => this.store.moveHabit(id, by),
+    () => this.editing.set(undefined),
+  );
+  protected readonly drag = this.dragger.state;
 
-  /** Starts dragging a habit by its handle. The up and down buttons stay for keyboards. */
   protected startDrag(event: PointerEvent, habit: Habit, index: number): void {
-    if (this.drag() || (event.pointerType === 'mouse' && event.button !== 0)) return;
-    const rows = [...this.host.nativeElement.querySelectorAll<HTMLElement>('.habit-row')];
-    const row = rows[index];
-    if (!row) return;
-    event.preventDefault();
-    (event.currentTarget as HTMLElement).setPointerCapture?.(event.pointerId);
-    const boxes = rows.map((r) => {
-      const rect = r.getBoundingClientRect();
-      return { top: rect.top, bottom: rect.top + rect.height };
-    });
-    this.editing.set(undefined);
-    this.drag.set({
-      id: habit.id,
-      pointerId: event.pointerId,
-      from: index,
-      to: index,
-      startY: event.clientY,
-      dy: 0,
-      height: row.getBoundingClientRect().height,
-      rows: boxes,
-      scale: row.offsetHeight ? row.getBoundingClientRect().height / row.offsetHeight : 1,
-    });
+    this.dragger.start(event, habit.id, index);
   }
 
   protected moveDrag(event: PointerEvent): void {
-    const drag = this.drag();
-    if (!drag || event.pointerId !== drag.pointerId) return;
-    const dy = event.clientY - drag.startY;
-    const to = dropIndex(drag.rows, drag.from, dy);
-    this.drag.set({ ...drag, dy, to });
+    this.dragger.move(event);
   }
 
-  protected async endDrag(event: PointerEvent, cancelled = false): Promise<void> {
-    const drag = this.drag();
-    if (!drag || event.pointerId !== drag.pointerId) return;
-    this.drag.set(undefined);
-    if (!cancelled && drag.to !== drag.from) {
-      await this.store.moveHabit(drag.id, drag.to - drag.from);
-    }
+  protected endDrag(event: PointerEvent, cancelled = false): Promise<void> {
+    return this.dragger.end(event, cancelled);
   }
 
-  /** How far a row slides while another one is dragged past it. */
   protected rowShift(index: number): string | null {
-    const drag = this.drag();
-    if (!drag) return null;
-    const dy = drag.dy / drag.scale;
-    const height = drag.height / drag.scale;
-    if (index === drag.from) return `translateY(${dy}px)`;
-    if (drag.from < drag.to && index > drag.from && index <= drag.to) {
-      return `translateY(${-height}px)`;
-    }
-    if (drag.to < drag.from && index >= drag.to && index < drag.from) {
-      return `translateY(${height}px)`;
-    }
-    return 'translateY(0)';
+    return this.dragger.shift(index);
   }
 
   /** Moves a habit, keeping focus on its arrow (or the other one, at the top or bottom). */

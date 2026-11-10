@@ -274,6 +274,21 @@ export class HabitStore {
     this.habits.update((list) => list.map((h) => (h.id === id ? next : h)));
   }
 
+  /**
+   * Moves a routine up (-1) or down (+1) in the routines list. Today, Progress, the grid,
+   * the extension and other devices all follow this order.
+   */
+  async moveRoutine(id: string, by: number): Promise<void> {
+    const list = this.activeRoutines();
+    const from = list.findIndex((r) => r.id === id);
+    if (from < 0) return;
+    const changed = moveItem(list, from, from + by);
+    if (!changed.length) return;
+    for (const routine of changed) await this.repo.putRoutine(routine);
+    const byId = new Map(changed.map((r) => [r.id, r]));
+    this.routines.update((all) => all.map((r) => byId.get(r.id) ?? r));
+  }
+
   /** Moves a habit up (-1) or down (+1) in its chain. */
   async moveHabit(id: string, by: number): Promise<void> {
     const habit = this.habits().find((h) => h.id === id);

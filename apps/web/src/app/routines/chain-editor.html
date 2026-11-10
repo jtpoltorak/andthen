@@ -380,32 +380,37 @@
     <fieldset class="pause-zone icon-picker">
       <legend class="pause-title">Icon</legend>
       <p class="row-sub">Makes this routine easy to spot on Today, Progress and Run.</p>
-      <div class="icon-options">
-        <label class="icon-option" [class.selected]="!r.icon" title="No icon">
-          <input
-            type="radio"
-            name="routine-icon"
-            class="visually-hidden"
-            [checked]="!r.icon"
-            (change)="setIcon(undefined)"
-          />
-          <span class="anchor-dot" aria-hidden="true"></span>
-          <span class="visually-hidden">No icon</span>
-        </label>
-        @for (icon of icons; track icon) {
-          <label class="icon-option" [class.selected]="r.icon === icon" [title]="iconNames[icon]">
-            <input
-              type="radio"
-              name="routine-icon"
-              class="visually-hidden"
-              [checked]="r.icon === icon"
-              (change)="setIcon(icon)"
-            />
-            <app-routine-icon [icon]="icon" [size]="18" />
-            <span class="visually-hidden">{{ iconNames[icon] }}</span>
-          </label>
-        }
-      </div>
+      @for (group of iconGroups; track group.name; let firstGroup = $first) {
+        <p class="icon-group" aria-hidden="true">{{ group.name }}</p>
+        <div class="icon-options">
+          @if (firstGroup) {
+            <label class="icon-option" [class.selected]="!r.icon" title="No icon">
+              <input
+                type="radio"
+                name="routine-icon"
+                class="visually-hidden"
+                [checked]="!r.icon"
+                (change)="setIcon(undefined)"
+              />
+              <span class="anchor-dot" aria-hidden="true"></span>
+              <span class="visually-hidden">No icon</span>
+            </label>
+          }
+          @for (icon of group.icons; track icon) {
+            <label class="icon-option" [class.selected]="r.icon === icon" [title]="iconNames[icon]">
+              <input
+                type="radio"
+                name="routine-icon"
+                class="visually-hidden"
+                [checked]="r.icon === icon"
+                (change)="setIcon(icon)"
+              />
+              <app-routine-icon [icon]="icon" [size]="18" />
+              <span class="visually-hidden">{{ iconNames[icon] }}</span>
+            </label>
+          }
+        </div>
+      }
     </fieldset>
 
     <section class="pause-zone" aria-labelledby="share-title">

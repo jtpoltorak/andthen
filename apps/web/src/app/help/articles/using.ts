@@ -189,10 +189,11 @@ export class TodayHelp {}
       </p>
       <h2>An icon</h2>
       <p>
-        Pick an icon at the top of the editor, like a mug, a moon or a laptop, so routines are easy
-        to tell apart at a glance. It shows on Today, Routines, Progress and the Run screen, and
-        goes along when you share the routine. Ready-made routines come with one. Pick the plain dot
-        to go without.
+        Pick an icon in the editor, like a mug, a toothbrush, a bike or a paw, so routines are easy
+        to tell apart at a glance. There are over 40, grouped into times of day, body, mind, home
+        and outdoors, and work and people. It shows on Today, Routines, Progress and the Run screen,
+        and goes along when you share the routine. Ready-made routines come with one. Pick the plain
+        dot to go without.
       </p>
       <h2>Habits</h2>
       <ul>
@@ -214,6 +215,15 @@ export class TodayHelp {}
           and its past check-ins stay in Progress. A chain needs at least one habit.
         </li>
       </ul>
+      <h2>The order of your routines</h2>
+      <p>
+        In <a routerLink="/routines">Routines</a>, tap <strong>Reorder</strong> next to the title.
+        The cards fold into slim rows: drag one by its handle (the six dots), or use the up and down
+        arrows, which also work from a keyboard. Tap <strong>Done</strong> when it looks right. The
+        order saves as you go, and Today, Progress, the browser extension and your other devices all
+        follow it. Today still keeps Morning, Afternoon and Evening apart, and uses your order
+        inside each.
+      </p>
       <h2>New and removed routines</h2>
       <p>
         <strong>New routine</strong> in Routines starts one from scratch or from a
