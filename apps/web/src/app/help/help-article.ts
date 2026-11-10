@@ -63,12 +63,12 @@ import { HELP_PARTS, helpArticle, type HelpArticleInfo } from './help-articles';
     @media (min-width: 1240px) {
       .layout {
         display: grid;
-        grid-template-columns: minmax(0, 1fr) 220px;
+        /* The article starts at the frame's left edge and "On this page" sits at its right. */
+        grid-template-columns: minmax(0, var(--help-text-max)) 240px;
+        justify-content: space-between;
         align-items: start;
-        gap: 24px;
-        max-width: 1000px;
-        margin: 0 auto;
-        padding-right: 24px;
+        gap: 32px;
+        padding-right: 40px;
       }
       .toc {
         position: sticky;

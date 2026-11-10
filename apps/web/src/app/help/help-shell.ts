@@ -93,6 +93,12 @@ import { filterArticles } from './help-home';
         grid-template-columns: var(--rail-width) minmax(0, 1fr);
         align-items: start;
       }
+      /* The same frame as the app's tabs (Shell), so Help lines up with the rest of AndThen. */
+      .content {
+        width: 100%;
+        max-width: var(--page-max);
+        margin: 0 auto;
+      }
       .side {
         position: sticky;
         top: 0;
