@@ -21,6 +21,15 @@ export interface Release {
 
 export const RELEASES: readonly Release[] = [
   {
+    version: '1.37.0',
+    date: '2026-11-10',
+    title: 'Put your routines in order, and pick from more icons.',
+    notes: [
+      'Tap Reorder in Routines to drag your routines into the order you want, or move them with the up and down arrows. Today, Progress, the browser extension and your other devices all follow it.',
+      'Thirty new routine icons, like a toothbrush, a glass of water, a bike, a paw and a shopping cart, for 43 in all. The picker groups them so they are easy to find.',
+    ],
+  },
+  {
     version: '1.36.2',
     date: '2026-11-10',
     notes: [

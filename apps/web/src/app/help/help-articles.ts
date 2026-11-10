@@ -155,8 +155,10 @@ export const HELP_ARTICLES = [
     slug: 'routines',
     part: 'using',
     title: 'Routines and the chain editor',
-    summary: 'Change an anchor, pick an icon, add, reorder and remove habits.',
-    keywords: 'edit routine anchor icon picture habit reorder remove usual time chain editor',
+    summary:
+      'Change an anchor, pick an icon, reorder routines, and add, reorder and remove habits.',
+    keywords:
+      'edit routine anchor icon picture habit reorder order move drag arrange sort routines remove usual time chain editor',
     minutes: 3,
     related: ['schedules', 'easier-notes', 'share'],
   },

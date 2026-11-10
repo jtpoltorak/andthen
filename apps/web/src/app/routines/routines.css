@@ -64,6 +64,15 @@ h1 {
   clear: both;
 }
 
+.icon-group {
+  margin: 12px 0 0;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
 .icon-options {
   display: flex;
   flex-wrap: wrap;
@@ -616,4 +625,66 @@ fieldset {
     opacity: 0;
     transform: translateY(6px);
   }
+}
+
+/* Routines list: Reorder mode folds the cards into slim rows to drag or move with arrows. */
+.title-tools {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.reorder-toggle {
+  min-height: 36px;
+  padding: 0 14px;
+  border: 1px solid var(--input-border);
+  border-radius: 999px;
+  background: var(--surface);
+  color: var(--accent-ink);
+  font: inherit;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+}
+.reorder-toggle.on {
+  border-color: var(--accent);
+  background: var(--accent);
+  color: var(--on-accent);
+}
+.reorder-toggle:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}
+
+.reorder-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.reorder-row {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 6px 6px 4px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-control);
+  background: var(--surface);
+}
+.reorder-row.dragging {
+  border-color: var(--accent);
+}
+.reorder-label {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+  font-size: 15px;
+  font-weight: 700;
+}
+.reorder-text {
+  overflow-wrap: anywhere;
 }

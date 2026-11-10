@@ -5,7 +5,10 @@ export type DayKey = string;
  * A routine is a chain of habits that starts with an anchor: something the
  * person already does every day ("After I pour my coffee").
  */
-/** The built-in routine icons, in the order the picker shows them. */
+/**
+ * The built-in routine icons. New ones go on the end: the stored id is what syncs, so an id
+ * never changes once it ships. (The picker shows them in its own groups.)
+ */
 export const ROUTINE_ICONS = [
   'coffee',
   'sun',
@@ -20,6 +23,37 @@ export const ROUTINE_ICONS = [
   'heart',
   'music',
   'home',
+  // Added in 1.37.0.
+  'sunrise',
+  'alarm',
+  'timer',
+  'calendar',
+  'bike',
+  'lotus',
+  'water',
+  'apple',
+  'meal',
+  'pill',
+  'tooth',
+  'drop',
+  'headphones',
+  'palette',
+  'list',
+  'star',
+  'smile',
+  'flame',
+  'broom',
+  'sprout',
+  'paw',
+  'cart',
+  'wallet',
+  'car',
+  'mountain',
+  'briefcase',
+  'phone',
+  'mail',
+  'chat',
+  'people',
 ] as const;
 
 export type RoutineIcon = (typeof ROUTINE_ICONS)[number];
