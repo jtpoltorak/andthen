@@ -30,7 +30,10 @@ export const routes: Routes = [
     title: 'Terms of Use · AndThen',
   },
   {
+    // Help sits inside the app's frame, so the menu on the left stays put while you read.
+    // Open to everyone (the welcome screen links here too), and loads on demand.
     path: 'help',
+    component: Shell,
     loadChildren: () => import('./help/help.routes').then((m) => m.HELP_ROUTES),
   },
   {

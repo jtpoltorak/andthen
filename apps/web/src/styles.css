@@ -46,8 +46,11 @@
   --page-max: 1400px;
   /* Help's reading column on laptops and monitors, padding included. */
   --help-text-max: 960px;
-  /* The left rail on laptops, shared by the app (Shell) and Help (HelpShell) so they line up. */
+  /* The left rail on laptops (Shell). */
   --rail-width: 260px;
+  /* The rail as icons only (Help on smaller laptops), and Help's topic list beside it. */
+  --rail-slim-width: 76px;
+  --help-side-width: 250px;
   --rail-padding: 24px 14px;
   color-scheme: light;
 }
@@ -507,7 +510,7 @@ input[role='switch']:focus-visible {
   }
 }
 
-/* The AndThen logo at the top of the laptop rail, the same in the app and in Help. */
+/* The AndThen logo at the top of the laptop rail (Shell). */
 .rail-brand {
   display: flex;
   align-items: center;

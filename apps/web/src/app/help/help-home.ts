@@ -84,6 +84,12 @@ export function filterArticles(query: string): HelpArticleInfo[] {
     </main>
   `,
   styles: `
+    /* On laptops Help is one of the app's own pages, with the menu right there, so no "‹ Back". */
+    @media (min-width: 900px) {
+      app-back-button {
+        display: none;
+      }
+    }
     .field-label {
       margin: 8px 0 0;
     }

@@ -1,3 +1,5 @@
+import { routes } from '../app.routes';
+import { Shell } from '../shell/shell';
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { HELP_ARTICLES, HELP_PARTS, helpArticle } from './help-articles';
@@ -95,6 +97,13 @@ describe('help link', () => {
 });
 
 describe('help on laptops', () => {
+  it('opens inside the app frame, so the menu on the left stays put', () => {
+    const help = routes.find((r) => r.path === 'help');
+    expect(help?.component).toBe(Shell);
+    // Open to everyone, so the welcome screen's Help link works before there's a routine.
+    expect(help?.canActivate).toBeUndefined();
+  });
+
   it('lists every topic in the sidebar, grouped by part', async () => {
     TestBed.configureTestingModule({ providers: [provideRouter(HELP_ROUTES.map((x) => x))] });
     const fixture = TestBed.createComponent(HelpShell);
