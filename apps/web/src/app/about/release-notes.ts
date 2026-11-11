@@ -21,6 +21,15 @@ export interface Release {
 
 export const RELEASES: readonly Release[] = [
   {
+    version: '1.38.0',
+    date: '2026-11-11',
+    title: 'Help keeps the menu on the left.',
+    notes: [
+      'On a computer, opening Help no longer swaps out the menu on the left. Today, Routines, Progress and Settings stay right there, with Help highlighted, so getting back is one click.',
+      'Help’s topic list now sits beside the menu. On a smaller laptop, the menu slims down to icons while you read.',
+    ],
+  },
+  {
     version: '1.37.0',
     date: '2026-11-10',
     title: 'Put your routines in order, and pick from more icons.',

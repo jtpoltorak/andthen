@@ -4,8 +4,9 @@ import { HELP_ARTICLES, HELP_PARTS, type HelpArticleInfo } from './help-articles
 import { filterArticles } from './help-home';
 
 /**
- * The frame around every Help page. On phones it adds nothing. On laptops (900px and up)
- * every topic is listed in a sidebar on the left, and the page reads in a wider column.
+ * The frame around every Help page, inside the app's own frame (Shell). On phones it adds
+ * nothing. On laptops (900px and up) every topic is listed in a column beside the app's
+ * menu, and the page reads in a wider column.
  */
 @Component({
   selector: 'app-help-shell',
@@ -13,15 +14,6 @@ import { filterArticles } from './help-home';
   template: `
     <div class="help-shell">
       <nav class="side" aria-label="Help topics">
-        <a class="rail-brand" routerLink="/today">
-          <svg width="26" height="26" viewBox="0 0 30 30" aria-hidden="true">
-            <circle cx="8" cy="15" r="5" fill="currentColor" />
-            <path d="M13 15h4" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" />
-            <circle cx="22.5" cy="15" r="5" fill="none" stroke="currentColor" stroke-width="2.5" />
-          </svg>
-          <span>AndThen</span>
-          <span class="visually-hidden">: back to the app</span>
-        </a>
         <a
           class="topic home"
           routerLink="/help"
@@ -90,7 +82,7 @@ import { filterArticles } from './help-home';
     @media (min-width: 900px) {
       .help-shell {
         display: grid;
-        grid-template-columns: var(--rail-width) minmax(0, 1fr);
+        grid-template-columns: var(--help-side-width) minmax(0, 1fr);
         align-items: start;
       }
       /* The same frame as the app's tabs (Shell), so Help lines up with the rest of AndThen. */
@@ -109,7 +101,8 @@ import { filterArticles } from './help-home';
         padding: var(--rail-padding);
         scrollbar-gutter: stable;
         border-right: 1px solid var(--border);
-        background: var(--surface);
+        /* Set apart from the app's menu (on --surface) just beside it. */
+        background: var(--bg);
       }
       .part {
         margin: 18px 14px 4px;

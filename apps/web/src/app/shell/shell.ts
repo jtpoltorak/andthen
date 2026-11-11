@@ -1,7 +1,10 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 
-/** The signed-in-free main app: page content above a bottom tab bar. */
+/**
+ * The signed-in-free main app: page content above a bottom tab bar, or beside a rail on
+ * laptops. Help opens inside it too, so the rail stays put while you read.
+ */
 @Component({
   selector: 'app-shell',
   imports: [RouterOutlet, RouterLink, RouterLinkActive],
@@ -15,9 +18,15 @@ import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
           <path d="M13 15h4" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" />
           <circle cx="22.5" cy="15" r="5" fill="none" stroke="currentColor" stroke-width="2.5" />
         </svg>
-        <span>AndThen</span>
+        <span class="label">AndThen</span>
       </a>
-      <a class="tab" routerLink="/today" routerLinkActive="active" ariaCurrentWhenActive="page">
+      <a
+        class="tab"
+        routerLink="/today"
+        routerLinkActive="active"
+        ariaCurrentWhenActive="page"
+        title="Today"
+      >
         <svg
           width="22"
           height="22"
@@ -34,9 +43,15 @@ import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
           <circle cx="6" cy="18" r="2.5" />
           <path d="M12 6h8M12 18h8" />
         </svg>
-        Today
+        <span class="label">Today</span>
       </a>
-      <a class="tab" routerLink="/routines" routerLinkActive="active" ariaCurrentWhenActive="page">
+      <a
+        class="tab"
+        routerLink="/routines"
+        routerLinkActive="active"
+        ariaCurrentWhenActive="page"
+        title="Routines"
+      >
         <svg
           width="22"
           height="22"
@@ -51,9 +66,15 @@ import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
           <rect x="4" y="4" width="16" height="6" rx="2" />
           <rect x="4" y="14" width="16" height="6" rx="2" />
         </svg>
-        Routines
+        <span class="label">Routines</span>
       </a>
-      <a class="tab" routerLink="/progress" routerLinkActive="active" ariaCurrentWhenActive="page">
+      <a
+        class="tab"
+        routerLink="/progress"
+        routerLinkActive="active"
+        ariaCurrentWhenActive="page"
+        title="Progress"
+      >
         <svg
           width="22"
           height="22"
@@ -74,13 +95,14 @@ import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
           <circle cx="6" cy="18" r="1.5" />
           <circle cx="12" cy="18" r="1.5" />
         </svg>
-        Progress
+        <span class="label">Progress</span>
       </a>
       <a
         class="tab rail-split"
         routerLink="/settings"
         routerLinkActive="active"
         ariaCurrentWhenActive="page"
+        title="Settings"
       >
         <svg
           width="22"
@@ -98,10 +120,16 @@ import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
             d="M12 3v2.5M12 18.5V21M3 12h2.5M18.5 12H21M5.6 5.6l1.8 1.8M16.6 16.6l1.8 1.8M5.6 18.4l1.8-1.8M16.6 7.4l1.8-1.8"
           />
         </svg>
-        Settings
+        <span class="label">Settings</span>
       </a>
-      <!-- Shown only in the wide layout, under Settings. -->
-      <a class="tab rail-split rail-help" routerLink="/help">
+      <!-- Shown only in the wide layout, under Settings. Help opens inside this frame. -->
+      <a
+        class="tab rail-split rail-help"
+        routerLink="/help"
+        routerLinkActive="active"
+        ariaCurrentWhenActive="page"
+        title="Help"
+      >
         <svg
           width="22"
           height="22"
@@ -117,7 +145,7 @@ import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
           <path d="M9.6 9.4a2.5 2.5 0 0 1 4.8.9c0 1.7-2.4 2.2-2.4 3.7" />
           <path d="M12 17.2h.01" />
         </svg>
-        Help
+        <span class="label">Help</span>
       </a>
     </nav>
   `,
@@ -167,6 +195,12 @@ import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
     .rail-help {
       display: none;
     }
+    /* Phones: Help reads full screen with its own "‹ Back", as before. */
+    @media (max-width: 899px) {
+      :host:has(app-help-shell) nav {
+        display: none;
+      }
+    }
 
     /* Laptops and desktops: the tabs move to a rail on the left, and pages get more room. */
     @media (min-width: 900px) {
@@ -201,6 +235,11 @@ import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
          Each page fills it in its own way (Today's side panel, Progress and Settings in columns). */
       .page:has(app-today, app-routines, app-progress, app-settings) {
         max-width: var(--page-max);
+      }
+      /* Help brings its own topic list and frame (HelpShell), so it gets the whole width. */
+      .page:has(app-help-shell) {
+        max-width: none;
+        padding-inline: 0;
       }
       .tab {
         flex-direction: row;
@@ -242,6 +281,37 @@ import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
     @media (min-width: 1100px) {
       .page {
         padding-inline: 20px;
+      }
+      .page:has(app-help-shell) {
+        padding-inline: 0;
+      }
+    }
+    /* Smaller laptops in Help: the rail slims down to icons (names show on hover), leaving room
+       for the topic list and the article. */
+    @media (min-width: 900px) and (max-width: 1279px) {
+      :host:has(app-help-shell) {
+        grid-template-columns: var(--rail-slim-width) minmax(0, 1fr);
+      }
+      :host:has(app-help-shell) nav {
+        align-items: center;
+        padding-inline: 10px;
+      }
+      :host:has(app-help-shell) .label {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        overflow: hidden;
+        clip-path: inset(50%);
+        white-space: nowrap;
+      }
+      :host:has(app-help-shell) .tab {
+        justify-content: center;
+        width: 52px;
+        padding: 0;
+      }
+      :host:has(app-help-shell) .rail-split::before {
+        left: 6px;
+        right: 6px;
       }
     }
   `,
