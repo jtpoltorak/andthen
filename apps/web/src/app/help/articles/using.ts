@@ -132,6 +132,19 @@ export class GettingStarted {}
       </p>
       <h2>Changing an answer</h2>
       <p>Tap <strong>Undo</strong> next to any answered habit to clear it, then answer again.</p>
+      <h2>Going back a day</h2>
+      <p>
+        Forgot to check in last night? Tap the <strong>‹</strong> arrow next to the date to go back
+        a day, like flipping back a page in a journal. The title changes to
+        <strong>Yesterday</strong> (or the day's name), and a note reminds you that changes count
+        for that day. Answer, undo and add how it felt just like today.
+      </p>
+      <p>
+        You can go back through the last 7 days, the same days you can change in the grid on
+        <a routerLink="/progress">Progress</a>. Older days are kept as they were. Tap
+        <strong>Back to today</strong>, or the <strong>›</strong> arrow, to return. Nudges, Run and
+        adding habits stay with today, since they're about what to do next.
+      </p>
       <h2>Other things you'll see</h2>
       <ul>
         <li>

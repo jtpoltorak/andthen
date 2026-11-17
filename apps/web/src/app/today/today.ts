@@ -11,7 +11,10 @@ import {
   type ChainLink,
   type CheckInKind,
   type PartOfDay,
+  type Chain,
   addDays,
+  buildDay,
+  canEditDay,
   chainsByPartOfDay,
   fromDayKey,
   greeting,
@@ -93,11 +96,69 @@ export class Today {
   protected readonly journaling = signal<string | undefined>(undefined);
 
   /**
-   * Routines with something planned today. A routine whose habits all rest today is
-   * listed apart, and so is a paused one.
+   * The day on show: today, or one of the last few days to fill in or fix. Going
+   * back stops where the grid on Progress does (canEditDay), so older days stay as they were.
+   */
+  protected readonly daysBack = signal(0);
+  protected readonly day = computed(() => addDays(this.store.today(), -this.daysBack()));
+  protected readonly isPast = computed(() => this.daysBack() > 0);
+  protected readonly canGoBack = computed(() =>
+    canEditDay(addDays(this.day(), -1), this.store.today()),
+  );
+  /** "Today", "Yesterday", or the weekday. */
+  protected readonly title = computed(() => {
+    const back = this.daysBack();
+    if (back === 0) return 'Today';
+    if (back === 1) return 'Yesterday';
+    return this.weekday();
+  });
+  protected readonly weekday = computed(() =>
+    fromDayKey(this.day()).toLocaleDateString(undefined, { weekday: 'long' }),
+  );
+
+  protected goBack(): void {
+    if (this.canGoBack()) this.showDay(this.daysBack() + 1);
+  }
+  protected goForward(): void {
+    if (this.isPast()) this.showDay(this.daysBack() - 1);
+  }
+  protected backToToday(): void {
+    this.showDay(0);
+  }
+  private showDay(daysBack: number): void {
+    this.daysBack.set(daysBack);
+    this.openedByHand.set(undefined);
+    this.addingTo.set(undefined);
+    this.journaling.set(undefined);
+    this.poppedHabit.set(undefined);
+    this.finishedRoutine.set(undefined);
+  }
+
+  /**
+   * Every routine's chain on the day on show. A past day leaves out the nudges:
+   * "don't miss twice" is about what to do next, and that's always today.
+   */
+  private readonly dayChains = computed((): Chain[] => {
+    if (!this.isPast()) return this.store.chains();
+    return buildDay(
+      this.store.routines(),
+      this.store.habits(),
+      this.store.checkIns(),
+      this.day(),
+      this.preferences.prefs().weekStartsOn,
+    ).map((c) => ({
+      ...c,
+      atRisk: 0,
+      links: c.links.map((link) => ({ ...link, nudge: undefined, missedOn: undefined })),
+    }));
+  });
+
+  /**
+   * Routines with something planned on the day. A routine whose habits all rest that
+   * day is listed apart, and so is a paused one.
    */
   protected readonly chains = computed(() =>
-    this.store.chains().filter((c) => !c.paused && (c.total > 0 || c.resting === 0)),
+    this.dayChains().filter((c) => !c.paused && (c.total > 0 || c.resting === 0)),
   );
   /** Routines grouped into Morning, Afternoon, Evening and Anytime, by their usual time. */
   protected readonly groups = computed(() => chainsByPartOfDay(this.chains()));
@@ -113,9 +174,9 @@ export class Today {
     this.chains().flatMap((c) => c.links.map((l) => l.status)),
   );
   protected readonly resting = computed(() =>
-    this.store.chains().filter((c) => !c.paused && c.total === 0 && c.resting > 0),
+    this.dayChains().filter((c) => !c.paused && c.total === 0 && c.resting > 0),
   );
-  protected readonly paused = computed(() => this.store.chains().filter((c) => !!c.paused));
+  protected readonly paused = computed(() => this.dayChains().filter((c) => !!c.paused));
 
   /** "until Thu, Nov 12" for a pause with an end, or nothing for one that lasts until resumed. */
   protected pausedUntil(until: string | undefined): string {
@@ -147,9 +208,10 @@ export class Today {
     return name ? greeting(name, new Date().getHours()) : '';
   });
 
+  /** The full date; the weekday is left out when the title already says it. */
   protected readonly dateLabel = computed(() =>
-    fromDayKey(this.store.today()).toLocaleDateString(undefined, {
-      weekday: 'long',
+    fromDayKey(this.day()).toLocaleDateString(undefined, {
+      ...(this.daysBack() >= 2 ? {} : { weekday: 'long' }),
       month: 'long',
       day: 'numeric',
     }),
@@ -159,6 +221,8 @@ export class Today {
     const chains = this.chains();
     const byHand = this.openedByHand();
     if (byHand && chains.some((c) => c.routine.id === byHand)) return byHand;
+    // A past day is over, so its first unfinished routine opens.
+    if (this.isPast()) return pickActiveRoutine(chains, 24 * 60) ?? chains[0]?.routine.id;
     const now = new Date();
     return (
       pickActiveRoutine(chains, now.getHours() * 60 + now.getMinutes()) ?? chains[0]?.routine.id
@@ -173,7 +237,8 @@ export class Today {
 
   protected async answer(routineId: string, link: ChainLink, kind: CheckInKind): Promise<void> {
     const before = this.garden().get(routineId)?.growth ?? 0;
-    await this.store.checkIn(link.habit.id, kind);
+    if (this.isPast()) await this.store.setCheckInOn(link.habit.id, this.day(), kind);
+    else await this.store.checkIn(link.habit.id, kind);
     this.celebrate(routineId, link, kind);
     this.noteGrowth(routineId, before);
     // A skip doesn't ask how it felt.
@@ -190,7 +255,7 @@ export class Today {
   private celebrate(routineId: string, link: ChainLink, kind: CheckInKind): void {
     clearTimeout(this.celebrateTimer);
     this.poppedHabit.set(kind === 'skip' ? undefined : link.habit.id);
-    const chain = this.store.chains().find((c) => c.routine.id === routineId);
+    const chain = this.dayChains().find((c) => c.routine.id === routineId);
     this.finishedRoutine.set(chain?.complete ? routineId : undefined);
     this.celebrateTimer = setTimeout(() => {
       this.poppedHabit.set(undefined);
@@ -212,7 +277,8 @@ export class Today {
     if (this.journaling() === link.habit.id) this.journaling.set(undefined);
     this.poppedHabit.set(undefined);
     this.finishedRoutine.set(undefined);
-    await this.store.undoCheckIn(link.habit.id);
+    if (this.isPast()) await this.store.clearCheckInOn(link.habit.id, this.day());
+    else await this.store.undoCheckIn(link.habit.id);
     this.focusCard(routineId);
   }
 
@@ -243,7 +309,7 @@ export class Today {
   /** "Missed yesterday", or the weekday for a habit that isn't every day. */
   protected missedLabel(link: ChainLink): string {
     const on = link.missedOn;
-    if (!on || on === addDays(this.store.today(), -1)) return 'Missed yesterday';
+    if (!on || on === addDays(this.day(), -1)) return 'Missed yesterday';
     return `Missed ${fromDayKey(on).toLocaleDateString(undefined, { weekday: 'long' })}`;
   }
 

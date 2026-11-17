@@ -9,7 +9,14 @@ import {
   signal,
   untracked,
 } from '@angular/core';
-import { MAX_CHECKIN_NOTE, MOODS, MOOD_LABELS, describeJournal, type Mood } from '@andthen/core';
+import {
+  MAX_CHECKIN_NOTE,
+  MOODS,
+  MOOD_LABELS,
+  describeJournal,
+  type DayKey,
+  type Mood,
+} from '@andthen/core';
 import { HabitStore } from '../data/habit-store';
 
 /**
@@ -160,6 +167,8 @@ export class CheckInJournal {
   private readonly store = inject(HabitStore);
   readonly habitId = input.required<string>();
   readonly habitName = input.required<string>();
+  /** The day of the check-in, when Today is showing a recent day instead of today. */
+  readonly date = input<DayKey | undefined>(undefined);
   /** Shows the "how did it feel?" box; otherwise the saved words, or a link to add some. */
   readonly open = input(false);
   readonly opened = output<void>();
@@ -171,33 +180,40 @@ export class CheckInJournal {
   protected readonly maxNote = MAX_CHECKIN_NOTE;
   protected readonly draft = signal('');
 
+  private readonly checkIn = computed(() =>
+    this.store.checkInOn(this.habitId(), this.date() ?? this.store.today()),
+  );
+
   protected readonly words = computed(() => {
-    const checkIn = this.store.todaysCheckIn(this.habitId());
+    const checkIn = this.checkIn();
     return checkIn ? describeJournal(checkIn) : '';
   });
 
   constructor() {
     // Each time the box opens, start from the saved note.
     effect(() => {
-      if (this.open())
-        this.draft.set(untracked(() => this.store.todaysCheckIn(this.habitId())?.note ?? ''));
+      if (this.open()) this.draft.set(untracked(() => this.checkIn()?.note ?? ''));
     });
   }
 
   protected mood(): Mood | undefined {
-    return this.store.todaysCheckIn(this.habitId())?.mood;
+    return this.checkIn()?.mood;
   }
 
   /** Tapping the picked mood again clears it. */
   protected async setMood(mood: Mood): Promise<void> {
-    await this.store.journal(this.habitId(), { mood: this.mood() === mood ? null : mood });
+    await this.store.journal(
+      this.habitId(),
+      { mood: this.mood() === mood ? null : mood },
+      this.date(),
+    );
   }
 
   /** Saves the note (if it changed) and closes. */
   protected async save(): Promise<void> {
     const note = this.draft();
-    if (note.trim() !== (this.store.todaysCheckIn(this.habitId())?.note ?? '')) {
-      await this.store.journal(this.habitId(), { note });
+    if (note.trim() !== (this.checkIn()?.note ?? '')) {
+      await this.store.journal(this.habitId(), { note }, this.date());
     }
     this.closed.emit();
   }
