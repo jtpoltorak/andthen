@@ -25,6 +25,8 @@ import {
   toDayKey,
   checkInTime,
   withJournal,
+  withMissNote,
+  type MissReason,
   type Mood,
   type SharedRoutine,
 } from '@andthen/core';
@@ -412,6 +414,24 @@ export class HabitStore {
     if (!canEditDay(date, this.today())) return;
     await this.repo.deleteCheckIn(habitId, date);
     this.checkIns.update((list) => removeCheckIn(list, habitId, date));
+  }
+
+  /**
+   * Notes what got in the way on a missed day, or clears the note when there's
+   * neither a reason nor words. Kept on the habit (see core misses.ts).
+   */
+  async noteMiss(
+    habitId: string,
+    date: DayKey,
+    entry: { reason?: MissReason; note?: string },
+  ): Promise<void> {
+    const current = this.habits().find((h) => h.id === habitId);
+    if (!current || date > this.today()) return;
+    const misses = withMissNote(current, date, entry);
+    const next: Habit = { ...current, misses };
+    if (!misses.length) delete next.misses;
+    await this.repo.putHabit(next);
+    this.habits.update((list) => list.map((h) => (h.id === habitId ? next : h)));
   }
 
   /** Everything on this device, wrapped as a backup file. */

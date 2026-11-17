@@ -241,7 +241,7 @@ export const HELP_ARTICLES = [
     part: 'using',
     title: 'The “don’t miss twice” nudge',
     summary: 'What the gentle badges on Today mean.',
-    keywords: 'nudge badge missed welcome back',
+    keywords: 'nudge badge missed welcome back what got in the way reason why missed note pattern',
     minutes: 1,
     related: ['never-miss-twice', 'today'],
   },

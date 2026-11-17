@@ -20,3 +20,4 @@ export * from './year';
 export * from './milestones';
 export * from './glance';
 export * from './grid';
+export * from './misses';

@@ -746,6 +746,20 @@ export class ReflectionHelp {}
         Skips and rest days never cause a nudge, and "times a week" habits don't get them. Why it
         matters: <a routerLink="/help/never-miss-twice">Never miss twice</a>.
       </p>
+      <h2>What got in the way?</h2>
+      <p>
+        Under a nudge there's a small <strong>+ What got in the way?</strong> link. It never opens
+        on its own. Tap it to pick a reason with one tap (Tired, Too busy, Forgot, Sick, Away from
+        home, Not feeling it, or Something else) and add a few words if you like. It's just for you,
+        and it's fine to leave it. The same link shows on an unanswered habit when you go back to a
+        past day on Today.
+      </p>
+      <p>
+        Your reasons add up under <strong>This week</strong> beside Today on a computer, and on each
+        habit in your <a routerLink="/reflect">weekly reflection</a>. When one reason keeps coming
+        up, AndThen suggests a "make it easy" note, so the pattern turns into a plan. Tired most
+        mornings? Maybe the mat stays rolled out by the couch.
+      </p>
     </app-help-article>
   `,
 })

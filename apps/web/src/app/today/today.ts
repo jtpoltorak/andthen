@@ -32,6 +32,8 @@ import { EmptyState } from '../shared/empty-state';
 import { HelpLink } from '../help/help-link';
 import { CheckInJournal } from './check-in-journal';
 import { DayRing } from './day-ring';
+import { MissNote } from './miss-note';
+import { MissTally } from './miss-tally';
 import { WeekPanel } from './week-panel';
 import { RoutineIcon } from '../shared/routine-icon';
 import { Plant } from '../shared/plant';
@@ -58,6 +60,8 @@ const lowerFirst = (text: string) => (text ? text.charAt(0).toLowerCase() + text
     EmptyState,
     CheckInJournal,
     DayRing,
+    MissNote,
+    MissTally,
     WeekPanel,
     RoutineIcon,
     Plant,
@@ -304,6 +308,12 @@ export class Today {
       default:
         return `Tiny version: ${lowerFirst(link.habit.twoMinuteVersion)}`;
     }
+  }
+
+  /** "yesterday" or "on Monday", for "What got in the way …?" */
+  protected whenLabel(date: string): string {
+    if (date === addDays(this.store.today(), -1)) return 'yesterday';
+    return `on ${fromDayKey(date).toLocaleDateString(undefined, { weekday: 'long' })}`;
   }
 
   /** "Missed yesterday", or the weekday for a habit that isn't every day. */
