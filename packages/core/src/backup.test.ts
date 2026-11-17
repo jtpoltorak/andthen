@@ -109,6 +109,17 @@ describe('parseBackup', () => {
     expect(restoredWater.obstacle).toBe('Forgetting');
   });
 
+  it("keeps a routine's why, trimmed, and reads older routines without one", () => {
+    const backup = createBackup(sample());
+    backup.data.routines[0].why = '  A calm start  ';
+    const result = parseBackup(JSON.stringify(backup));
+    expect(result.ok && result.data.routines[0].why).toBe('A calm start');
+
+    delete backup.data.routines[0].why;
+    const older = parseBackup(JSON.stringify(backup));
+    expect(older.ok && 'why' in older.data.routines[0]).toBe(false);
+  });
+
   it('reads older backups that have no "make it easier" notes', () => {
     const backup = createBackup(sample());
     for (const h of backup.data.habits) {

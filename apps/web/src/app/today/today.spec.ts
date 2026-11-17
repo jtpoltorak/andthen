@@ -80,6 +80,22 @@ describe('Today', () => {
     expect(root.textContent).toContain('Make it easy: Keep the mat out');
   });
 
+  it("shows the habit's why only when it is up next, and the routine's why under the anchor", async () => {
+    const { fixture, root } = await setup();
+    const store = TestBed.inject(HabitStore);
+    const routine = store.activeRoutines()[0];
+    const [water, stretch] = store.habitsOf(routine.id);
+    await store.updateHabit(stretch.id, { why: 'My back feels better' });
+    await store.updateRoutine(routine.id, { why: 'A calm start' });
+    await fixture.whenStable();
+    expect(root.querySelector('.why-note')).toBeNull();
+    expect(root.querySelector('.routine-why')?.textContent).toContain('“A calm start”');
+
+    await store.checkIn(water.id, 'full');
+    await fixture.whenStable();
+    expect(root.querySelector('.why-note')?.textContent).toContain('My back feels better');
+  });
+
   it('asks how it felt after Done, and keeps the mood and a few words', async () => {
     const { fixture, root } = await setup();
     const store = TestBed.inject(HabitStore);

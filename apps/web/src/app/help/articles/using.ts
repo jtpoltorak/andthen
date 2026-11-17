@@ -274,15 +274,21 @@ export class TemplatesHelp {}
   template: `
     <app-help-article slug="easier-notes">
       <p class="lede">
-        A few optional notes per habit: why it matters to you, and how to make the hard moments
-        easier.
+        A few optional notes: why a habit or a routine matters to you, and how to make the hard
+        moments easier.
       </p>
       <h2>Why it matters to you</h2>
       <p>
         Open a habit in the chain editor and fill in <strong>Why it matters to you</strong>, like
-        "So I have energy for the kids". One short line is plenty. It shows under the habit on
-        Progress and in your weekly reflection, so on a flat week you see the reason, not just the
-        dots. A habit you care about is easier to come back to.
+        "So I have energy for the kids". One short line is plenty. It shows on Today beside the
+        habit when it's your next one, with a small heart, and under the habit on Progress and in
+        your weekly reflection. So on a flat week, or the morning after a miss, you see the reason,
+        not just the dots. A habit you care about is easier to come back to.
+      </p>
+      <p>
+        A whole routine can have a why too. In the chain editor, choose <strong>Edit</strong> next
+        to the routine's anchor and fill in <strong>Why this routine?</strong>, like "A calm start
+        before the house wakes up". It shows in small italics under the anchor on Today.
       </p>
       <h2>Make it easier</h2>
       <p>In the chain editor, open a habit and expand <strong>Make it easier</strong>:</p>

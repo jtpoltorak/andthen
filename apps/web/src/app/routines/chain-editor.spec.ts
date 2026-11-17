@@ -160,6 +160,24 @@ describe('ChainEditor', () => {
     expect('why' in store.habitsOf(routine.id)[0]).toBe(false);
   });
 
+  it('saves and clears a routine\'s "why" with the anchor', async () => {
+    const { fixture, root, store, routine } = await setup();
+    button(root, 'Edit anchor').click();
+    await fixture.whenStable();
+    type(root.querySelector<HTMLInputElement>('#routine-why-input')!, ' A calm start ');
+    button(root, 'Save').click();
+    await fixture.whenStable();
+    expect(store.routine(routine.id)?.why).toBe('A calm start');
+    expect(root.textContent).toContain('Why: A calm start');
+
+    button(root, 'Edit anchor').click();
+    await fixture.whenStable();
+    type(root.querySelector<HTMLInputElement>('#routine-why-input')!, '');
+    button(root, 'Save').click();
+    await fixture.whenStable();
+    expect('why' in store.routine(routine.id)!).toBe(false);
+  });
+
   it('pauses the routine until resumed, then resumes it', async () => {
     const { fixture, root, store, routine } = await setup();
     button(root, 'Pause this routine…').click();

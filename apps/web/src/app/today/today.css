@@ -75,6 +75,7 @@ h1 {
 
 .anchor {
   display: flex;
+  flex-wrap: wrap;
   flex: 1 1 140px;
   align-items: center;
   gap: 10px;
@@ -304,6 +305,31 @@ h1 {
   font-size: 13px;
   line-height: 1.4;
   color: var(--muted);
+}
+
+/* The routine's why: a quiet line under the anchor, in the person's own words. */
+.routine-why {
+  flex-basis: 100%;
+  margin: -8px 0 0;
+  font-size: 13px;
+  font-style: italic;
+  line-height: 1.4;
+  color: var(--muted);
+}
+
+.why-note {
+  display: flex;
+  gap: 7px;
+  align-items: flex-start;
+  margin: 4px 0 2px;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.4;
+  color: var(--accent-ink);
+}
+.why-note svg {
+  flex: none;
+  margin-top: 2px;
 }
 
 .easier-note {
