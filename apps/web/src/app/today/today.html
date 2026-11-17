@@ -79,6 +79,11 @@
               <div class="card-head">
                 <div class="anchor">
                   <span>{{ chain.routine.anchor }}</span>
+                  @if (chain.routine.why) {
+                    <p class="routine-why">
+                      <span class="visually-hidden">Why: </span>“{{ chain.routine.why }}”
+                    </p>
+                  }
                 </div>
                 <span class="head-meta">
                   <span class="count">{{ chain.doneCount }} of {{ chain.total }}</span>
@@ -151,6 +156,27 @@
                       <div class="badge">{{ missedLabel(link) }} · don't miss twice</div>
                     } @else if (link.nudge === 'welcome-back') {
                       <div class="badge badge-soft">Welcome back · 2 minutes counts</div>
+                    }
+                    <!-- The person's own reason, beside the habit they're up to: it matters most after a miss. -->
+                    @if (link.isNext && link.habit.why) {
+                      <p class="why-note">
+                        <svg
+                          width="14"
+                          height="14"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          stroke-width="2.2"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          aria-hidden="true"
+                        >
+                          <path
+                            d="M12 19.5s-7.5-4.5-7.5-10A4 4 0 0 1 12 7a4 4 0 0 1 7.5 2.5c0 5.5-7.5 10-7.5 10z"
+                          />
+                        </svg>
+                        <span><span class="visually-hidden">Why: </span>{{ link.habit.why }}</span>
+                      </p>
                     }
                     <div class="link-sub">
                       {{ subtitle(link) }}

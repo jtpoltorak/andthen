@@ -73,6 +73,8 @@ export interface Routine {
   usualTime?: string;
   /** Optional icon from the built-in set (`ROUTINE_ICONS`), so routines are easy to tell apart. */
   icon?: RoutineIcon;
+  /** Optional: why this routine matters to the person, e.g. "A calm start before the house wakes up". */
+  why?: string;
   order: number;
   createdOn: DayKey;
   archivedOn?: DayKey;

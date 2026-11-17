@@ -21,6 +21,15 @@ export interface Release {
 
 export const RELEASES: readonly Release[] = [
   {
+    version: '1.39.0',
+    date: '2026-11-17',
+    title: 'Your why, where you need it.',
+    notes: [
+      'The “why it matters to you” line you wrote for a habit now shows on Today, with a small heart, beside the habit you’re up to next.',
+      'Routines can have a why too: edit a routine’s anchor and fill in “Why this routine?”. It shows in small italics under the anchor on Today.',
+    ],
+  },
+  {
     version: '1.38.0',
     date: '2026-11-11',
     title: 'Help keeps the menu on the left.',

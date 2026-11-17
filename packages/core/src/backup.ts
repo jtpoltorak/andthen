@@ -151,6 +151,9 @@ function readRoutine(raw: unknown, i: number): Routine {
   }
   // Optional: an icon this version doesn't know (from a newer one) is left off, not an error.
   if (isRoutineIcon(raw['icon'])) routine.icon = raw['icon'];
+  // Optional: older backups were made before a routine could have a why.
+  const why = text(raw, 'why', where, false)?.trim();
+  if (why) routine.why = why;
   const archivedOn = day(raw, 'archivedOn', where, false);
   if (archivedOn) routine.archivedOn = archivedOn;
   // Optional: older backups were made before pauses.

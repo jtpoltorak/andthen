@@ -143,6 +143,7 @@ export class ChainEditor {
   // Drafts for whichever form is open.
   protected readonly draftAnchor = signal('');
   protected readonly draftTime = signal('');
+  protected readonly draftRoutineWhy = signal('');
   protected readonly draftName = signal('');
   protected readonly draftMini = signal('');
   protected readonly draftEasier = signal('');
@@ -185,6 +186,7 @@ export class ChainEditor {
     if (!r) return;
     this.draftAnchor.set(r.anchor);
     this.draftTime.set(r.usualTime ?? '');
+    this.draftRoutineWhy.set(r.why ?? '');
     this.editing.set({ kind: 'anchor' });
   }
 
@@ -193,6 +195,7 @@ export class ChainEditor {
     await this.store.updateRoutine(this.id(), {
       anchor: this.draftAnchor(),
       usualTime: this.draftTime() || undefined,
+      why: this.draftRoutineWhy(),
     });
     this.cancel();
   }

@@ -43,6 +43,19 @@
                 [value]="draftTime()"
                 (input)="draftTime.set($any($event.target).value)"
               />
+              <label class="field-label" for="routine-why-input">
+                Why this routine? <span class="optional">(optional)</span>
+              </label>
+              <input
+                id="routine-why-input"
+                class="text-input"
+                type="text"
+                autocomplete="off"
+                maxlength="140"
+                placeholder="e.g. A calm start before the house wakes up"
+                [value]="draftRoutineWhy()"
+                (input)="draftRoutineWhy.set($any($event.target).value)"
+              />
               <div class="form-actions">
                 <button type="submit" class="btn-small" [disabled]="!draftAnchor().trim()">
                   Save
@@ -57,6 +70,9 @@
                 <div class="row-sub">
                   {{ r.usualTime ? 'Usually around ' + r.usualTime : 'Something you already do' }}
                 </div>
+                @if (r.why) {
+                  <div class="row-sub why-sub">Why: {{ r.why }}</div>
+                }
               </div>
               <button type="button" class="btn-text" id="edit-anchor" (click)="editAnchor()">
                 Edit<span class="visually-hidden"> anchor</span>
