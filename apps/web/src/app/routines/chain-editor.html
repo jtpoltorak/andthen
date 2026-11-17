@@ -396,10 +396,33 @@
     <fieldset class="pause-zone icon-picker">
       <legend class="pause-title">Icon</legend>
       <p class="row-sub">Makes this routine easy to spot on Today, Progress and Run.</p>
-      @for (group of iconGroups; track group.name; let firstGroup = $first) {
+      <div class="icon-search">
+        <svg
+          width="16"
+          height="16"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          aria-hidden="true"
+        >
+          <circle cx="11" cy="11" r="6.5" />
+          <path d="M16 16l4.5 4.5" />
+        </svg>
+        <input
+          type="search"
+          autocomplete="off"
+          placeholder='Search icons, e.g. "swim" or "tea"'
+          aria-label="Search icons"
+          [value]="iconQuery()"
+          (input)="iconQuery.set($any($event.target).value)"
+        />
+      </div>
+      @for (group of iconGroups(); track group.name; let firstGroup = $first) {
         <p class="icon-group" aria-hidden="true">{{ group.name }}</p>
         <div class="icon-options">
-          @if (firstGroup) {
+          @if (firstGroup && !iconQuery().trim()) {
             <label class="icon-option" [class.selected]="!r.icon" title="No icon">
               <input
                 type="radio"
@@ -426,6 +449,8 @@
             </label>
           }
         </div>
+      } @empty {
+        <p class="row-sub icon-none">No icons match “{{ iconQuery().trim() }}”.</p>
       }
     </fieldset>
 

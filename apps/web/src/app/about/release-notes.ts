@@ -21,6 +21,15 @@ export interface Release {
 
 export const RELEASES: readonly Release[] = [
   {
+    version: '1.42.0',
+    date: '2026-11-17',
+    title: '32 new routine icons.',
+    notes: [
+      'There are now 75 routine icons, with new groups for moving, calm and self-care, learning and making, around the house, and goals and money.',
+      'A search box in the icon picker finds one by what you’re doing, like “swim”, “laundry” or “tea”.',
+    ],
+  },
+  {
     version: '1.41.0',
     date: '2026-11-17',
     title: 'What got in the way?',

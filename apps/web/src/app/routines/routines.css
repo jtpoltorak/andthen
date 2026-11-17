@@ -64,6 +64,35 @@ h1 {
   clear: both;
 }
 
+.icon-search {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 10px 0 4px;
+  padding: 0 12px;
+  border: 1.5px solid var(--input-border);
+  border-radius: 12px;
+  background: var(--surface);
+  color: var(--muted);
+}
+.icon-search:focus-within {
+  border-color: var(--accent);
+}
+.icon-search input {
+  flex: 1;
+  min-width: 0;
+  height: 40px;
+  border: 0;
+  outline: none;
+  background: none;
+  color: var(--ink);
+  font: inherit;
+  font-size: 15px;
+}
+.icon-none {
+  margin-top: 10px;
+}
+
 .icon-group {
   margin: 12px 0 0;
   font-size: 12px;
