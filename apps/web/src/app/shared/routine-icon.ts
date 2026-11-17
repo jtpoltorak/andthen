@@ -134,6 +134,91 @@ const SHAPES: Record<IconId, readonly Shape[]> = {
     { cx: 17, cy: 9.5, r: 2.5 },
     { d: 'M3.5 19.5a5.5 5.5 0 0 1 11 0M15.5 14.2a4.5 4.5 0 0 1 5 5.3' },
   ],
+  // Added in 1.42.0.
+  swim: [
+    {
+      d: 'M3 9c2-1.5 4-1.5 6 0s4 1.5 6 0 4-1.5 6 0M3 14c2-1.5 4-1.5 6 0s4 1.5 6 0 4-1.5 6 0M3 19c2-1.5 4-1.5 6 0s4 1.5 6 0 4-1.5 6 0',
+    },
+  ],
+  stairs: [{ d: 'M3.5 20.5h4.5V16h4.5v-4.5H17V7h3.5' }],
+  ball: [{ cx: 12, cy: 12, r: 8.5 }, { d: 'M5.5 6.5c3 2.5 3 8.5 0 11M18.5 6.5c-3 2.5-3 8.5 0 11' }],
+  tent: [{ d: 'M2.5 20h19M4.5 20L12 5.5 19.5 20M12 12.5L9 20M12 12.5l3 7.5' }],
+  medal: [{ cx: 12, cy: 15, r: 5 }, { d: 'M8.5 3.5l2 7M15.5 3.5l-2 7M8.5 3.5h7' }],
+  breathe: [{ d: 'M3 9h11a3 3 0 1 0-3-3M3 15h15a3 3 0 1 1-3 3M3 12h7' }],
+  bath: [
+    {
+      d: 'M3 12h18v2a5 5 0 0 1-5 5H8a5 5 0 0 1-5-5zM6 12V5.5a2 2 0 0 1 2-2c1 0 1.7.6 2 1.5M7 19l-1 2M17 19l1 2',
+    },
+  ],
+  tea: [
+    {
+      d: 'M5 9.5h11v5a5 5 0 0 1-5 5h-1a5 5 0 0 1-5-5zM16 11h1.5a2.5 2.5 0 0 1 0 5H16M10.5 3.5v7M9 10.5h3V13H9z',
+    },
+  ],
+  candle: [{ d: 'M8.5 11h7v9.5h-7zM12 11V9M12 3c1.5 1.8 2 3 0 4.5C10 6 10.5 4.8 12 3z' }],
+  sparkle: [
+    {
+      d: 'M11 3l1.8 5.2L18 10l-5.2 1.8L11 17l-1.8-5.2L4 10l5.2-1.8zM18.5 15l.8 2 2 .8-2 .8-.8 2-.8-2-2-.8 2-.8z',
+    },
+  ],
+  cloud: [{ d: 'M7 18.5a4.5 4.5 0 0 1-.6-9A6 6 0 0 1 18 10a4 4 0 0 1-.5 8.5z' }],
+  'phone-off': [{ d: 'M7.5 3.5h9v17h-9zM11 17.5h2M3.5 3.5l17 17' }],
+  hourglass: [
+    {
+      d: 'M6.5 3.5h11M6.5 20.5h11M7.5 3.5c0 4.5 4.5 5.5 4.5 8.5s-4.5 4-4.5 8.5M16.5 3.5c0 4.5-4.5 5.5-4.5 8.5s4.5 4 4.5 8.5',
+    },
+  ],
+  graduation: [
+    { d: 'M2.5 9.5L12 5l9.5 4.5L12 14zM6.5 11.5V16c3.5 2.5 7.5 2.5 11 0v-4.5M21.5 9.5v5' },
+  ],
+  globe: [
+    { cx: 12, cy: 12, r: 8.5 },
+    { d: 'M3.5 12h17M12 3.5c-3 2.5-3 14.5 0 17M12 3.5c3 2.5 3 14.5 0 17' },
+  ],
+  bulb: [
+    {
+      d: 'M9.5 18h5M10.5 21h3M12 3a6 6 0 0 0-3.5 10.9c.6.5 1 1.2 1 2V18h5v-2.1c0-.8.4-1.5 1-2A6 6 0 0 0 12 3z',
+    },
+  ],
+  code: [{ d: 'M8.5 7L3.5 12l5 5M15.5 7l5 5-5 5M13.5 4.5l-3 15' }],
+  camera: [{ d: 'M3.5 8h4L9 5.5h6L16.5 8h4v11h-17z' }, { cx: 12, cy: 13.5, r: 3.5 }],
+  piano: [{ d: 'M3.5 5h17v14h-17zM8 13v6M12 13v6M16 13v6M6.5 5v8h3V5M14.5 5v8h3V5' }],
+  dice: [
+    { d: 'M4.5 4.5h15v15h-15z' },
+    { d: 'M8.5 8.5h.01M15.5 15.5h.01M12 12h.01M15.5 8.5h.01M8.5 15.5h.01' },
+  ],
+  gamepad: [
+    {
+      d: 'M7 8h10a4.5 4.5 0 0 1 4.5 4.5v1a3.5 3.5 0 0 1-6.3 2.1L14 14h-4l-1.2 1.6a3.5 3.5 0 0 1-6.3-2.1v-1A4.5 4.5 0 0 1 7 8zM7.5 10.5v3M6 12h3M15.5 11h.01M17.5 13h.01',
+    },
+  ],
+  shirt: [{ d: 'M8.5 3.5L3.5 6 5 10.5l2.5-1v11h9v-11l2.5 1L20.5 6l-5-2.5a3.5 3.5 0 0 1-7 0z' }],
+  trash: [{ d: 'M4 6.5h16M9.5 6.5V4h5v2.5M6 6.5l1 14h10l1-14M10 10.5v6M14 10.5v6' }],
+  'plant-pot': [
+    {
+      d: 'M6 13h12l-1.5 7.5h-9zM12 13V8M12 8c0-2.5 1.5-4 4-4 0 2.5-1.5 4-4 4zM12 10.5c0-2-1.2-3.2-3.2-3.2 0 2 1.2 3.2 3.2 3.2z',
+    },
+  ],
+  key: [{ cx: 8, cy: 15.5, r: 4.5 }, { d: 'M11.2 12.3L20 3.5M16.5 7l2.5 2.5M14.5 9l2 2' }],
+  gift: [
+    {
+      d: 'M4 9.5h16v4H4zM5.5 13.5h13v7h-13zM12 9.5v11M12 9.5c-1-3-5-4.5-5.5-2.5S10 9.5 12 9.5zM12 9.5c1-3 5-4.5 5.5-2.5S14 9.5 12 9.5z',
+    },
+  ],
+  umbrella: [{ d: 'M3 12a9 9 0 0 1 18 0zM12 12v6.5a2 2 0 0 1-4 0' }],
+  target: [
+    { cx: 12, cy: 12, r: 8.5 },
+    { cx: 12, cy: 12, r: 5 },
+    { cx: 12, cy: 12, r: 1.5 },
+  ],
+  chart: [{ d: 'M3.5 3.5v17h17M7 15l4-4.5 3 3 5.5-6.5M15 7h4.5v4.5' }],
+  coins: [
+    {
+      d: 'M5 7c0-1.4 3.1-2.5 7-2.5s7 1.1 7 2.5-3.1 2.5-7 2.5S5 8.4 5 7zM5 7v5c0 1.4 3.1 2.5 7 2.5s7-1.1 7-2.5V7M5 12v5c0 1.4 3.1 2.5 7 2.5s7-1.1 7-2.5v-5',
+    },
+  ],
+  clipboard: [{ d: 'M8 4.5H5.5v16h13v-16H16M8.5 3h7v3h-7zM8.5 11l1.5 1.5 3-3M8.5 16.5h7' }],
+  suitcase: [{ d: 'M4 8h16v11.5H4zM9 8V5.5h6V8M9 8v11.5M15 8v11.5' }],
 };
 
 /** What each icon is called, for the picker and screen readers. */
@@ -181,6 +266,38 @@ export const ROUTINE_ICON_NAMES: Record<IconId, string> = {
   mail: 'Envelope',
   chat: 'Speech bubble',
   people: 'People',
+  swim: 'Waves',
+  stairs: 'Stairs',
+  ball: 'Ball',
+  tent: 'Tent',
+  medal: 'Medal',
+  breathe: 'Breeze',
+  bath: 'Bath',
+  tea: 'Tea',
+  candle: 'Candle',
+  sparkle: 'Sparkle',
+  cloud: 'Cloud',
+  'phone-off': 'Phone off',
+  hourglass: 'Hourglass',
+  graduation: 'Graduation cap',
+  globe: 'Globe',
+  bulb: 'Light bulb',
+  code: 'Code',
+  camera: 'Camera',
+  piano: 'Keyboard',
+  dice: 'Dice',
+  gamepad: 'Game controller',
+  shirt: 'Shirt',
+  trash: 'Bin',
+  'plant-pot': 'Potted plant',
+  key: 'Key',
+  gift: 'Gift',
+  umbrella: 'Umbrella',
+  target: 'Target',
+  chart: 'Chart',
+  coins: 'Coins',
+  clipboard: 'Clipboard',
+  suitcase: 'Suitcase',
 };
 
 /** The picker's groups, so a longer set stays easy to scan. Every icon is in exactly one. */
@@ -214,7 +331,108 @@ export const ROUTINE_ICON_GROUPS: readonly { name: string; icons: readonly IconI
     icons: ['home', 'broom', 'sprout', 'leaf', 'paw', 'cart', 'wallet', 'car', 'mountain'],
   },
   { name: 'Work and people', icons: ['laptop', 'briefcase', 'phone', 'mail', 'chat', 'people'] },
+  { name: 'Moving', icons: ['swim', 'stairs', 'ball', 'tent', 'medal', 'breathe'] },
+  {
+    name: 'Calm and self-care',
+    icons: ['bath', 'tea', 'candle', 'sparkle', 'cloud', 'phone-off', 'hourglass'],
+  },
+  {
+    name: 'Learning and making',
+    icons: ['graduation', 'globe', 'bulb', 'code', 'camera', 'piano', 'dice', 'gamepad'],
+  },
+  { name: 'Around the house', icons: ['shirt', 'trash', 'plant-pot', 'key', 'gift', 'umbrella'] },
+  { name: 'Goals and money', icons: ['target', 'chart', 'coins', 'clipboard', 'suitcase'] },
 ];
+
+/**
+ * Extra words the picker's search matches, beyond each icon's name and group:
+ * what people might be doing, not what the drawing shows.
+ */
+export const ROUTINE_ICON_KEYWORDS: Partial<Record<IconId, string>> = {
+  coffee: 'coffee tea mug drink morning',
+  sun: 'day morning bright',
+  moon: 'night evening sleep',
+  bed: 'sleep bedtime nap rest',
+  laptop: 'work computer screen',
+  book: 'read reading study',
+  pen: 'write journal writing',
+  shoe: 'walk run running jog',
+  weights: 'gym lift workout exercise strength',
+  leaf: 'nature outside green',
+  heart: 'health love kindness',
+  music: 'music song practice instrument',
+  home: 'house home chores',
+  alarm: 'wake up morning',
+  bike: 'cycle cycling ride',
+  lotus: 'yoga meditate meditation calm',
+  water: 'drink hydrate glass',
+  apple: 'eat fruit healthy food',
+  meal: 'eat food lunch dinner cook',
+  pill: 'medicine vitamins meds',
+  tooth: 'teeth brush floss dentist',
+  drop: 'water skincare',
+  headphones: 'listen podcast audiobook',
+  palette: 'art paint draw create',
+  list: 'to-do tasks plan',
+  flame: 'energy fire motivation',
+  broom: 'clean tidy sweep chores',
+  sprout: 'plant garden grow',
+  paw: 'dog cat pet walk feed',
+  cart: 'shop groceries',
+  wallet: 'money budget spend',
+  car: 'drive commute',
+  mountain: 'hike outdoors climb',
+  phone: 'call text',
+  mail: 'email inbox letter',
+  chat: 'talk message friend',
+  people: 'family friends social',
+  swim: 'swim swimming pool water sea',
+  stairs: 'steps climb walk',
+  ball: 'sport tennis play game',
+  tent: 'camping outdoors hike',
+  medal: 'award win race goal',
+  breathe: 'breathe breathing wind air calm',
+  bath: 'bath shower wash self-care',
+  tea: 'tea drink mug calm',
+  candle: 'candle calm pray prayer meditate light',
+  sparkle: 'sparkle magic clean shine skincare',
+  cloud: 'cloud weather daydream rest',
+  'phone-off': 'screen time no phone off detox',
+  hourglass: 'hourglass time wait slow',
+  graduation: 'study school learn class degree',
+  globe: 'language world travel learn',
+  bulb: 'idea think learn',
+  code: 'code program coding developer',
+  camera: 'photo photography picture',
+  piano: 'piano music practice instrument',
+  dice: 'board game play',
+  gamepad: 'game video play',
+  shirt: 'laundry clothes dress',
+  trash: 'trash bin garbage tidy recycle',
+  'plant-pot': 'plant water garden houseplant',
+  key: 'key lock door leave',
+  gift: 'gift kindness present',
+  umbrella: 'umbrella rain weather',
+  target: 'goal focus aim',
+  chart: 'chart progress money invest grow',
+  coins: 'money save budget',
+  clipboard: 'plan tasks to-do review',
+  suitcase: 'travel trip pack',
+};
+
+/** Icons whose name, group or keywords contain every word in the search, in picker order. */
+export function searchRoutineIcons(query: string): { name: string; icons: IconId[] }[] {
+  const words = query.toLowerCase().split(/\s+/).filter(Boolean);
+  return ROUTINE_ICON_GROUPS.map((group) => ({
+    name: group.name,
+    icons: group.icons.filter((icon) => {
+      const text = [icon, ROUTINE_ICON_NAMES[icon], group.name, ROUTINE_ICON_KEYWORDS[icon] ?? '']
+        .join(' ')
+        .toLowerCase();
+      return words.every((w) => text.includes(w));
+    }),
+  })).filter((group) => group.icons.length > 0);
+}
 
 /**
  * One routine icon, drawn in the current text color. Decorative by default, since the

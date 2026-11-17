@@ -206,10 +206,12 @@ export class TodayHelp {}
       <h2>An icon</h2>
       <p>
         Pick an icon in the editor, like a mug, a toothbrush, a bike or a paw, so routines are easy
-        to tell apart at a glance. There are over 40, grouped into times of day, body, mind, home
-        and outdoors, and work and people. It shows on Today, Routines, Progress and the Run screen,
-        and goes along when you share the routine. Ready-made routines come with one. Pick the plain
-        dot to go without.
+        to tell apart at a glance. There are 75, grouped into times of day, body, mind, home and
+        outdoors, work and people, moving, calm and self-care, learning and making, around the
+        house, and goals and money. Type in <strong>Search icons</strong> to find one by what you're
+        doing, like "swim", "laundry" or "tea". It shows on Today, Routines, Progress and the Run
+        screen, and goes along when you share the routine. Ready-made routines come with one. Pick
+        the plain dot to go without.
       </p>
       <h2>Habits</h2>
       <ul>

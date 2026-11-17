@@ -24,7 +24,12 @@ import {
   toSharedRoutine,
   type RoutineIcon as RoutineIconId,
 } from '@andthen/core';
-import { ROUTINE_ICON_GROUPS, ROUTINE_ICON_NAMES, RoutineIcon } from '../shared/routine-icon';
+import {
+  ROUTINE_ICON_GROUPS,
+  searchRoutineIcons,
+  ROUTINE_ICON_NAMES,
+  RoutineIcon,
+} from '../shared/routine-icon';
 
 type ScheduleKind = 'daily' | 'days' | 'weekly';
 
@@ -173,7 +178,11 @@ export class ChainEditor {
     return e?.kind === 'habit' && e.id === habit.id;
   }
 
-  protected readonly iconGroups = ROUTINE_ICON_GROUPS;
+  /** The icon picker's search: filters the groups by name, group and a few keywords. */
+  protected readonly iconQuery = signal('');
+  protected readonly iconGroups = computed(() =>
+    this.iconQuery().trim() ? searchRoutineIcons(this.iconQuery()) : ROUTINE_ICON_GROUPS,
+  );
   protected readonly iconNames = ROUTINE_ICON_NAMES;
 
   /** Picking an icon saves straight away; there's nothing else to confirm. */
