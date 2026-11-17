@@ -351,16 +351,26 @@ export class HabitStore {
 
   /** Today's check-in for a habit, if there is one. */
   todaysCheckIn(habitId: string): CheckIn | undefined {
-    const date = this.today();
+    return this.checkInOn(habitId, this.today());
+  }
+
+  /** A habit's check-in on a day, if there is one. */
+  checkInOn(habitId: string, date: DayKey): CheckIn | undefined {
     return this.checkIns().find((c) => c.habitId === habitId && c.date === date);
   }
 
   /**
-   * Adds to (or changes) the tiny journal on today's check-in: how it felt and a
-   * few words. Leave a field out to keep it; pass null to clear it.
+   * Adds to (or changes) the tiny journal on a check-in (today's, unless a recent
+   * day is given): how it felt and a few words. Leave a field out to keep it; pass
+   * null to clear it.
    */
-  async journal(habitId: string, entry: { mood?: Mood | null; note?: string | null }) {
-    const current = this.todaysCheckIn(habitId);
+  async journal(
+    habitId: string,
+    entry: { mood?: Mood | null; note?: string | null },
+    date: DayKey = this.today(),
+  ) {
+    if (!canEditDay(date, this.today())) return;
+    const current = this.checkInOn(habitId, date);
     if (!current) return;
     const next = withJournal(current, entry);
     await this.repo.putCheckIn(next);

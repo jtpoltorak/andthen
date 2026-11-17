@@ -133,6 +133,8 @@ export class DayRing {
   readonly statuses = input.required<readonly LinkStatus[]>();
   /** True right after a check-in, so finishing the day gets a small pulse. */
   readonly celebrate = input(false);
+  /** How the day is named in the label: "today", or "on Monday" for a recent day. */
+  readonly when = input('today');
 
   protected readonly size = SIZE;
   protected readonly stroke = STROKE;
@@ -162,7 +164,7 @@ export class DayRing {
   protected readonly label = computed(() => {
     const total = this.statuses().length;
     const skipped = this.statuses().filter((s) => s === 'skip').length;
-    const base = `${this.done()} of ${total} ${total === 1 ? 'habit' : 'habits'} done today`;
+    const base = `${this.done()} of ${total} ${total === 1 ? 'habit' : 'habits'} done ${this.when()}`;
     return skipped ? `${base}, ${skipped} skipped` : base;
   });
 }

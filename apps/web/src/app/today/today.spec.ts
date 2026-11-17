@@ -1,5 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
+import { addDays } from '@andthen/core';
 import { HABIT_REPOSITORY, InMemoryHabitRepository } from '../data/habit-repository';
 import { HabitStore } from '../data/habit-store';
 import { PreferencesStore } from '../data/preferences';
@@ -94,6 +95,49 @@ describe('Today', () => {
     await store.checkIn(water.id, 'full');
     await fixture.whenStable();
     expect(root.querySelector('.why-note')?.textContent).toContain('My back feels better');
+  });
+
+  it('goes back a day to fill in yesterday, then back to today', async () => {
+    const { fixture, root } = await setup({ startedYesterday: true });
+    const store = TestBed.inject(HabitStore);
+    const [water] = store.habitsOf(store.activeRoutines()[0].id);
+    const yesterday = addDays(store.today(), -1);
+    const h1 = () => root.querySelector('h1')?.textContent?.trim();
+
+    buttonsByText(root, 'Previous day')[0].click();
+    await fixture.whenStable();
+    expect(h1()).toBe('Yesterday');
+    expect(root.querySelector('.past-banner')).not.toBeNull();
+    expect(root.querySelector('.run-link')).toBeNull();
+    expect(root.querySelector('.badge')).toBeNull(); // No "don't miss twice" on a past day.
+
+    buttonsByText(root, 'Done')[0].click();
+    await fixture.whenStable();
+    expect(store.checkInOn(water.id, yesterday)?.kind).toBe('full');
+    expect(store.todaysCheckIn(water.id)).toBeUndefined();
+
+    buttonsByText(root, 'Undo')[0].click();
+    await fixture.whenStable();
+    expect(store.checkInOn(water.id, yesterday)).toBeUndefined();
+
+    buttonsByText(root, 'Back to today')[0].click();
+    await fixture.whenStable();
+    expect(h1()).toBe('Today');
+    expect(root.querySelector('.past-banner')).toBeNull();
+  });
+
+  it('goes back no further than the last 7 days, and not past today', async () => {
+    const { fixture, root } = await setup();
+    const back = () => buttonsByText(root, 'Previous day')[0];
+    const next = () => buttonsByText(root, 'Next day')[0];
+    expect(next().disabled).toBe(true);
+    for (let i = 0; i < 6; i++) {
+      back().click();
+      await fixture.whenStable();
+    }
+    expect(back().disabled).toBe(true);
+    expect(next().disabled).toBe(false);
+    expect(root.textContent).toContain('Nothing to fill in');
   });
 
   it('asks how it felt after Done, and keeps the mood and a few words', async () => {

@@ -21,6 +21,15 @@ export interface Release {
 
 export const RELEASES: readonly Release[] = [
   {
+    version: '1.40.0',
+    date: '2026-11-17',
+    title: 'Go back a day on Today.',
+    notes: [
+      'Forgot to check in last night? Tap the arrow next to the date on Today to go back a day, and fill it in just like today.',
+      'You can go back through the last 7 days, the same days you can change in the grid on Progress. “Back to today” brings you home.',
+    ],
+  },
+  {
     version: '1.39.0',
     date: '2026-11-17',
     title: 'Your why, where you need it.',

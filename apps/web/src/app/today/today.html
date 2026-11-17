@@ -1,23 +1,82 @@
 <main class="today">
   <div class="today-col">
-    <header [class.with-sky]="skyOn()">
-      @if (skyOn()) {
+    <header [class.with-sky]="skyOn() && !isPast()">
+      @if (skyOn() && !isPast()) {
         <app-sky />
       }
-      <div class="date">{{ dateLabel() }}</div>
+      <!-- Back through the last few days, like a journal: fill in or fix a day you missed. -->
+      <div class="date-row">
+        <div class="day-nav" role="group" aria-label="Choose a day">
+          <button
+            type="button"
+            class="day-arrow"
+            [disabled]="!canGoBack()"
+            [attr.title]="canGoBack() ? null : 'Older days are on Progress, in the grid'"
+            (click)="goBack()"
+          >
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2.4"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
+            >
+              <path d="M15 5l-7 7 7 7" />
+            </svg>
+            <span class="visually-hidden">Previous day</span>
+          </button>
+          <button type="button" class="day-arrow" [disabled]="!isPast()" (click)="goForward()">
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2.4"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
+            >
+              <path d="M9 5l7 7-7 7" />
+            </svg>
+            <span class="visually-hidden">Next day</span>
+          </button>
+        </div>
+        <div class="date" aria-live="polite">{{ dateLabel() }}</div>
+        @if (isPast()) {
+          <button type="button" class="back-today" (click)="backToToday()">Back to today</button>
+        }
+      </div>
       <div class="title-row">
-        <h1>Today</h1>
+        <h1>{{ title() }}</h1>
         @if (statuses().length) {
-          <app-day-ring [statuses]="statuses()" [celebrate]="finishedRoutine() !== undefined" />
+          <app-day-ring
+            [statuses]="statuses()"
+            [celebrate]="finishedRoutine() !== undefined"
+            [when]="isPast() ? 'on ' + weekday() : 'today'"
+          />
         }
         <app-help-link slug="today" />
       </div>
-      @if (greeting(); as hello) {
-        <p class="greeting">{{ hello }}.</p>
+      @if (!isPast()) {
+        @if (greeting(); as hello) {
+          <p class="greeting">{{ hello }}.</p>
+        }
       }
     </header>
 
-    @if (milestones.fresh(); as reached) {
+    @if (isPast()) {
+      <p class="past-banner" role="status">
+        You're filling in {{ weekday() }}. Changes count for that day, and the last 7 days can be
+        changed.
+      </p>
+    }
+
+    @if (!isPast() && milestones.fresh(); as reached) {
       <section class="milestone-card" aria-labelledby="milestone-title">
         <svg
           class="milestone-art"
@@ -87,7 +146,7 @@
                 </div>
                 <span class="head-meta">
                   <span class="count">{{ chain.doneCount }} of {{ chain.total }}</span>
-                  @if (!chain.complete) {
+                  @if (!chain.complete && !isPast()) {
                     <a class="run-link" [routerLink]="['/run', chain.routine.id]">
                       <svg
                         width="12"
@@ -192,6 +251,7 @@
                       <app-check-in-journal
                         [habitId]="link.habit.id"
                         [habitName]="link.habit.name"
+                        [date]="isPast() ? day() : undefined"
                         [open]="link.habit.id === journaling()"
                         (opened)="journaling.set(link.habit.id)"
                         (closed)="journaling.set(undefined)"
@@ -258,7 +318,9 @@
                   </span>
                 }
                 <div class="complete-title">Chain complete</div>
-                <div class="complete-note">Small still counts. See you tomorrow.</div>
+                <div class="complete-note">
+                  {{ isPast() ? 'Small still counts.' : 'Small still counts. See you tomorrow.' }}
+                </div>
               </div>
             }
 
@@ -288,7 +350,9 @@
               </div>
             }
 
-            @if (addingTo() === chain.routine.id) {
+            @if (isPast()) {
+              <!-- Adding habits changes the routine from today on, so it waits for Today. -->
+            } @else if (addingTo() === chain.routine.id) {
               <form
                 class="add-form"
                 (submit)="$event.preventDefault(); addLink(chain.routine.id)"
@@ -391,7 +455,11 @@
         }
       }
     } @empty {
-      @if (paused().length) {
+      @if (isPast()) {
+        <app-empty-state art="rest" heading="Nothing to fill in">
+          <p>No habits were planned for {{ weekday() }}.</p>
+        </app-empty-state>
+      } @else if (paused().length) {
         <app-empty-state art="pause" heading="Taking a break">
           <p>Paused routines don't count as missed. Pick them up whenever you're ready.</p>
         </app-empty-state>
@@ -412,7 +480,7 @@
 
     @if (resting().length) {
       <p class="resting">
-        Resting today:
+        Resting {{ isPast() ? 'that day' : 'today' }}:
         @for (chain of resting(); track chain.routine.id; let last = $last) {
           <a [routerLink]="['/routines', chain.routine.id]">{{ chain.routine.anchor }}</a
           >{{ last ? '' : ', ' }}
@@ -435,15 +503,17 @@
                 Paused{{ chain.paused?.until ? ' ' + pausedUntil(chain.paused.until) : '' }}
               </span>
             </span>
-            <button type="button" class="resume-btn" (click)="resume(chain.routine.id)">
-              Resume<span class="visually-hidden"> {{ chain.routine.anchor }}</span>
-            </button>
+            @if (!isPast()) {
+              <button type="button" class="resume-btn" (click)="resume(chain.routine.id)">
+                Resume<span class="visually-hidden"> {{ chain.routine.anchor }}</span>
+              </button>
+            }
           </div>
         }
       </section>
     }
 
-    @if (reflection.show()) {
+    @if (reflection.show() && !isPast()) {
       <section class="reflect-card" aria-labelledby="reflect-title">
         <h2 id="reflect-title">Weekly reflection</h2>
         <p>Two minutes: what went well, and what could be easier next week?</p>
