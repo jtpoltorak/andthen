@@ -98,6 +98,13 @@ h1 {
   min-width: 0;
 }
 
+.habit-misses {
+  margin: 2px 0 0;
+  font-size: 13px;
+  line-height: 1.4;
+  color: var(--amber-soft-ink);
+}
+
 .habit-why {
   margin: 2px 0 0;
   font-size: 14px;

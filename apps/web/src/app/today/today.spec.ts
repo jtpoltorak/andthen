@@ -126,6 +126,35 @@ describe('Today', () => {
     expect(root.querySelector('.past-banner')).toBeNull();
   });
 
+  it("notes what got in the way of yesterday's miss, and shows it once saved", async () => {
+    const { fixture, root } = await setup({ startedYesterday: true });
+    const store = TestBed.inject(HabitStore);
+    const yesterday = addDays(store.today(), -1);
+    expect(root.querySelector('app-miss-note form')).toBeNull(); // Never opens on its own.
+
+    buttonsByText(root, '+ What got in the way?')[0].click();
+    await fixture.whenStable();
+    expect(root.textContent).toContain('What got in the way yesterday?');
+    buttonsByText(root, 'Tired')[0].click();
+    const words = root.querySelector<HTMLInputElement>('app-miss-note .note-input')!;
+    words.value = ' Up late ';
+    words.dispatchEvent(new Event('input'));
+    buttonsByText(root, 'Save')[0].click();
+    await fixture.whenStable();
+
+    expect(store.habitsOf(store.activeRoutines()[0].id)[0].misses).toEqual([
+      { date: yesterday, reason: 'tired', note: 'Up late' },
+    ]);
+    expect(root.textContent).toContain('Noted: Tired · Up late');
+  });
+
+  it('offers a miss note for an unanswered habit on a past day', async () => {
+    const { fixture, root } = await setup({ startedYesterday: true });
+    buttonsByText(root, 'Previous day')[0].click();
+    await fixture.whenStable();
+    expect(buttonsByText(root, '+ What got in the way?').length).toBeGreaterThan(0);
+  });
+
   it('goes back no further than the last 7 days, and not past today', async () => {
     const { fixture, root } = await setup();
     const back = () => buttonsByText(root, 'Previous day')[0];

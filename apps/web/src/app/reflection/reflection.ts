@@ -6,6 +6,7 @@ import {
   type Habit,
   type HabitWeek,
   MAX_REFLECTION_LENGTH,
+  MISS_REASON_LABELS,
   addDays,
   dayStatus,
   fromDayKey,
@@ -14,6 +15,7 @@ import {
   previousReflection,
   reflectionFor,
   summarize,
+  tallyMissReasons,
 } from '@andthen/core';
 import { HabitStore } from '../data/habit-store';
 import { PreferencesStore } from '../data/preferences';
@@ -64,6 +66,16 @@ export class Reflection {
     const { from, to } = this.week();
     return `${shortDate(from)} to ${shortDate(to)}`;
   });
+
+  /** "Tired (2), Too busy": what got in the way of a habit this week, from its miss notes. */
+  protected missesFor(habit: Habit): string {
+    const { from, to } = this.week();
+    return tallyMissReasons([habit], from, to)
+      .map((t) =>
+        t.count > 1 ? `${MISS_REASON_LABELS[t.reason]} (${t.count})` : MISS_REASON_LABELS[t.reason],
+      )
+      .join(', ');
+  }
 
   protected readonly summary = computed(() => {
     const { from, to } = this.week();

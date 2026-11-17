@@ -113,9 +113,21 @@ export interface Habit {
   why?: string;
   /** Optional: when it's due. Missing means every day. */
   schedule?: Schedule;
+  /** Optional notes on missed days: what got in the way. Newest last, a few dozen at most. */
+  misses?: MissNote[];
   order: number;
   createdOn: DayKey;
   archivedOn?: DayKey;
+}
+
+/** What got in the way of a missed habit, picked with one tap. */
+export type MissReason = 'tired' | 'busy' | 'forgot' | 'sick' | 'away' | 'not-feeling-it' | 'other';
+
+/** A note on a day a habit was missed. Both parts are optional, but one is always there. */
+export interface MissNote {
+  date: DayKey;
+  reason?: MissReason;
+  note?: string;
 }
 
 /** `full` = did the habit, `mini` = did the 2-minute version, `skip` = consciously skipped. */

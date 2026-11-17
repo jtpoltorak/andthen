@@ -216,6 +216,14 @@
                     } @else if (link.nudge === 'welcome-back') {
                       <div class="badge badge-soft">Welcome back · 2 minutes counts</div>
                     }
+                    @if (link.missedOn) {
+                      <app-miss-note
+                        [habitId]="link.habit.id"
+                        [habitName]="link.habit.name"
+                        [date]="link.missedOn"
+                        [when]="whenLabel(link.missedOn)"
+                      />
+                    }
                     <!-- The person's own reason, beside the habit they're up to: it matters most after a miss. -->
                     @if (link.isNext && link.habit.why) {
                       <p class="why-note">
@@ -245,6 +253,16 @@
                         </button>
                       }
                     </div>
+
+                    <!-- A past day is over: a habit left unanswered was missed. -->
+                    @if (isPast() && link.status === 'pending') {
+                      <app-miss-note
+                        [habitId]="link.habit.id"
+                        [habitName]="link.habit.name"
+                        [date]="day()"
+                        [when]="whenLabel(day())"
+                      />
+                    }
 
                     <!-- The tiny journal: one tap for how it felt, and a few optional words. -->
                     @if (link.status === 'full' || link.status === 'mini') {
@@ -535,5 +553,6 @@
   <app-week-panel class="today-side">
     <a routerLink="/progress">See Progress</a>
     <a routerLink="/reflect">Reflect on your week</a>
+    <app-miss-tally />
   </app-week-panel>
 </main>

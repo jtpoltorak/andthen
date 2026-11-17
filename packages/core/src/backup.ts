@@ -1,6 +1,7 @@
 import { minutesOf } from './dates';
 import { timeOfMinutes } from './glance';
 import { cleanCheckInNote, isMood } from './journal';
+import { cleanMissNotes } from './misses';
 import {
   isRoutineIcon,
   type CheckIn,
@@ -198,6 +199,9 @@ function readHabit(raw: unknown, i: number): Habit {
   if (schedule) habit.schedule = schedule;
   const archivedOn = day(raw, 'archivedOn', where, false);
   if (archivedOn) habit.archivedOn = archivedOn;
+  // Optional: notes on missed days. Older backups don't have them; bad entries are dropped.
+  const misses = cleanMissNotes(raw['misses']);
+  if (misses.length) habit.misses = misses;
   return habit;
 }
 

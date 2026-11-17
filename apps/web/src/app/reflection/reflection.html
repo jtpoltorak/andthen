@@ -33,6 +33,9 @@
               <p class="habit-why">Why: {{ row.habit.why }}</p>
             }
             <p class="habit-sub">{{ row.summary }}</p>
+            @if (missesFor(row.habit); as misses) {
+              <p class="habit-misses">What got in the way: {{ misses }}</p>
+            }
           </div>
           <div class="dots" role="img" [attr.aria-label]="row.summary">
             @for (dot of row.dots; track dot.date) {

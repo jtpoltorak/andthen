@@ -21,6 +21,15 @@ export interface Release {
 
 export const RELEASES: readonly Release[] = [
   {
+    version: '1.41.0',
+    date: '2026-11-17',
+    title: 'What got in the way?',
+    notes: [
+      'Missed a habit? A small “What got in the way?” link under the nudge lets you pick a reason with one tap, and add a few words if you like. It never pops up on its own.',
+      'Your reasons add up under This week on Today and in your weekly reflection. When one keeps coming up, AndThen suggests a “make it easy” note to plan around it.',
+    ],
+  },
+  {
     version: '1.40.0',
     date: '2026-11-17',
     title: 'Go back a day on Today.',
